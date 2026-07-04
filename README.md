@@ -22,7 +22,13 @@ tests/                   基础测试
 web/                     本地网页演示
 ```
 
-完整数据集和模型权重不随普通 Git 仓库提交。若要运行网页演示或复现主结果，需要先从 Release 附件或课程交付包中取得 `vit_b16_best.pt`，并放置为 `models/vit_b16_best.pt`。若要重新计算测试集指标，还需要自行准备同一数据集。
+完整数据集和模型权重不随普通 Git 仓库提交。若要运行网页演示或复现主结果，需要先从 [v1.0.0 Release](https://github.com/JasonGao1010/Chest-Xray-Pneumonia-Classification/releases/tag/v1.0.0) 附件下载 `vit_b16_best.pt`，并放置为 `models/vit_b16_best.pt`。若要重新计算测试集指标，还需要自行准备同一数据集。
+
+权重文件的 SHA256 校验值为：
+
+```text
+78604698f504d8d96f5bdad9570608c77472e7625684cb13a6f222275c8381be
+```
 
 ## 环境准备
 
