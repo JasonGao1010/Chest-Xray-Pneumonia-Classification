@@ -1,0 +1,36 @@
+project:
+  name: xray-pneumonia-classification
+  task: binary_classification
+  classes:
+    - NORMAL
+    - PNEUMONIA
+
+paths:
+  data_root: data/raw/chest_xray
+  results_dir: results
+  figures_dir: figures
+  checkpoints_dir: outputs/checkpoints
+
+data:
+  image_size: 224
+  train_split: train
+  val_split: val
+  test_split: test
+  normalize: imagenet
+  augment:
+    horizontal_flip: true
+    random_rotation_degrees: 7
+    color_jitter: false
+
+training:
+  model: torchvision:vit_b_16
+  pretrained: true
+  epochs: 4
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  seed: 42
+  mixed_precision: false
+  use_class_weights: true

@@ -1,0 +1,84 @@
+# Python cache and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local environments and secrets
+.env
+.venv/
+venv/
+env/
+
+# Dataset and generated training artifacts
+data/raw/
+data/processed/
+outputs/
+logs/
+experiments/
+notebooks/
+
+# Model weights are too large for normal Git history.
+models/*.pt
+models/*.pth
+models/*.ckpt
+models/*.onnx
+*.pt
+*.pth
+*.ckpt
+*.onnx
+!models/README.md
+
+# Delivery archives and generated release folders
+deliverables/
+*.zip
+
+# Private workspace notes
+MANIFEST.md
+task_plan.md
+progress.md
+findings.md
+REPRODUCE_RESULTS.md
+
+# Keep only stable public figures by default.
+figures/*
+!figures/confusion_matrix_test_vit_b16.png
+!figures/threshold_curve_test_vit_b16.png
+!figures/probability_distribution_test_vit_b16.png
+!figures/error_profile_default_threshold.png
+!figures/web_demo_examples.png
+!figures/grad_cam_examples_effnetv2.png
+
+# Keep only stable public result files by default.
+results/*
+!results/main_test_metrics.json
+!results/predictions_test_vit_b16.csv
+!results/threshold_curve_test_vit_b16.csv
+
+# Keep report source and final PDF; ignore generated office/intermediate files.
+reports/*
+!reports/course_report.md
+!reports/course_report.tex
+!reports/course_report.pdf
+
+# Public config
+configs/*
+!configs/vit_b16.yaml
+
+# Course/private source materials are not needed in the public repository.
+docs/*
+
+# Keep public scripts only.
+scripts/*
+!scripts/README.md
+!scripts/check_dataset.py
+!scripts/evaluate.py
+!scripts/analyze_thresholds.py
+!scripts/train.py
+!scripts/serve_patient_app.py
+
+# System files
+.DS_Store
+Thumbs.db

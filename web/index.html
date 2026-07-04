@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>肺炎 X 光图像分类演示</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="tool-surface" aria-label="X 光分类工具">
+        <header class="app-header">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 7.5C4 5.6 5.6 4 7.5 4h9C18.4 4 20 5.6 20 7.5v9c0 1.9-1.6 3.5-3.5 3.5h-9C5.6 20 4 18.4 4 16.5v-9Z" />
+                <path d="M8 12h8M12 8v8" />
+              </svg>
+            </span>
+            <div>
+              <p class="eyebrow">Chest X-ray Classifier</p>
+              <h1>肺炎 X 光图像分类演示</h1>
+            </div>
+          </div>
+          <div class="model-chip">
+            <span>ViT-B/16</span>
+            <strong>本地推理</strong>
+          </div>
+        </header>
+
+        <div class="workspace">
+          <section class="viewer-panel">
+            <div class="viewer-toolbar">
+              <div>
+                <p class="panel-label">影像预览</p>
+                <strong id="fileName">示例胸片</strong>
+              </div>
+              <span id="fileMeta">等待选择</span>
+            </div>
+
+            <label class="drop-zone" id="dropZone">
+              <input id="imageInput" name="image" type="file" accept="image/*" />
+              <img id="previewImage" src="sample-xray" alt="胸部 X 光预览" />
+              <span class="upload-badge">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 16V4" />
+                  <path d="m7 9 5-5 5 5" />
+                  <path d="M5 20h14" />
+                </svg>
+                上传图片
+              </span>
+            </label>
+
+            <div class="action-row">
+              <button id="predictButton" type="button" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m8 5 11 7-11 7V5Z" />
+                </svg>
+                开始分类
+              </button>
+              <button id="clearButton" type="button" class="secondary">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M6 7l1 13h10l1-13" />
+                  <path d="M9 7V4h6v3" />
+                </svg>
+                清空
+              </button>
+            </div>
+          </section>
+
+          <section class="result-panel" aria-live="polite">
+            <div class="result-head">
+              <p class="panel-label">模型输出</p>
+              <span id="statusValue">未运行</span>
+            </div>
+
+            <div class="diagnosis-block">
+              <span class="risk-pill" id="riskPill">等待图片</span>
+              <h2 id="resultTitle">尚未分类</h2>
+              <p id="resultSummary">选择胸部 X 光图片后，模型会返回正常类和肺炎类的概率。</p>
+            </div>
+
+            <div class="probability-stack">
+              <div class="probability-row">
+                <div class="probability-topline">
+                  <span>正常</span>
+                  <strong id="normalValue">--</strong>
+                </div>
+                <div class="meter-track">
+                  <div class="meter-fill normal" id="normalBar"></div>
+                </div>
+              </div>
+
+              <div class="probability-row">
+                <div class="probability-topline">
+                  <span>肺炎</span>
+                  <strong id="pneumoniaValue">--</strong>
+                </div>
+                <div class="meter-track">
+                  <div class="meter-fill pneumonia" id="pneumoniaBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <dl class="summary-grid">
+              <div>
+                <dt>判别阈值</dt>
+                <dd id="thresholdValue">0.50</dd>
+              </div>
+              <div>
+                <dt>最高概率</dt>
+                <dd id="confidenceValue">--</dd>
+              </div>
+            </dl>
+
+            <p class="warning">
+              本页面仅用于课程设计演示，不能替代医生诊断。若有症状或检查异常，请咨询专业医生。
+            </p>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

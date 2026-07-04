@@ -1,0 +1,12 @@
+torch
+torchvision
+timm>=1.0.26
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+pillow
+tqdm
+pyyaml
+flask
