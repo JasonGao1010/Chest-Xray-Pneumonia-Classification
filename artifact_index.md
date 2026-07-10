@@ -8,7 +8,7 @@
 | 来源诊断 | 简单图像统计区分来源 | `results/domain_shift_diagnostic.json` | AUC 0.9551，不作因果证明 |
 | 稳健训练 | 强度扰动+标签平滑 | `results/robust_summary.json` | 固定阈值改善，外部 AUC 下降 |
 | 跨域训练 | 简单混合与域均衡 3 seeds | `results/mixed_strict_summary.json` | 简单混合为当前最佳 |
-| 正式报告 | 高密度正文与复现附录 | `reports/course_report.pdf`, `reports/thesis/main.tex` | 70 页，第1--12章正文52页 |
+| 正式报告 | 硕士论文式8章高密度正文与复现附录 | `reports/course_report.pdf`, `reports/thesis/main.tex` | 70页，连续正文51页 |
 
 | 产物族 | 用途 | 主要位置 | 验证与限制 |
 |---|---|---|---|
