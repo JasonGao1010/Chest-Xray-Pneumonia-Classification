@@ -19,7 +19,7 @@ degraded substantially on the RSNA subset:
 | ConvNeXt-Tiny | 0.9727 | 0.6695 | 0.4140 |
 | ViT-B/16 | 0.9817 | 0.6594 | 0.3628 |
 
-The Kermany test contains 1,170 images grouped into 821 conservative
+The Kermany test contains 1,170 images grouped into 624 conservative
 filename-derived clusters. The RSNA test contains 442 images grouped by 442
 `patientId` values. These datasets differ in population, labels, image format,
 and distribution, so the comparison is a cross-source stress test rather than

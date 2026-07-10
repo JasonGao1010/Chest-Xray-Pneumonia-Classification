@@ -36,9 +36,10 @@ def filename_group_from_path(path: str, dataset: str) -> str:
     if dataset == "kermany_grouped":
         person = re.match(r"(person\d+)_", stem)
         if person:
-            subtype_match = re.search(r"_(bacteria|virus)_", stem)
-            subtype = subtype_match.group(1) if subtype_match else "unknown"
-            return f"kermany_filename_cluster:{subtype}:{person.group(1)}"
+            # Use the same conservative unit as split construction and audit.
+            # The public metadata do not prove equal bacterial/viral counters
+            # are different patients, so bootstrap must keep them together.
+            return f"kermany_filename_cluster:{person.group(1)}"
         normal = re.match(r"((?:normal\d+-)?im-\d+)(?:-|$)", stem)
         token = normal.group(1) if normal else stem
         return f"kermany_filename_cluster:normal:{token}"
@@ -311,8 +312,9 @@ def main() -> int:
             },
             "grouping_keys": {
                 "kermany_grouped": (
-                    "subtype-aware filename cluster: bacteria:personN and virus:personN "
-                    "remain distinct; NORMAL uses the exam-like filename prefix"
+                    "conservative subtype-agnostic filename cluster: equal personN "
+                    "counters in bacterial and viral filenames remain grouped; NORMAL "
+                    "uses the exam-like filename prefix"
                 ),
                 "rsna": "RSNA patientId, equal to the image filename stem",
             },

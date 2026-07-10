@@ -9,16 +9,15 @@ from scripts.summarize_strict_results import (
 )
 
 
-def test_kermany_group_key_is_subtype_aware():
+def test_kermany_group_key_matches_conservative_split_unit():
     bacteria = filename_group_from_path(
         "test/PNEUMONIA/person12_bacteria_1.jpeg", "kermany_grouped"
     )
     virus = filename_group_from_path(
         "test/PNEUMONIA/person12_virus_1.jpeg", "kermany_grouped"
     )
-    assert bacteria != virus
-    assert bacteria.endswith("bacteria:person12")
-    assert virus.endswith("virus:person12")
+    assert bacteria == virus
+    assert bacteria.endswith("person12")
 
 
 def test_paired_bootstrap_reports_candidate_minus_baseline():

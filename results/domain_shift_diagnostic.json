@@ -33,7 +33,7 @@
     "method": "5-fold StratifiedGroupKFold",
     "shuffle": true,
     "random_state": 42,
-    "grouping": "source-prefixed subtype-aware filename clusters for Kermany and RSNA patientId filename stems for RSNA"
+    "grouping": "source-prefixed conservative subtype-agnostic filename clusters for Kermany and RSNA patientId filename stems for RSNA"
   },
   "analyses": {
     "unadjusted": {
@@ -54,41 +54,41 @@
           }
         }
       },
-      "group_count": 2894,
+      "group_count": 2832,
       "folds": [
         {
           "fold": 1,
           "sample_count": 600,
-          "accuracy": 0.885,
-          "roc_auc": 0.9423500000000001
+          "accuracy": 0.8866666666666667,
+          "roc_auc": 0.9485722222222222
         },
         {
           "fold": 2,
           "sample_count": 600,
-          "accuracy": 0.8966666666666666,
-          "roc_auc": 0.9651333333333334
+          "accuracy": 0.8733333333333333,
+          "roc_auc": 0.9508777777777778
         },
         {
           "fold": 3,
           "sample_count": 600,
-          "accuracy": 0.895,
-          "roc_auc": 0.9607888888888889
+          "accuracy": 0.9,
+          "roc_auc": 0.9675888888888889
         },
         {
           "fold": 4,
           "sample_count": 600,
-          "accuracy": 0.8816666666666667,
-          "roc_auc": 0.9467333333333332
+          "accuracy": 0.9,
+          "roc_auc": 0.9555555555555555
         },
         {
           "fold": 5,
           "sample_count": 600,
-          "accuracy": 0.8866666666666667,
-          "roc_auc": 0.9526333333333333
+          "accuracy": 0.8816666666666667,
+          "roc_auc": 0.9508722222222221
         }
       ],
-      "overall_accuracy": 0.889,
-      "overall_roc_auc": 0.9531206666666666
+      "overall_accuracy": 0.8883333333333333,
+      "overall_roc_auc": 0.9547093333333334
     },
     "label_matched": {
       "counts": {
@@ -108,41 +108,41 @@
           }
         }
       },
-      "group_count": 2217,
+      "group_count": 2191,
       "folds": [
         {
           "fold": 1,
           "sample_count": 452,
-          "accuracy": 0.8672566371681416,
-          "roc_auc": 0.9398151773827238
+          "accuracy": 0.8849557522123894,
+          "roc_auc": 0.9486059989035945
         },
         {
           "fold": 2,
           "sample_count": 452,
-          "accuracy": 0.8672566371681416,
-          "roc_auc": 0.9487822069073537
+          "accuracy": 0.8849557522123894,
+          "roc_auc": 0.9509945962878847
         },
         {
           "fold": 3,
           "sample_count": 452,
-          "accuracy": 0.8429203539823009,
-          "roc_auc": 0.9222726916751508
+          "accuracy": 0.8694690265486725,
+          "roc_auc": 0.9423408254366042
         },
         {
           "fold": 4,
           "sample_count": 452,
-          "accuracy": 0.8783185840707964,
-          "roc_auc": 0.9497219829274022
+          "accuracy": 0.8473451327433629,
+          "roc_auc": 0.9279896624637795
         },
         {
           "fold": 5,
           "sample_count": 452,
-          "accuracy": 0.8893805309734514,
-          "roc_auc": 0.9542838123580546
+          "accuracy": 0.8761061946902655,
+          "roc_auc": 0.951914793640849
         }
       ],
-      "overall_accuracy": 0.8690265486725663,
-      "overall_roc_auc": 0.9422883546088182,
+      "overall_accuracy": 0.8725663716814159,
+      "overall_roc_auc": 0.9441444122484142,
       "matching": "equal source counts separately within each diagnosis label"
     },
     "label_stratified": {
@@ -218,41 +218,41 @@
             }
           }
         },
-        "group_count": 1712,
+        "group_count": 1650,
         "folds": [
           {
             "fold": 1,
             "sample_count": 364,
-            "accuracy": 0.8818681318681318,
-            "roc_auc": 0.9515981735159817
+            "accuracy": 0.8846153846153846,
+            "roc_auc": 0.949960636120296
           },
           {
             "fold": 2,
-            "sample_count": 364,
-            "accuracy": 0.8846153846153846,
-            "roc_auc": 0.938151472209101
+            "sample_count": 363,
+            "accuracy": 0.8760330578512396,
+            "roc_auc": 0.9395128124011389
           },
           {
             "fold": 3,
-            "sample_count": 363,
-            "accuracy": 0.8787878787878788,
-            "roc_auc": 0.9282505536222715
+            "sample_count": 364,
+            "accuracy": 0.8626373626373627,
+            "roc_auc": 0.9293654542591717
           },
           {
             "fold": 4,
             "sample_count": 364,
-            "accuracy": 0.8653846153846154,
-            "roc_auc": 0.9370177924736262
+            "accuracy": 0.8956043956043956,
+            "roc_auc": 0.9470634545740829
           },
           {
             "fold": 5,
             "sample_count": 363,
-            "accuracy": 0.9090909090909091,
-            "roc_auc": 0.9601090816844241
+            "accuracy": 0.8980716253443526,
+            "roc_auc": 0.9454274479959411
           }
         ],
-        "overall_accuracy": 0.8839383938393839,
-        "overall_roc_auc": 0.9430229680729646
+        "overall_accuracy": 0.8833883388338833,
+        "overall_roc_auc": 0.9415944074661386
       }
     }
   },
@@ -263,36 +263,36 @@
     {
       "fold": 1,
       "sample_count": 600,
-      "accuracy": 0.885,
-      "roc_auc": 0.9423500000000001
+      "accuracy": 0.8866666666666667,
+      "roc_auc": 0.9485722222222222
     },
     {
       "fold": 2,
       "sample_count": 600,
-      "accuracy": 0.8966666666666666,
-      "roc_auc": 0.9651333333333334
+      "accuracy": 0.8733333333333333,
+      "roc_auc": 0.9508777777777778
     },
     {
       "fold": 3,
       "sample_count": 600,
-      "accuracy": 0.895,
-      "roc_auc": 0.9607888888888889
+      "accuracy": 0.9,
+      "roc_auc": 0.9675888888888889
     },
     {
       "fold": 4,
       "sample_count": 600,
-      "accuracy": 0.8816666666666667,
-      "roc_auc": 0.9467333333333332
+      "accuracy": 0.9,
+      "roc_auc": 0.9555555555555555
     },
     {
       "fold": 5,
       "sample_count": 600,
-      "accuracy": 0.8866666666666667,
-      "roc_auc": 0.9526333333333333
+      "accuracy": 0.8816666666666667,
+      "roc_auc": 0.9508722222222221
     }
   ],
-  "overall_accuracy": 0.889,
-  "overall_roc_auc": 0.9531206666666666,
+  "overall_accuracy": 0.8883333333333333,
+  "overall_roc_auc": 0.9547093333333334,
   "source_feature_means": {
     "kermany": {
       "mean": 0.48038283131519954,

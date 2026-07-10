@@ -99,7 +99,7 @@ def collect(
                             "path": path,
                             "source": source,
                             "label": label,
-                            "group": f"{source}:{filename_group_id(path, label, dataset_kind)}",
+                            "group": f"{source}:{filename_group_id(path, label, dataset_kind, kermany_subtype_sensitive=False)}",
                         }
                     )
     return _evenly_spaced(rows, limit)
@@ -243,7 +243,7 @@ def main() -> int:
             "shuffle": True,
             "random_state": 42,
             "grouping": (
-                "source-prefixed subtype-aware filename clusters for Kermany and "
+                "source-prefixed conservative subtype-agnostic filename clusters for Kermany and "
                 "RSNA patientId filename stems for RSNA"
             ),
         },

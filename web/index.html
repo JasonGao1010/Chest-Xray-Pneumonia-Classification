@@ -140,17 +140,17 @@ const DATA={
  rsna:[{name:"训练",normal:560,pneumonia:492},{name:"验证",normal:107,pneumonia:106},{name:"测试",normal:215,pneumonia:227}],
  folds:[.9398151774,.9487822069,.9222726917,.9497219829,.9542838124],
  rows:[
-  {scope:"architecture",experiment:"DenseNet-121",domain:"Kermany",n:1170,groups:821,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
-  {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"Kermany",n:1170,groups:821,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
-  {scope:"architecture",experiment:"ViT-B/16",domain:"Kermany",n:1170,groups:821,acc:.9820512821,bacc:.9816841776,prec:.9929161747,recall:.9824766355,spec:.9808917197,f1:.9876688197,auc:.9968450503,auprc:.9988487659,brier:.0165625566,ece:null},
+  {scope:"architecture",experiment:"DenseNet-121",domain:"Kermany",n:1170,groups:624,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
+  {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"Kermany",n:1170,groups:624,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
+  {scope:"architecture",experiment:"ViT-B/16",domain:"Kermany",n:1170,groups:624,acc:.9820512821,bacc:.9816841776,prec:.9929161747,recall:.9824766355,spec:.9808917197,f1:.9876688197,auc:.9968450503,auprc:.9988487659,brier:.0165625566,ece:null},
   {scope:"architecture",experiment:"DenseNet-121",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6591230407,prec:.6117318436,recall:.9647577093,spec:.3534883721,f1:.7487179487,auc:.8151623809,auprc:.8036194820,brier:.2919496597,ece:null},
   {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"RSNA",n:442,groups:442,acc:.6764705882,bacc:.6695318103,prec:.625,recall:.9251101322,spec:.4139534884,f1:.7460035524,auc:.8039545129,auprc:.8042785175,brier:.2596788402,ece:null},
   {scope:"architecture",experiment:"ViT-B/16",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6593689171,prec:.6129943503,recall:.9559471366,spec:.3627906977,f1:.7469879518,auc:.8236451183,auprc:.8299617258,brier:.2832613065,ece:null},
-  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
+  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
   {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
-  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
+  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
   {scope:"strategy",experiment:"简单混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
-  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
+  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
   {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
  ]
 };
