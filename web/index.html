@@ -35,30 +35,30 @@
 <div class="topline"></div>
 <header>
   <div class="header-row">
-    <div class="identity"><span class="code">XR-01</span><div><h1>胸片肺炎二分类实验结果</h1><p class="subtitle">离线可视化报告 · 数据、模型与跨来源评估</p></div></div>
+    <div class="identity"><span class="code">XR-01</span><div><h1>胸片肺炎二分类实验</h1><p class="subtitle">从数据划分到跨来源测试</p></div></div>
     <div class="header-meta"><span>3 种架构</span><span>3 个随机种子</span><span>95% 分组区间</span></div>
   </div>
-  <nav><a href="#summary">结论摘要</a><a href="#models">模型比较</a><a href="#explorer">多维对比</a><a href="#interventions">训练策略</a><a href="#datasets">数据构成</a><a href="#evidence">证据核验</a></nav>
+  <nav><a href="#summary">主要结果</a><a href="#models">模型表现</a><a href="#explorer">详细指标</a><a href="#interventions">训练方案</a><a href="#datasets">数据划分</a><a href="#evidence">核查结果</a></nav>
 </header>
 
 <main>
   <section class="section" id="summary">
-    <div class="section-head"><span class="section-index">01 / SUMMARY</span><div><h2>四项主要观察</h2><p class="section-note">所有数值来自仓库内逐图预测与机器汇总；百分数保留两位小数。</p></div></div>
+    <div class="section-head"><span class="section-index">01 / 主要结果</span><div><h2>先看最值得注意的四个结果</h2><p class="section-note">以下数值均由仓库中的逐图预测重新计算，百分数保留两位小数。</p></div></div>
     <div class="finding-grid">
-      <article class="finding"><span>内部最佳 BAcc</span><strong class="good">98.17%</strong><p>ViT-B/16，Kermany文件名簇隔离测试集，n=1,170。</p></article>
-      <article class="finding"><span>RSNA最佳 AUROC</span><strong>82.36%</strong><p>ViT-B/16；固定阈值BAcc为65.94%，两种指标不等价。</p></article>
-      <article class="finding"><span>简单混合训练 RSNA BAcc</span><strong class="good">78.13%</strong><p>相对严格DenseNet基线提高12.22个百分点，使用了RSNA标签。</p></article>
-      <article class="finding"><span>标签匹配来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两个处理后来源高度可分，不指向具体设备或采集机制。</p></article>
+      <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16。测试集有 1,170 张图像，按 624 个保守文件名簇分组。</p></article>
+      <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>同样来自 ViT-B/16，但固定阈值下的平衡准确率只有 65.94%。</p></article>
+      <article class="finding"><span>混合训练后的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet 严格基线高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
+      <article class="finding"><span>控制标签比例后的来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两套处理后图像仍容易区分，但现有证据不足以解释差异来自哪里。</p></article>
     </div>
   </section>
 
   <section class="section" id="models">
-    <div class="section-head"><span class="section-index">02 / MODELS</span><div><h2>内部性能没有转化为稳定的跨来源表现</h2><p class="section-note">三随机种子概率平均后计算指标；误差范围采用文件名簇或patientId分组自助法。</p></div></div>
+    <div class="section-head"><span class="section-index">02 / 模型表现</span><div><h2>换一套数据后，三种模型都明显退步</h2><p class="section-note">每个结果先对三个随机种子的预测概率取平均，再计算指标和分组自助区间。</p></div></div>
     <div class="chart-grid">
       <article class="chart-panel">
-        <div class="panel-title"><div><h3>三种架构的内部与RSNA表现</h3><p>切换指标查看相同模型在两个数据来源上的变化</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
+        <div class="panel-title"><div><h3>同一模型在两套测试集上的表现</h3><p>可切换平衡准确率、AUROC 和 Brier 分数</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
         <div class="bar-chart" id="modelBars"></div><div class="axis" id="barAxis"></div>
-        <p class="chart-caption" id="barCaption">BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。</p>
+        <p class="chart-caption" id="barCaption">三种模型在 Kermany 上都超过 97%，换到 RSNA 后只剩约 66%。</p>
       </article>
       <article class="chart-panel">
         <div class="panel-title"><div><h3>跨来源 BAcc 下降</h3><p>同一模型从Kermany内部测试到RSNA测试</p></div><div class="legend"><span><i class="lg-int"></i>Kermany</span><span><i class="lg-ext"></i>RSNA</span></div></div>
@@ -71,13 +71,13 @@
           <circle cx="93" cy="37" r="4" fill="#a06d22"/><circle cx="337" cy="202" r="4" fill="#a06d22"/><text x="82" y="23" text-anchor="end">ViT 98.17</text><text x="348" y="218">65.94</text></g>
           <text x="215" y="126" text-anchor="middle" font-size="12" fill="#aa4349">下降 30.3–32.2 个百分点</text>
         </svg>
-        <p class="chart-caption">内部BAcc区间高度重叠；跨来源下降是三个架构共同出现的现象。</p>
+        <p class="chart-caption">三种架构在 Kermany 上差距不大；到了 RSNA，平衡准确率都降了约 30 个百分点。</p>
       </article>
     </div>
   </section>
 
   <section class="section" id="explorer">
-    <div class="section-head"><span class="section-index">03 / EXPLORER</span><div><h2>完整指标与多维交叉对比</h2><p class="section-note">覆盖正式汇总中的9项主要评价指标，并补充策略汇总的ECE。选择指标、数据域和实验范围后，排名图与数值矩阵同步更新。</p></div></div>
+    <div class="section-head"><span class="section-index">03 / 详细指标</span><div><h2>逐项比较各组实验</h2><p class="section-note">这里列出 9 项常用评价指标，并补充训练方案的 ECE。筛选条件改变后，左侧排序和右侧表格会一起更新。</p></div></div>
     <div class="explorer">
       <div class="controls">
         <div class="control"><label for="metricSelect">比较指标</label><select id="metricSelect"></select></div>
@@ -85,8 +85,8 @@
         <div class="control"><label for="scopeSelect">实验范围</label><select id="scopeSelect"><option value="all">全部模型与策略</option><option value="architecture">仅架构基线</option><option value="strategy">仅 DenseNet 训练策略</option></select></div>
       </div>
       <div class="compare-view">
-        <article class="rank-panel"><div class="panel-title"><div><h3 id="rankTitle">指标排名</h3><p id="rankSub">数值越高越好</p></div></div><div class="rank-list" id="rankList"></div></article>
-        <article class="matrix-panel"><div class="panel-title"><div><h3>全指标矩阵</h3><p>绿色为当前数据域内最优值；Brier 与 ECE 越低越好</p></div></div><div class="table-wrap"><table><thead id="matrixHead"></thead><tbody id="matrixBody"></tbody></table></div></article>
+        <article class="rank-panel"><div class="panel-title"><div><h3 id="rankTitle">指标排序</h3><p id="rankSub">按数值从高到低排列</p></div></div><div class="rank-list" id="rankList"></div></article>
+        <article class="matrix-panel"><div class="panel-title"><div><h3>各项指标</h3><p>绿色标出当前范围内表现最好的一项；Brier 与 ECE 看较低值</p></div></div><div class="table-wrap"><table><thead id="matrixHead"></thead><tbody id="matrixBody"></tbody></table></div></article>
       </div>
       <div class="metric-key"><span><b>Acc</b> 准确率</span><span><b>BAcc</b> 平衡准确率</span><span><b>Prec</b> 精确率</span><span><b>Recall</b> 灵敏度</span><span><b>Spec</b> 特异度</span><span><b>F1</b> F1分数</span><span><b>AUROC</b> ROC曲线下面积</span><span><b>AUPRC</b> PR曲线下面积</span><span><b>Brier</b> 概率误差</span><span><b>ECE</b> 校准误差（策略汇总）</span></div>
       <div class="table-note"><span id="rowCount"></span><span>主要指标为三种子概率集成；ECE来自对应策略的三种子均值汇总。</span></div>
@@ -94,17 +94,17 @@
   </section>
 
   <section class="section" id="interventions">
-    <div class="section-head"><span class="section-index">04 / STRATEGIES</span><div><h2>训练策略对 DenseNet BAcc 的影响</h2><p class="section-note">点为候选方案减严格基线的差值，横线为95%成对分组自助区间；单位为百分点。</p></div></div>
+    <div class="section-head"><span class="section-index">04 / 训练方案</span><div><h2>几种训练改动带来了什么变化</h2><p class="section-note">圆点表示相对 DenseNet 严格基线的平衡准确率差值，横线表示 95% 成对分组自助区间，单位为百分点。</p></div></div>
     <div class="delta-panel">
       <div class="delta-header"><span>策略 / 评价来源</span><span>95% CI</span><span>差值</span></div>
       <div id="deltaRows"></div>
       <div class="delta-axis"><span></span><div class="delta-ticks"><span>-5</span><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></div><span></span></div>
-      <p class="chart-caption">简单混合与域均衡训练均使用RSNA标签，因此这些结果属于已知目标域训练，不是未知医院零样本泛化。</p>
+      <p class="chart-caption">简单混合和域均衡方案都看过 RSNA 的训练标签，所以这里反映的是已知目标域训练效果，不能当作未知医院的零样本泛化结果。</p>
     </div>
   </section>
 
   <section class="section" id="datasets">
-    <div class="section-head"><span class="section-index">05 / DATA</span><div><h2>数据规模与划分构成</h2><p class="section-note">柱长表示各划分在该数据集中的占比，深色为PNEUMONIA标签。</p></div></div>
+    <div class="section-head"><span class="section-index">05 / 数据划分</span><div><h2>两套数据各用了多少图像</h2><p class="section-note">柱长表示训练、验证和测试部分在整套数据中的占比，深色代表 PNEUMONIA 标签。</p></div></div>
     <div class="data-grid">
       <article class="data-panel"><div class="dataset-total"><h3>Kermany保守文件名簇划分</h3><strong>5,856</strong></div><div id="kermanySplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">4107 / 579 / 1170。分组键来自文件名，不等同于经过验证的患者编号。</p></article>
       <article class="data-panel"><div class="dataset-total"><h3>RSNA冻结子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">1052 / 213 / 442。按RSNA patientId隔离；可从官方完整训练集按冻结清单和哈希重建。</p></article>
@@ -112,17 +112,17 @@
   </section>
 
   <section class="section" id="evidence">
-    <div class="section-head"><span class="section-index">06 / EVIDENCE</span><div><h2>来源差异与结果完整性</h2><p class="section-note">来源分类只量化可分性；审计结果用于确认数据划分与预测文件的一致性。</p></div></div>
+    <div class="section-head"><span class="section-index">06 / 核查结果</span><div><h2>数据来源差异有多大，结果文件是否齐全</h2><p class="section-note">来源分类只回答两套处理后图像是否容易区分；右侧审计检查划分、预测文件和复算指标是否一致。</p></div></div>
     <div class="evidence-grid">
-      <article class="source-chart"><div class="panel-title"><div><h3>标签匹配后的来源分类</h3><p>5折 StratifiedGroupKFold</p></div></div><div class="source-number"><strong>0.9441</strong><span>总体AUROC<br>n=2,260，group=2,191</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span></div><p class="chart-caption">控制标签构成后仍能较好地区分来源，但不能据此归因于医院、设备或采集协议。</p></article>
-      <article class="audit-panel"><div class="panel-title"><div><h3>完整性审计</h3><p>当前严格结果包</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>正式评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">审计通过说明文件与计算关系一致，不等于数据标签具有临床金标准质量。</p></article>
+      <article class="source-chart"><div class="panel-title"><div><h3>匹配标签比例后再判断图像来源</h3><p>5 折 StratifiedGroupKFold</p></div></div><div class="source-number"><strong>0.9441</strong><span>总体 AUROC<br>n=2,260，group=2,191</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span></div><p class="chart-caption">即使匹配两边的标签比例，分类器仍能较容易地判断图像来源。现有分析没有识别造成差异的具体医院、设备或采集流程。</p></article>
+      <article class="audit-panel"><div class="panel-title"><div><h3>结果文件核查</h3><p>以当前严格结果为准</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany 分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId 跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>已核对的评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失的逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">这些检查说明文件、划分和计算能够相互对应，但不能说明数据标签达到了临床金标准。</p></article>
     </div>
   </section>
 
-  <section class="boundary"><h3>解释边界</h3><ul><li>Kermany分组是文件名簇敏感性方案，不可称为患者独立划分。</li><li>RSNA结果来自1,707张冻结子集，测试集已参与多轮观察。</li><li>混合训练使用目标域标签，不能解释为未知域零样本泛化。</li><li>所有结果用于课程研究与方法评估，不构成临床验证。</li></ul></section>
+  <section class="boundary"><h3>阅读这些结果时需要注意</h3><ul><li>Kermany 只能按保守文件名簇分组，不能声称已经做到患者级独立划分。</li><li>RSNA 结果来自 1,707 张冻结子集，而且测试集已在多轮分析中被观察。</li><li>混合训练使用了 RSNA 标签，不能据此声称模型能零样本适应未知医院。</li><li>本页用于课程研究和方法比较，不构成临床验证。</li></ul></section>
 </main>
 
-<footer><span>胸片分类 · 离线证据报告</span><span>依据 strict_summary.json 与审计产物生成</span></footer>
+<footer><span>胸片肺炎二分类实验</span><span>数值依据 strict_summary.json 与审计结果整理</span></footer>
 
 <script>
 const DATA={
@@ -158,7 +158,7 @@ const METRICS=[
  {key:"acc",label:"Acc",better:"high"},{key:"bacc",label:"BAcc",better:"high"},{key:"prec",label:"Prec",better:"high"},{key:"recall",label:"Recall",better:"high"},{key:"spec",label:"Spec",better:"high"},{key:"f1",label:"F1",better:"high"},{key:"auc",label:"AUROC",better:"high"},{key:"auprc",label:"AUPRC",better:"high"},{key:"brier",label:"Brier",better:"low"},{key:"ece",label:"ECE",better:"low"}
 ];
 const pct=v=>(v*100).toFixed(2)+"%";
-function renderBars(metric){const lower=metric==="brier"?0:metric==="bacc"?.55:.75,upper=metric==="brier"?.35:1;const chart=document.querySelector("#modelBars");chart.innerHTML=DATA.models.map(m=>{const a=m.internal[metric],b=m.external[metric],w=v=>Math.max(0,(v-lower)/(upper-lower)*100);return `<div class="bar-group"><div class="bar-label"><strong>${m.name}</strong><small>3 个随机种子集成</small></div><div class="bars"><div class="bar-row"><div class="track"><div class="fill internal" style="width:${w(a)}%"></div></div><span class="bar-value">${metric==="brier"?a.toFixed(3):pct(a)}</span></div><div class="bar-row"><div class="track"><div class="fill external" style="width:${w(b)}%"></div></div><span class="bar-value">${metric==="brier"?b.toFixed(3):pct(b)}</span></div></div></div>`}).join("");const ticks=metric==="brier"?[0,.1,.2,.3]:metric==="bacc"?[.55,.7,.85,1]:[.75,.83,.92,1];document.querySelector("#barAxis").innerHTML=ticks.map(x=>`<span>${metric==="brier"?x.toFixed(1):Math.round(x*100)}</span>`).join("");const copy={bacc:"BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。",auc:"AUROC越高越好。RSNA上ViT最高，但三种架构的区间仍有重叠。",brier:"Brier越低越好。三个模型在RSNA上的概率误差均明显高于内部测试。"};document.querySelector("#barCaption").textContent=copy[metric]}
+function renderBars(metric){const lower=metric==="brier"?0:metric==="bacc"?.55:.75,upper=metric==="brier"?.35:1;const chart=document.querySelector("#modelBars");chart.innerHTML=DATA.models.map(m=>{const a=m.internal[metric],b=m.external[metric],w=v=>Math.max(0,(v-lower)/(upper-lower)*100);return `<div class="bar-group"><div class="bar-label"><strong>${m.name}</strong><small>三个随机种子的概率平均</small></div><div class="bars"><div class="bar-row"><div class="track"><div class="fill internal" style="width:${w(a)}%"></div></div><span class="bar-value">${metric==="brier"?a.toFixed(3):pct(a)}</span></div><div class="bar-row"><div class="track"><div class="fill external" style="width:${w(b)}%"></div></div><span class="bar-value">${metric==="brier"?b.toFixed(3):pct(b)}</span></div></div></div>`}).join("");const ticks=metric==="brier"?[0,.1,.2,.3]:metric==="bacc"?[.55,.7,.85,1]:[.75,.83,.92,1];document.querySelector("#barAxis").innerHTML=ticks.map(x=>`<span>${metric==="brier"?x.toFixed(1):Math.round(x*100)}</span>`).join("");const copy={bacc:"三种模型在 Kermany 上都超过 97%，换到 RSNA 后只剩约 66%。",auc:"在 RSNA 上，ViT 的 AUROC 最高，但三种架构之间的差距并不大。",brier:"三种模型在 RSNA 上的 Brier 分数都更高，说明概率预测的误差明显增大。"};document.querySelector("#barCaption").textContent=copy[metric]}
 document.querySelectorAll("[data-metric]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-metric]").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderBars(b.dataset.metric)}));
 function pos(v){return (v+5)/26*100}document.querySelector("#deltaRows").innerHTML=DATA.deltas.map(d=>`<div class="delta-row"><div class="delta-label"><strong>${d.strategy}</strong><small>${d.source}</small></div><div class="ci-track"><i class="ci-zero"></i><i class="ci-line ${d.value<0?'negative':''}" style="left:${pos(d.low)}%;width:${pos(d.high)-pos(d.low)}%"></i><i class="ci-dot" style="left:${pos(d.value)}%"></i></div><span class="delta-value">${d.value>0?'+':''}${d.value.toFixed(2)}</span></div>`).join("");
 function renderSplits(id,rows){const total=rows.reduce((s,r)=>s+r.normal+r.pneumonia,0);document.querySelector(id).innerHTML=rows.map(r=>{const n=r.normal/total*100,p=r.pneumonia/total*100;return `<div class="split-row"><span>${r.name}</span><div class="stack"><i class="normal" style="width:${n}%"></i><i class="pneumonia" style="width:${p}%"></i></div><span class="split-count">${r.normal+r.pneumonia}</span></div>`}).join("")}
@@ -171,12 +171,12 @@ function filteredRows(){return DATA.rows.filter(r=>(domainSelect.value==="all"||
 function renderExplorer(){
  const rows=filteredRows(),metric=METRICS.find(m=>m.key===metricSelect.value),available=rows.filter(r=>r[metric.key]!=null),ordered=[...available].sort((a,b)=>metric.better==="low"?a[metric.key]-b[metric.key]:b[metric.key]-a[metric.key]);
  const values=available.map(r=>r[metric.key]),lo=Math.min(...values),hi=Math.max(...values),span=hi-lo||1;
- document.querySelector("#rankTitle").textContent=metric.label+" 排名";document.querySelector("#rankSub").textContent=(metric.better==="low"?"数值越低越好":"数值越高越好")+" · 当前筛选";
- document.querySelector("#rankList").innerHTML=ordered.map((r,i)=>{const w=18+82*(metric.better==="low"?(hi-r[metric.key])/span:(r[metric.key]-lo)/span);return `<div class="rank-row" title="${r.experiment} / ${r.domain}"><span>${i+1}. ${r.experiment}<small style="display:block;color:var(--muted)">${r.domain}</small></span><div class="rank-track"><div class="rank-fill" style="width:${w}%"></div></div><b class="rank-value">${showValue(r[metric.key])}</b></div>`}).join("")||"<p class='section-note'>当前筛选没有该项指标。</p>";
+ document.querySelector("#rankTitle").textContent=metric.label+" 排序";document.querySelector("#rankSub").textContent=metric.better==="low"?"按数值从低到高排列":"按数值从高到低排列";
+ document.querySelector("#rankList").innerHTML=ordered.map((r,i)=>{const w=18+82*(metric.better==="low"?(hi-r[metric.key])/span:(r[metric.key]-lo)/span);return `<div class="rank-row" title="${r.experiment} / ${r.domain}"><span>${i+1}. ${r.experiment}<small style="display:block;color:var(--muted)">${r.domain}</small></span><div class="rank-track"><div class="rank-fill" style="width:${w}%"></div></div><b class="rank-value">${showValue(r[metric.key])}</b></div>`}).join("")||"<p class='section-note'>这组条件下没有对应指标。</p>";
  document.querySelector("#matrixHead").innerHTML=`<tr><th>实验</th><th>数据域</th><th>n / groups</th>${METRICS.map(m=>`<th>${m.label}</th>`).join("")}</tr>`;
  const extrema={};METRICS.forEach(m=>{const vs=rows.map(r=>r[m.key]).filter(v=>v!=null);extrema[m.key]=vs.length?(m.better==="low"?Math.min(...vs):Math.max(...vs)):null});
  document.querySelector("#matrixBody").innerHTML=rows.map(r=>`<tr><td>${r.experiment}</td><td>${r.domain}</td><td>${r.n} / ${r.groups}</td>${METRICS.map(m=>{const v=r[m.key],best=v!=null&&Math.abs(v-extrema[m.key])<1e-10;return `<td class="${best?'cell-best':''}">${showValue(v)}</td>`}).join("")}</tr>`).join("");
- document.querySelector("#rowCount").textContent=`显示 ${rows.length} 组评价结果；指标单位均为百分数，— 表示该汇总未提供。`;
+ document.querySelector("#rowCount").textContent=`当前显示 ${rows.length} 组结果。除 Brier 外，表中数值按百分数显示；— 表示没有对应数据。`;
 }
 [metricSelect,domainSelect,scopeSelect].forEach(x=>x.addEventListener("change",renderExplorer));renderExplorer();
   </script>
