@@ -1,129 +1,184 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>肺炎 X 光图像分类演示</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <section class="tool-surface" aria-label="X 光分类工具">
-        <header class="app-header">
-          <div class="brand">
-            <span class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4 7.5C4 5.6 5.6 4 7.5 4h9C18.4 4 20 5.6 20 7.5v9c0 1.9-1.6 3.5-3.5 3.5h-9C5.6 20 4 18.4 4 16.5v-9Z" />
-                <path d="M8 12h8M12 8v8" />
-              </svg>
-            </span>
-            <div>
-              <p class="eyebrow">Chest X-ray Classifier</p>
-              <h1>肺炎 X 光图像分类演示</h1>
-            </div>
-          </div>
-          <div class="model-chip">
-            <span>ViT-B/16</span>
-            <strong>本地推理</strong>
-          </div>
-        </header>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="胸片肺炎二分类实验结果离线可视化">
+  <title>胸片分类实验结果｜离线报告</title>
+  <style>
+    :root{--bg:#f4f5f3;--paper:#fff;--ink:#17201d;--muted:#64706b;--line:#d5dad7;--grid:#e9ecea;--green:#176c61;--green2:#58a295;--green3:#a8d0c8;--red:#aa4349;--amber:#a06d22;--blue:#476f91;--sans:Arial,"STZhongsong","华文中宋",serif;--mono:Arial,"STZhongsong","华文中宋",sans-serif}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;font-size:112.5%}body{margin:0;color:var(--ink);background:var(--bg);font-family:var(--sans);-webkit-font-smoothing:antialiased}button,select{font:inherit}svg text{font-family:var(--sans)}
+    .topline{height:5px;background:var(--green)}
+    header,main,footer{width:min(1240px,calc(100% - 48px));margin:auto}
+    header{padding:29px 0 25px;border-bottom:1px solid var(--line)}
+    .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:32px}.identity{display:flex;gap:15px;align-items:flex-start}.code{padding:8px 9px;border:1px solid var(--ink);font:700 .7rem var(--mono)}
+    h1{margin:0 0 7px;font-size:1.55rem;letter-spacing:-.02em}.subtitle{margin:0;color:var(--muted);font-size:.83rem}.header-meta{display:flex;gap:0;color:var(--muted);font:600 .68rem var(--mono)}.header-meta span{padding:3px 13px;border-left:1px solid var(--line)}
+    nav{display:flex;gap:22px;margin-top:24px}nav a{color:#47524e;text-decoration:none;font-size:.72rem}nav a:hover{color:var(--green)}
+    main{padding:32px 0 70px}.section{margin-bottom:54px}.section-head{display:grid;grid-template-columns:170px 1fr;gap:24px;padding:0 0 13px;border-bottom:2px solid var(--ink)}.section-index{color:var(--green);font:700 .68rem var(--mono)}.section-head h2{margin:0;font-size:1.15rem;letter-spacing:-.01em}.section-note{margin:7px 0 0;color:var(--muted);font-size:.72rem;line-height:1.6}
+    .finding-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-top:0;background:var(--paper)}.finding{min-height:157px;padding:20px}.finding+.finding{border-left:1px solid var(--line)}.finding span{display:block;margin-bottom:17px;color:var(--muted);font-size:.68rem}.finding strong{display:block;margin-bottom:8px;font:700 2rem/1 var(--mono);letter-spacing:-.05em}.finding p{margin:0;color:#48534f;font-size:.7rem;line-height:1.55}.finding .good{color:var(--green)}.finding .warn{color:var(--amber)}
+    .chart-grid{display:grid;grid-template-columns:1.15fr .85fr;border:1px solid var(--line);border-top:0;background:var(--paper)}.chart-panel{padding:21px 22px 23px;min-width:0}.chart-panel+.chart-panel{border-left:1px solid var(--line)}.panel-title{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:19px}.panel-title h3{margin:0;font-size:.8rem}.panel-title p{margin:4px 0 0;color:var(--muted);font-size:.66rem}.legend{display:flex;gap:14px;color:var(--muted);font-size:.62rem;white-space:nowrap}.legend i{display:inline-block;width:8px;height:8px;margin-right:5px}.lg-int{background:var(--green)}.lg-ext{background:var(--red)}
+    .metric-tabs{display:flex;gap:4px}.metric-tabs button{padding:5px 8px;border:1px solid var(--line);color:var(--muted);background:white;font-size:.62rem;cursor:pointer}.metric-tabs button.active{border-color:var(--green);color:var(--green);background:#edf5f2}
+    .bar-chart{display:grid;gap:17px}.bar-group{display:grid;grid-template-columns:116px 1fr;gap:14px;align-items:center}.bar-label strong{display:block;font-size:.7rem}.bar-label small{color:var(--muted);font-size:.6rem}.bars{display:grid;gap:5px}.bar-row{display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:center}.track{height:12px;background:#eef0ef}.fill{height:100%;min-width:2px;transition:width .25s}.fill.internal{background:var(--green)}.fill.external{background:var(--red)}.bar-value{text-align:right;font:650 .64rem var(--mono)}.axis{display:flex;justify-content:space-between;margin:12px 56px 0 130px;color:#8b9490;font:.56rem var(--mono)}
+    .slope-svg{width:100%;height:auto;display:block}.chart-caption{margin:15px 0 0;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:.66rem;line-height:1.55}
+    .delta-panel{border:1px solid var(--line);border-top:0;background:var(--paper);padding:22px}.delta-header{display:grid;grid-template-columns:185px 1fr 86px;gap:15px;padding-bottom:10px;color:var(--muted);font:.6rem var(--mono)}.delta-row{display:grid;grid-template-columns:185px 1fr 86px;gap:15px;align-items:center;min-height:52px;border-top:1px solid var(--grid)}.delta-label strong{display:block;font-size:.7rem}.delta-label small{color:var(--muted);font-size:.61rem}.ci-track{position:relative;height:18px}.ci-track::before{content:"";position:absolute;top:8px;left:0;right:0;height:1px;background:var(--line)}.ci-zero{position:absolute;top:2px;bottom:2px;left:30.77%;width:1px;background:#7a8581}.ci-line{position:absolute;top:7px;height:3px;background:var(--green)}.ci-line.negative{background:var(--amber)}.ci-dot{position:absolute;top:4px;width:9px;height:9px;border:2px solid white;border-radius:50%;background:var(--green);box-shadow:0 0 0 1px var(--green);transform:translateX(-50%)}.delta-value{text-align:right;font:650 .66rem var(--mono)}.delta-axis{display:grid;grid-template-columns:185px 1fr 86px;gap:15px;margin-top:7px}.delta-ticks{display:flex;justify-content:space-between;color:#8b9490;font:.55rem var(--mono)}
+    .data-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-top:0;background:var(--paper)}.data-panel{padding:22px}.data-panel+.data-panel{border-left:1px solid var(--line)}.dataset-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}.dataset-total h3{margin:0;font-size:.82rem}.dataset-total strong{font:700 1.35rem var(--mono)}.split-row{display:grid;grid-template-columns:56px 1fr 65px;gap:10px;align-items:center;margin:10px 0}.split-row>span{font-size:.66rem}.stack{display:flex;height:15px;background:#eef0ef}.stack i{display:block;height:100%}.stack .normal{background:var(--green3)}.stack .pneumonia{background:var(--green)}.split-count{text-align:right;color:var(--muted);font:.61rem var(--mono)}.data-legend{display:flex;gap:15px;margin-top:16px;color:var(--muted);font-size:.61rem}.data-legend i{display:inline-block;width:8px;height:8px;margin-right:5px}.data-note{margin:17px 0 0;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:.64rem;line-height:1.55}
+    .evidence-grid{display:grid;grid-template-columns:.9fr 1.1fr;border:1px solid var(--line);border-top:0;background:var(--paper)}.source-chart{padding:22px}.audit-panel{padding:22px;border-left:1px solid var(--line)}.source-number{display:flex;align-items:flex-end;justify-content:space-between;margin:14px 0 19px}.source-number strong{font:700 2.1rem/1 var(--mono);color:var(--blue)}.source-number span{max-width:190px;color:var(--muted);font-size:.65rem;line-height:1.5;text-align:right}.folds{display:flex;align-items:end;gap:8px;height:124px;padding-top:10px;border-bottom:1px solid var(--line)}.fold{flex:1;position:relative;background:#d5e1e9}.fold i{position:absolute;left:0;right:0;bottom:0;background:var(--blue)}.fold span{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font:.55rem var(--mono)}.fold-labels{display:flex;justify-content:space-around;margin-top:7px;color:var(--muted);font:.55rem var(--mono)}
+    .audit-table{margin-top:12px;border-top:1px solid var(--line)}.audit-row{display:grid;grid-template-columns:1fr 82px;gap:15px;align-items:center;min-height:40px;border-bottom:1px solid var(--grid)}.audit-row span{font-size:.68rem}.status-pass{text-align:right;color:var(--green);font:700 .62rem var(--mono)}
+    .explorer{border:1px solid var(--line);border-top:0;background:var(--paper)}.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:end;padding:18px 22px;border-bottom:1px solid var(--line)}.control{display:grid;gap:6px}.control label{color:var(--muted);font:600 .58rem var(--mono);text-transform:uppercase}.control select{min-width:150px;padding:7px 28px 7px 9px;border:1px solid var(--line);border-radius:0;background:white;color:var(--ink);font-size:.68rem}.compare-view{display:grid;grid-template-columns:.72fr 1.28fr;min-height:280px}.rank-panel{padding:22px;border-right:1px solid var(--line)}.rank-list{display:grid;gap:12px;margin-top:18px}.rank-row{display:grid;grid-template-columns:122px 1fr 58px;gap:10px;align-items:center}.rank-row span{font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-track{height:10px;background:var(--grid)}.rank-fill{height:100%;background:var(--blue)}.rank-value{text-align:right;font:650 .62rem var(--mono)}.matrix-panel{padding:22px;overflow:auto}.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:1020px}th,td{padding:10px 9px;border-bottom:1px solid var(--grid);text-align:right;font-size:.62rem;white-space:nowrap}th{position:sticky;top:0;background:#f8f9f8;color:var(--muted);font:600 .56rem var(--mono);z-index:1}th:first-child,th:nth-child(2),td:first-child,td:nth-child(2){text-align:left}td:first-child{font-weight:650}.cell-best{background:#e7f2ee;color:#105b52;font-weight:700}.cell-worst{color:var(--red)}.table-note{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;color:var(--muted);font-size:.6rem}.metric-key{display:flex;flex-wrap:wrap;gap:8px 16px;padding:13px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:.59rem}.metric-key b{color:var(--ink)}
+    .boundary{display:grid;grid-template-columns:170px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.boundary h3{margin:0;font-size:.78rem}.boundary ul{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin:0;padding:0;list-style:none}.boundary li{position:relative;padding-left:15px;color:#4e5955;font-size:.69rem;line-height:1.55}.boundary li::before{content:"—";position:absolute;left:0;color:var(--amber)}
+    footer{display:flex;justify-content:space-between;gap:20px;padding:18px 0 28px;border-top:1px solid var(--line);color:#7c8682;font:.58rem var(--mono)}
+    @media(max-width:900px){.finding-grid{grid-template-columns:1fr 1fr}.finding:nth-child(3){border-left:0;border-top:1px solid var(--line)}.finding:nth-child(4){border-top:1px solid var(--line)}.chart-grid,.data-grid,.evidence-grid,.compare-view{grid-template-columns:1fr}.chart-panel+.chart-panel,.data-panel+.data-panel,.audit-panel{border-left:0;border-top:1px solid var(--line)}.rank-panel{border-right:0;border-bottom:1px solid var(--line)}.delta-header,.delta-row{grid-template-columns:145px 1fr 75px}.delta-axis{grid-template-columns:145px 1fr 75px}.boundary ul{grid-template-columns:1fr}}
+    @media(max-width:620px){header,main,footer{width:min(100% - 24px,1240px)}.header-row{display:block}.header-meta{margin-top:17px}.header-meta span:first-child{border-left:0;padding-left:0}nav{gap:13px;overflow:auto}.section-head{grid-template-columns:1fr;gap:5px}.finding-grid{grid-template-columns:1fr}.finding+.finding{border-left:0;border-top:1px solid var(--line)}.chart-panel,.delta-panel,.data-panel,.source-chart,.audit-panel{padding:16px}.chart-grid{overflow:hidden}.bar-group{grid-template-columns:90px 1fr}.axis{margin-left:104px}.delta-panel{overflow-x:auto}.delta-header,.delta-row,.delta-axis{min-width:620px}.documentation{display:block}.boundary{grid-template-columns:1fr}.header-meta span:nth-child(2){display:none}footer{flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="topline"></div>
+<header>
+  <div class="header-row">
+    <div class="identity"><span class="code">XR-01</span><div><h1>胸片肺炎二分类实验结果</h1><p class="subtitle">离线可视化报告 · 数据、模型与跨来源评估</p></div></div>
+    <div class="header-meta"><span>3 ARCHITECTURES</span><span>3 SEEDS</span><span>95% GROUPED CI</span></div>
+  </div>
+  <nav><a href="#summary">结论摘要</a><a href="#models">模型比较</a><a href="#explorer">多维对比</a><a href="#interventions">训练策略</a><a href="#datasets">数据构成</a><a href="#evidence">证据核验</a></nav>
+</header>
 
-        <div class="workspace">
-          <section class="viewer-panel">
-            <div class="viewer-toolbar">
-              <div>
-                <p class="panel-label">影像预览</p>
-                <strong id="fileName">示例胸片</strong>
-              </div>
-              <span id="fileMeta">等待选择</span>
-            </div>
+<main>
+  <section class="section" id="summary">
+    <div class="section-head"><span class="section-index">01 / SUMMARY</span><div><h2>四项主要观察</h2><p class="section-note">所有数值来自仓库内逐图预测与机器汇总；百分数保留两位小数。</p></div></div>
+    <div class="finding-grid">
+      <article class="finding"><span>内部最佳 BAcc</span><strong class="good">98.17%</strong><p>ViT-B/16，Kermany文件名簇隔离测试集，n=1,170。</p></article>
+      <article class="finding"><span>RSNA最佳 AUROC</span><strong>82.36%</strong><p>ViT-B/16；固定阈值BAcc为65.94%，两种指标不等价。</p></article>
+      <article class="finding"><span>简单混合训练 RSNA BAcc</span><strong class="good">78.13%</strong><p>相对严格DenseNet基线提高12.22个百分点，使用了RSNA标签。</p></article>
+      <article class="finding"><span>标签匹配来源分类 AUROC</span><strong class="warn">94.23%</strong><p>两个处理后来源高度可分，不指向具体设备或采集机制。</p></article>
+    </div>
+  </section>
 
-            <label class="drop-zone" id="dropZone">
-              <input id="imageInput" name="image" type="file" accept="image/*" />
-              <img id="previewImage" src="sample-xray" alt="胸部 X 光预览" />
-              <span class="upload-badge">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 16V4" />
-                  <path d="m7 9 5-5 5 5" />
-                  <path d="M5 20h14" />
-                </svg>
-                上传图片
-              </span>
-            </label>
+  <section class="section" id="models">
+    <div class="section-head"><span class="section-index">02 / MODELS</span><div><h2>内部性能没有转化为稳定的跨来源表现</h2><p class="section-note">三随机种子概率平均后计算指标；误差范围采用文件名簇或patientId分组自助法。</p></div></div>
+    <div class="chart-grid">
+      <article class="chart-panel">
+        <div class="panel-title"><div><h3>三种架构的内部与RSNA表现</h3><p>切换指标查看相同模型在两个数据来源上的变化</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
+        <div class="bar-chart" id="modelBars"></div><div class="axis" id="barAxis"></div>
+        <p class="chart-caption" id="barCaption">BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。</p>
+      </article>
+      <article class="chart-panel">
+        <div class="panel-title"><div><h3>跨来源 BAcc 下降</h3><p>同一模型从Kermany内部测试到RSNA测试</p></div><div class="legend"><span><i class="lg-int"></i>Kermany</span><span><i class="lg-ext"></i>RSNA</span></div></div>
+        <svg class="slope-svg" viewBox="0 0 430 285" role="img" aria-label="三种模型跨来源平衡准确率下降图">
+          <line x1="93" y1="28" x2="93" y2="239" stroke="#d5dad7"/><line x1="337" y1="28" x2="337" y2="239" stroke="#d5dad7"/>
+          <text x="93" y="266" text-anchor="middle" font-size="11" fill="#64706b">Kermany</text><text x="337" y="266" text-anchor="middle" font-size="11" fill="#64706b">RSNA</text>
+          <g fill="none" stroke-width="2"><line x1="93" y1="42" x2="337" y2="202" stroke="#176c61"/><line x1="93" y1="45" x2="337" y2="196" stroke="#476f91"/><line x1="93" y1="37" x2="337" y2="202" stroke="#a06d22"/></g>
+          <g font-size="10"><circle cx="93" cy="42" r="4" fill="#176c61"/><circle cx="337" cy="202" r="4" fill="#176c61"/><text x="82" y="39" text-anchor="end">DenseNet 97.65</text><text x="348" y="205">65.91</text>
+          <circle cx="93" cy="45" r="4" fill="#476f91"/><circle cx="337" cy="196" r="4" fill="#476f91"/><text x="82" y="55" text-anchor="end">ConvNeXt 97.27</text><text x="348" y="193">66.95</text>
+          <circle cx="93" cy="37" r="4" fill="#a06d22"/><circle cx="337" cy="202" r="4" fill="#a06d22"/><text x="82" y="23" text-anchor="end">ViT 98.17</text><text x="348" y="218">65.94</text></g>
+          <text x="215" y="126" text-anchor="middle" font-size="12" fill="#aa4349">下降 30.3–32.2 个百分点</text>
+        </svg>
+        <p class="chart-caption">内部BAcc区间高度重叠；跨来源下降是三个架构共同出现的现象。</p>
+      </article>
+    </div>
+  </section>
 
-            <div class="action-row">
-              <button id="predictButton" type="button" disabled>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m8 5 11 7-11 7V5Z" />
-                </svg>
-                开始分类
-              </button>
-              <button id="clearButton" type="button" class="secondary">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 7h16" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                  <path d="M6 7l1 13h10l1-13" />
-                  <path d="M9 7V4h6v3" />
-                </svg>
-                清空
-              </button>
-            </div>
-          </section>
+  <section class="section" id="explorer">
+    <div class="section-head"><span class="section-index">03 / EXPLORER</span><div><h2>完整指标与多维交叉对比</h2><p class="section-note">覆盖正式汇总中的9项主要评价指标，并补充策略汇总的ECE。选择指标、数据域和实验范围后，排名图与数值矩阵同步更新。</p></div></div>
+    <div class="explorer">
+      <div class="controls">
+        <div class="control"><label for="metricSelect">比较指标</label><select id="metricSelect"></select></div>
+        <div class="control"><label for="domainSelect">评价数据域</label><select id="domainSelect"><option value="all">Kermany + RSNA</option><option value="Kermany">Kermany 内部测试</option><option value="RSNA">RSNA 外部测试</option></select></div>
+        <div class="control"><label for="scopeSelect">实验范围</label><select id="scopeSelect"><option value="all">全部模型与策略</option><option value="architecture">仅架构基线</option><option value="strategy">仅 DenseNet 训练策略</option></select></div>
+      </div>
+      <div class="compare-view">
+        <article class="rank-panel"><div class="panel-title"><div><h3 id="rankTitle">指标排名</h3><p id="rankSub">数值越高越好</p></div></div><div class="rank-list" id="rankList"></div></article>
+        <article class="matrix-panel"><div class="panel-title"><div><h3>全指标矩阵</h3><p>绿色为当前数据域内最优值；Brier 与 ECE 越低越好</p></div></div><div class="table-wrap"><table><thead id="matrixHead"></thead><tbody id="matrixBody"></tbody></table></div></article>
+      </div>
+      <div class="metric-key"><span><b>Acc</b> 准确率</span><span><b>BAcc</b> 平衡准确率</span><span><b>Prec</b> 精确率</span><span><b>Recall</b> 灵敏度</span><span><b>Spec</b> 特异度</span><span><b>F1</b> F1分数</span><span><b>AUROC</b> ROC曲线下面积</span><span><b>AUPRC</b> PR曲线下面积</span><span><b>Brier</b> 概率误差</span><span><b>ECE</b> 校准误差（策略汇总）</span></div>
+      <div class="table-note"><span id="rowCount"></span><span>主要指标为三种子概率集成；ECE来自对应策略的三种子均值汇总。</span></div>
+    </div>
+  </section>
 
-          <section class="result-panel" aria-live="polite">
-            <div class="result-head">
-              <p class="panel-label">模型输出</p>
-              <span id="statusValue">未运行</span>
-            </div>
+  <section class="section" id="interventions">
+    <div class="section-head"><span class="section-index">04 / STRATEGIES</span><div><h2>训练策略对 DenseNet BAcc 的影响</h2><p class="section-note">点为候选方案减严格基线的差值，横线为95%成对分组自助区间；单位为百分点。</p></div></div>
+    <div class="delta-panel">
+      <div class="delta-header"><span>策略 / 评价来源</span><span>95% CI</span><span>差值</span></div>
+      <div id="deltaRows"></div>
+      <div class="delta-axis"><span></span><div class="delta-ticks"><span>-5</span><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></div><span></span></div>
+      <p class="chart-caption">简单混合与域均衡训练均使用RSNA标签，因此这些结果属于已知目标域训练，不是未知医院零样本泛化。</p>
+    </div>
+  </section>
 
-            <div class="diagnosis-block">
-              <span class="risk-pill" id="riskPill">等待图片</span>
-              <h2 id="resultTitle">尚未分类</h2>
-              <p id="resultSummary">选择胸部 X 光图片后，模型会返回正常类和肺炎类的概率。</p>
-            </div>
+  <section class="section" id="datasets">
+    <div class="section-head"><span class="section-index">05 / DATA</span><div><h2>数据规模与划分构成</h2><p class="section-note">柱长表示各划分在该数据集中的占比，深色为PNEUMONIA标签。</p></div></div>
+    <div class="data-grid">
+      <article class="data-panel"><div class="dataset-total"><h3>Kermany保守文件名簇划分</h3><strong>5,856</strong></div><div id="kermanySplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">4107 / 579 / 1170。分组键来自文件名，不等同于经过验证的患者编号。</p></article>
+      <article class="data-panel"><div class="dataset-total"><h3>RSNA镜像便利子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">1052 / 213 / 442。按RSNA patientId隔离；该子集不是完整官方挑战集。</p></article>
+    </div>
+  </section>
 
-            <div class="probability-stack">
-              <div class="probability-row">
-                <div class="probability-topline">
-                  <span>正常</span>
-                  <strong id="normalValue">--</strong>
-                </div>
-                <div class="meter-track">
-                  <div class="meter-fill normal" id="normalBar"></div>
-                </div>
-              </div>
+  <section class="section" id="evidence">
+    <div class="section-head"><span class="section-index">06 / EVIDENCE</span><div><h2>来源差异与结果完整性</h2><p class="section-note">来源分类只量化可分性；审计结果用于确认数据划分与预测文件的一致性。</p></div></div>
+    <div class="evidence-grid">
+      <article class="source-chart"><div class="panel-title"><div><h3>标签匹配后的来源分类</h3><p>5折 StratifiedGroupKFold</p></div></div><div class="source-number"><strong>0.9423</strong><span>总体AUROC<br>n=2,260，group=2,217</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span></div><p class="chart-caption">控制标签构成后仍能较好地区分来源，但不能据此归因于医院、设备或采集协议。</p></article>
+      <article class="audit-panel"><div class="panel-title"><div><h3>完整性审计</h3><p>当前严格结果包</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>正式评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">审计通过说明文件与计算关系一致，不等于数据标签具有临床金标准质量。</p></article>
+    </div>
+  </section>
 
-              <div class="probability-row">
-                <div class="probability-topline">
-                  <span>肺炎</span>
-                  <strong id="pneumoniaValue">--</strong>
-                </div>
-                <div class="meter-track">
-                  <div class="meter-fill pneumonia" id="pneumoniaBar"></div>
-                </div>
-              </div>
-            </div>
+  <section class="boundary"><h3>解释边界</h3><ul><li>Kermany分组是文件名簇敏感性方案，不可称为患者独立划分。</li><li>RSNA结果来自1,707张镜像便利子集，测试集已参与多轮观察。</li><li>混合训练使用目标域标签，不能解释为未知域零样本泛化。</li><li>所有结果用于课程研究与方法评估，不构成临床验证。</li></ul></section>
+</main>
 
-            <dl class="summary-grid">
-              <div>
-                <dt>判别阈值</dt>
-                <dd id="thresholdValue">0.50</dd>
-              </div>
-              <div>
-                <dt>最高概率</dt>
-                <dd id="confidenceValue">--</dd>
-              </div>
-            </dl>
+<footer><span>Chest X-ray classification · Offline evidence report</span><span>Generated from strict_summary.json and audit artifacts</span></footer>
 
-            <p class="warning">
-              本页面仅用于课程设计演示，不能替代医生诊断。若有症状或检查异常，请咨询专业医生。
-            </p>
-          </section>
-        </div>
-      </section>
-    </main>
-
-    <script src="app.js"></script>
-  </body>
+<script>
+const DATA={
+ models:[
+  {name:"DenseNet-121",short:"DenseNet",internal:{bacc:.9764829752,auc:.9945234835,brier:.0175451877},external:{bacc:.6591230407,auc:.8151623809,brier:.2919496597}},
+  {name:"ConvNeXt-Tiny",short:"ConvNeXt",internal:{bacc:.9727141497,auc:.9967483184,brier:.0172802187},external:{bacc:.6695318103,auc:.8039545129,brier:.2596788402}},
+  {name:"ViT-B/16",short:"ViT",internal:{bacc:.9816841776,auc:.9968450503,brier:.0165625566},external:{bacc:.6593689171,auc:.8236451183,brier:.2832613065}}
+ ],
+ deltas:[
+  {strategy:"稳健配方",source:"Kermany",value:.0688,low:-.5376,high:.7862},{strategy:"稳健配方",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
+  {strategy:"简单混合",source:"Kermany",value:-.5841,low:-1.3113,high:.1545},{strategy:"简单混合",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
+  {strategy:"域均衡混合",source:"Kermany",value:-.9290,low:-1.9298,high:.0033},{strategy:"域均衡混合",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
+ ],
+ kermany:[{name:"训练",normal:1113,pneumonia:2994},{name:"验证",normal:156,pneumonia:423},{name:"测试",normal:314,pneumonia:856}],
+ rsna:[{name:"训练",normal:560,pneumonia:492},{name:"验证",normal:107,pneumonia:106},{name:"测试",normal:215,pneumonia:227}],
+ folds:[.9398151774,.9487822069,.9222726917,.9497219829,.9542838124],
+ rows:[
+  {scope:"architecture",experiment:"DenseNet-121",domain:"Kermany",n:1170,groups:821,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
+  {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"Kermany",n:1170,groups:821,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
+  {scope:"architecture",experiment:"ViT-B/16",domain:"Kermany",n:1170,groups:821,acc:.9820512821,bacc:.9816841776,prec:.9929161747,recall:.9824766355,spec:.9808917197,f1:.9876688197,auc:.9968450503,auprc:.9988487659,brier:.0165625566,ece:null},
+  {scope:"architecture",experiment:"DenseNet-121",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6591230407,prec:.6117318436,recall:.9647577093,spec:.3534883721,f1:.7487179487,auc:.8151623809,auprc:.8036194820,brier:.2919496597,ece:null},
+  {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"RSNA",n:442,groups:442,acc:.6764705882,bacc:.6695318103,prec:.625,recall:.9251101322,spec:.4139534884,f1:.7460035524,auc:.8039545129,auprc:.8042785175,brier:.2596788402,ece:null},
+  {scope:"architecture",experiment:"ViT-B/16",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6593689171,prec:.6129943503,recall:.9559471366,spec:.3627906977,f1:.7469879518,auc:.8236451183,auprc:.8299617258,brier:.2832613065,ece:null},
+  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
+  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
+  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
+  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
+  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"Kermany",n:1170,groups:821,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
+  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
+ ]
+};
+const METRICS=[
+ {key:"acc",label:"Acc",better:"high"},{key:"bacc",label:"BAcc",better:"high"},{key:"prec",label:"Prec",better:"high"},{key:"recall",label:"Recall",better:"high"},{key:"spec",label:"Spec",better:"high"},{key:"f1",label:"F1",better:"high"},{key:"auc",label:"AUROC",better:"high"},{key:"auprc",label:"AUPRC",better:"high"},{key:"brier",label:"Brier",better:"low"},{key:"ece",label:"ECE",better:"low"}
+];
+const pct=v=>(v*100).toFixed(2)+"%";
+function renderBars(metric){const lower=metric==="brier"?0:metric==="bacc"?.55:.75,upper=metric==="brier"?.35:1;const chart=document.querySelector("#modelBars");chart.innerHTML=DATA.models.map(m=>{const a=m.internal[metric],b=m.external[metric],w=v=>Math.max(0,(v-lower)/(upper-lower)*100);return `<div class="bar-group"><div class="bar-label"><strong>${m.name}</strong><small>3 seeds ensemble</small></div><div class="bars"><div class="bar-row"><div class="track"><div class="fill internal" style="width:${w(a)}%"></div></div><span class="bar-value">${metric==="brier"?a.toFixed(3):pct(a)}</span></div><div class="bar-row"><div class="track"><div class="fill external" style="width:${w(b)}%"></div></div><span class="bar-value">${metric==="brier"?b.toFixed(3):pct(b)}</span></div></div></div>`}).join("");const ticks=metric==="brier"?[0,.1,.2,.3]:metric==="bacc"?[.55,.7,.85,1]:[.75,.83,.92,1];document.querySelector("#barAxis").innerHTML=ticks.map(x=>`<span>${metric==="brier"?x.toFixed(1):Math.round(x*100)}</span>`).join("");const copy={bacc:"BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。",auc:"AUROC越高越好。RSNA上ViT最高，但三种架构的区间仍有重叠。",brier:"Brier越低越好。三个模型在RSNA上的概率误差均明显高于内部测试。"};document.querySelector("#barCaption").textContent=copy[metric]}
+document.querySelectorAll("[data-metric]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-metric]").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderBars(b.dataset.metric)}));
+function pos(v){return (v+5)/26*100}document.querySelector("#deltaRows").innerHTML=DATA.deltas.map(d=>`<div class="delta-row"><div class="delta-label"><strong>${d.strategy}</strong><small>${d.source}</small></div><div class="ci-track"><i class="ci-zero"></i><i class="ci-line ${d.value<0?'negative':''}" style="left:${pos(d.low)}%;width:${pos(d.high)-pos(d.low)}%"></i><i class="ci-dot" style="left:${pos(d.value)}%"></i></div><span class="delta-value">${d.value>0?'+':''}${d.value.toFixed(2)}</span></div>`).join("");
+function renderSplits(id,rows){const total=rows.reduce((s,r)=>s+r.normal+r.pneumonia,0);document.querySelector(id).innerHTML=rows.map(r=>{const n=r.normal/total*100,p=r.pneumonia/total*100;return `<div class="split-row"><span>${r.name}</span><div class="stack"><i class="normal" style="width:${n}%"></i><i class="pneumonia" style="width:${p}%"></i></div><span class="split-count">${r.normal+r.pneumonia}</span></div>`}).join("")}
+renderSplits("#kermanySplits",DATA.kermany);renderSplits("#rsnaSplits",DATA.rsna);
+document.querySelector("#foldChart").innerHTML=DATA.folds.map(v=>`<div class="fold"><i style="height:${(v-.85)/.15*100}%"></i><span>${v.toFixed(3)}</span></div>`).join("");renderBars("bacc");
+const metricSelect=document.querySelector("#metricSelect"),domainSelect=document.querySelector("#domainSelect"),scopeSelect=document.querySelector("#scopeSelect");
+metricSelect.innerHTML=METRICS.map(m=>`<option value="${m.key}" ${m.key==="bacc"?"selected":""}>${m.label}</option>`).join("");
+const showValue=v=>v==null?"—":(v*100).toFixed(2);
+function filteredRows(){return DATA.rows.filter(r=>(domainSelect.value==="all"||r.domain===domainSelect.value)&&(scopeSelect.value==="all"||r.scope===scopeSelect.value))}
+function renderExplorer(){
+ const rows=filteredRows(),metric=METRICS.find(m=>m.key===metricSelect.value),available=rows.filter(r=>r[metric.key]!=null),ordered=[...available].sort((a,b)=>metric.better==="low"?a[metric.key]-b[metric.key]:b[metric.key]-a[metric.key]);
+ const values=available.map(r=>r[metric.key]),lo=Math.min(...values),hi=Math.max(...values),span=hi-lo||1;
+ document.querySelector("#rankTitle").textContent=metric.label+" 排名";document.querySelector("#rankSub").textContent=(metric.better==="low"?"数值越低越好":"数值越高越好")+" · 当前筛选";
+ document.querySelector("#rankList").innerHTML=ordered.map((r,i)=>{const w=18+82*(metric.better==="low"?(hi-r[metric.key])/span:(r[metric.key]-lo)/span);return `<div class="rank-row" title="${r.experiment} / ${r.domain}"><span>${i+1}. ${r.experiment}<small style="display:block;color:var(--muted)">${r.domain}</small></span><div class="rank-track"><div class="rank-fill" style="width:${w}%"></div></div><b class="rank-value">${showValue(r[metric.key])}</b></div>`}).join("")||"<p class='section-note'>当前筛选没有该项指标。</p>";
+ document.querySelector("#matrixHead").innerHTML=`<tr><th>实验</th><th>数据域</th><th>n / groups</th>${METRICS.map(m=>`<th>${m.label}</th>`).join("")}</tr>`;
+ const extrema={};METRICS.forEach(m=>{const vs=rows.map(r=>r[m.key]).filter(v=>v!=null);extrema[m.key]=vs.length?(m.better==="low"?Math.min(...vs):Math.max(...vs)):null});
+ document.querySelector("#matrixBody").innerHTML=rows.map(r=>`<tr><td>${r.experiment}</td><td>${r.domain}</td><td>${r.n} / ${r.groups}</td>${METRICS.map(m=>{const v=r[m.key],best=v!=null&&Math.abs(v-extrema[m.key])<1e-10;return `<td class="${best?'cell-best':''}">${showValue(v)}</td>`}).join("")}</tr>`).join("");
+ document.querySelector("#rowCount").textContent=`显示 ${rows.length} 组评价结果；指标单位均为百分数，— 表示该汇总未提供。`;
+}
+[metricSelect,domainSelect,scopeSelect].forEach(x=>x.addEventListener("change",renderExplorer));renderExplorer();
+  </script>
+</body>
 </html>

@@ -77,6 +77,17 @@ class CalibrationTest(unittest.TestCase):
         fit = fit_temperature_grid(records, minimum=1.0, maximum=10.0, step=0.5)
         self.assertGreater(fit["temperature"], 5.0)
 
+    def test_load_binary_predictions_rejects_invalid_probability(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "predictions.csv"
+            path.write_text(
+                "path,true_label,predicted_label,prob_PNEUMONIA\n"
+                "x.png,NORMAL,NORMAL,1.2\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                load_binary_predictions(path)
+
 
 if __name__ == "__main__":
     unittest.main()

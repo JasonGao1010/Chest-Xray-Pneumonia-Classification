@@ -18,7 +18,7 @@ https://github.com/JasonGao1010/Chest-Xray-Pneumonia-Classification/releases/tag
 78604698f504d8d96f5bdad9570608c77472e7625684cb13a6f222275c8381be
 ```
 
-网页演示和主结果复现命令都默认读取这个路径：
+网页演示默认读取这个路径。该权重来自早期 Kermany 官方目录划分训练，不是 `results/strict_*` 对应的三随机种子模型：
 
 ```bash
 python scripts/serve_patient_app.py --checkpoint models/vit_b16_best.pt --device cpu

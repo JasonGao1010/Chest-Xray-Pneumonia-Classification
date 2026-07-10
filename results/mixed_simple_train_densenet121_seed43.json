@@ -1,0 +1,166 @@
+{
+  "ok": true,
+  "run_id": "20260710_160843_torchvision:densenet121",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/processed/kermany_grouped_rsna_mixed",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:densenet121",
+    "pretrained": true,
+    "epochs": 5,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 43,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null,
+    "domain_balanced_prefixes": [],
+    "freeze_mode": "none",
+    "label_smoothing": 0.0
+  },
+  "dataset": {
+    "root": "./data/processed/kermany_grouped_rsna_mixed",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1673,
+        "PNEUMONIA": 3486
+      },
+      "val": {
+        "NORMAL": 263,
+        "PNEUMONIA": 529
+      }
+    },
+    "total_images": 5951,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 1673,
+    "PNEUMONIA": 3486
+  },
+  "domain_balanced_counts": {},
+  "freeze": {
+    "mode": "none",
+    "trainable_parameters": 6955906
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.24583028257759673,
+        "accuracy": 0.898236092265943,
+        "samples": 5159
+      },
+      "val": {
+        "loss": 0.21567639584342638,
+        "accuracy": 0.9027777777777778,
+        "samples": 792
+      },
+      "learning_rate": 9.045084971874738e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.15786718700769267,
+        "accuracy": 0.9381663113006397,
+        "samples": 5159
+      },
+      "val": {
+        "loss": 0.20941411320007208,
+        "accuracy": 0.9103535353535354,
+        "samples": 792
+      },
+      "learning_rate": 6.545084971874737e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.12714988880551215,
+        "accuracy": 0.9513471603023842,
+        "samples": 5159
+      },
+      "val": {
+        "loss": 0.22172243072830064,
+        "accuracy": 0.9040404040404041,
+        "samples": 792
+      },
+      "learning_rate": 3.454915028125263e-05
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.0924376308582947,
+        "accuracy": 0.9633649932157394,
+        "samples": 5159
+      },
+      "val": {
+        "loss": 0.23399167379947625,
+        "accuracy": 0.9103535353535354,
+        "samples": 792
+      },
+      "learning_rate": 9.549150281252631e-06
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.0690470084989919,
+        "accuracy": 0.9715061058344641,
+        "samples": 5159
+      },
+      "val": {
+        "loss": 0.21940211903755413,
+        "accuracy": 0.9154040404040404,
+        "samples": 792
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260710_160843_torchvision:densenet121/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260710_160843_torchvision:densenet121/last.pt"
+}

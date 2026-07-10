@@ -6,7 +6,7 @@ import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 DEFAULT_CLASSES = ("NORMAL", "PNEUMONIA")
 DEFAULT_SPLITS = ("train", "val", "test")
@@ -231,7 +231,7 @@ def stratified_holdout_indices(
 try:
     from torch.utils.data import Dataset as _TorchDataset
 except Exception:  # pragma: no cover - used only when torch is unavailable
-    _TorchDataset = object  # type: ignore[assignment]
+    _TorchDataset = object  # type: ignore[misc,assignment]
 
 
 class XRayImageDataset(_TorchDataset):
@@ -271,10 +271,10 @@ class XRayImageDataset(_TorchDataset):
 
         path, label = self.samples[index]
         with Image.open(path) as image:
-            image = image.convert("RGB")
+            loaded_image: Any = image.convert("RGB")
             if self.transform is not None:
-                image = self.transform(image)
-        return image, label
+                loaded_image = self.transform(loaded_image)
+        return loaded_image, label
 
 
 class XRaySampleDataset(_TorchDataset):
@@ -312,10 +312,10 @@ class XRaySampleDataset(_TorchDataset):
 
         path, label = self.samples[index]
         with Image.open(path) as image:
-            image = image.convert("RGB")
+            loaded_image: Any = image.convert("RGB")
             if self.transform is not None:
-                image = self.transform(image)
-        return image, label
+                loaded_image = self.transform(loaded_image)
+        return loaded_image, label
 
 
 def build_class_weights(

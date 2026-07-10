@@ -1,0 +1,152 @@
+{
+  "ok": true,
+  "run_id": "20260710_154912_torchvision:vit_b_16",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/processed/kermany_grouped_seed42",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:vit_b_16",
+    "pretrained": true,
+    "epochs": 4,
+    "batch_size": 16,
+    "learning_rate": 5e-05,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 43,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null,
+    "domain_balanced_prefixes": [],
+    "freeze_mode": "none",
+    "label_smoothing": 0.0
+  },
+  "dataset": {
+    "root": "./data/processed/kermany_grouped_seed42",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1113,
+        "PNEUMONIA": 2994
+      },
+      "val": {
+        "NORMAL": 156,
+        "PNEUMONIA": 423
+      }
+    },
+    "total_images": 4686,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 1113,
+    "PNEUMONIA": 2994
+  },
+  "domain_balanced_counts": {},
+  "freeze": {
+    "mode": "none",
+    "trainable_parameters": 85800194
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.20676046557450545,
+        "accuracy": 0.9181884587289992,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.12033209084036128,
+        "accuracy": 0.9568221070811744,
+        "samples": 579
+      },
+      "learning_rate": 4.267766952966369e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.10841225614825217,
+        "accuracy": 0.9607986364743122,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.097911596497672,
+        "accuracy": 0.9706390328151986,
+        "samples": 579
+      },
+      "learning_rate": 2.5e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.09135700924839486,
+        "accuracy": 0.9676162649135622,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.07921646880259374,
+        "accuracy": 0.9723661485319517,
+        "samples": 579
+      },
+      "learning_rate": 7.3223304703363135e-06
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.04764268026809204,
+        "accuracy": 0.9844168492817141,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.08146015284277357,
+        "accuracy": 0.9723661485319517,
+        "samples": 579
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260710_154912_torchvision:vit_b_16/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260710_154912_torchvision:vit_b_16/last.pt"
+}

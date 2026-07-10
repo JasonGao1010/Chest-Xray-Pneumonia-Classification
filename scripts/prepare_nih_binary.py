@@ -7,7 +7,8 @@ import argparse
 import csv
 import json
 import random
-import sys
+import re
+import shutil
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -45,29 +46,48 @@ def zip_image_members(zip_path: Path) -> dict[str, str]:
     return result
 
 
+def patient_id_from_image_index(image_index: str) -> str:
+    """Return the NIH patient identifier encoded in an image filename."""
+    match = re.match(r"(\d{8})(?:_|$)", image_index)
+    if match is None:
+        raise ValueError(f"Cannot parse NIH patient ID from image name: {image_index}")
+    return match.group(1)
+
+
 def split_rows(rows: list[dict[str, Any]], seed: int) -> list[dict[str, Any]]:
+    """Assign complete NIH patients to train/validation/test splits."""
     rng = random.Random(seed)
-    by_label: dict[str, list[dict[str, Any]]] = {"NORMAL": [], "PNEUMONIA": []}
+    by_patient: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
-        by_label[row["binary_label"]].append(row)
+        patient_id = str(row.get("patient_id") or patient_id_from_image_index(row["image_index"]))
+        row["patient_id"] = patient_id
+        by_patient.setdefault(patient_id, []).append(row)
+
+    # Stratify by the set of labels represented for each patient while keeping
+    # every image from that patient in exactly one split.
+    by_signature: dict[tuple[str, ...], list[str]] = {}
+    for patient_id, patient_rows in by_patient.items():
+        signature = tuple(sorted({str(row["binary_label"]) for row in patient_rows}))
+        by_signature.setdefault(signature, []).append(patient_id)
 
     result: list[dict[str, Any]] = []
-    for label_rows in by_label.values():
-        shuffled = list(label_rows)
+    for patient_ids in by_signature.values():
+        shuffled = sorted(patient_ids)
         rng.shuffle(shuffled)
         total = len(shuffled)
         train_count = round(total * 0.70)
         val_count = round(total * 0.10)
-        for index, row in enumerate(shuffled):
+        for index, patient_id in enumerate(shuffled):
             if index < train_count:
                 split = "train"
             elif index < train_count + val_count:
                 split = "val"
             else:
                 split = "test"
-            copied = dict(row)
-            copied["split"] = split
-            result.append(copied)
+            for row in by_patient[patient_id]:
+                copied = dict(row)
+                copied["split"] = split
+                result.append(copied)
     return sorted(result, key=lambda row: (row["split"], row["binary_label"], row["image_index"]))
 
 
@@ -75,6 +95,7 @@ def write_metadata(path: Path, rows: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
         "image_index",
+        "patient_id",
         "finding_labels",
         "binary_label",
         "split",
@@ -137,6 +158,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--figure-output", type=Path, default=Path("figures/nih_class_distribution.png"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--limit-per-class", type=int, default=65)
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Replace existing generated outputs. Existing outputs are preserved by default.",
+    )
     return parser.parse_args()
 
 
@@ -145,6 +171,27 @@ def main() -> int:
     metadata_csv = resolve_project_path(args.metadata_csv)
     zip_path = resolve_project_path(args.zip)
     output_root = resolve_project_path(args.output_root)
+    summary_output = resolve_project_path(args.summary_output)
+    figure_output = resolve_project_path(args.figure_output)
+    existing = [path for path in (output_root, summary_output, figure_output) if path.exists()]
+    if existing and not args.force:
+        rendered = "\n  - ".join(path.as_posix() for path in existing)
+        raise FileExistsError(
+            "Refusing to overwrite existing NIH outputs. Choose new paths or rerun "
+            "with --force:\n  - " + rendered
+        )
+    resolved_output = output_root.resolve()
+    protected_roots = (metadata_csv.parent.resolve(), zip_path.parent.resolve())
+    if resolved_output == PROJECT_ROOT.resolve() or any(
+        resolved_output.is_relative_to(root) or root.is_relative_to(resolved_output)
+        for root in protected_roots
+    ):
+        raise ValueError("--output-root must not overlap the project or raw-data roots")
+    for path in existing:
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
     members = zip_image_members(zip_path)
     rows = load_metadata(metadata_csv)
 
@@ -163,6 +210,7 @@ def main() -> int:
         candidates[binary_label].append(
             {
                 "image_index": image_index,
+                "patient_id": patient_id_from_image_index(image_index),
                 "finding_labels": finding_labels,
                 "binary_label": binary_label,
                 "source_zip": zip_path.as_posix(),
@@ -189,7 +237,7 @@ def main() -> int:
     extract_rows(zip_path, output_root, split_selected)
     write_metadata(output_root / "metadata.csv", split_selected)
     write_sample_manifests(output_root, split_selected)
-    write_distribution_figure(resolve_project_path(args.figure_output), counts)
+    write_distribution_figure(figure_output, counts)
     summary = {
         "ok": True,
         "source": "NIH ChestX-ray14 images_001.zip subset",
@@ -205,7 +253,7 @@ def main() -> int:
             "PNEUMONIA": len(candidates["PNEUMONIA"]),
         },
     }
-    write_json(resolve_project_path(args.summary_output), summary)
+    write_json(summary_output, summary)
     print(f"Prepared NIH binary subset: {len(split_selected)} images")
     print(json.dumps(counts, ensure_ascii=False))
     return 0

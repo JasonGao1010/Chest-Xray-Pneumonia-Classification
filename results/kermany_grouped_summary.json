@@ -4,7 +4,11 @@
   "source_root": "./data/raw/chest_xray",
   "output_root": "./data/processed/kermany_grouped_seed42",
   "manifest": "./data/splits/kermany_grouped_seed42.csv",
-  "manifest_sha256": "ef73fd9733898e6216723cfbb2105e25e20765e750a92f11135fd01b16996573",
+  "manifest_sha256": "a0b117b04248fd475cea737690a3ba3a23d3daee0c0e8289e17545e5f2af9acf",
+  "manifest_sha256_raw": "a0b117b04248fd475cea737690a3ba3a23d3daee0c0e8289e17545e5f2af9acf",
+  "manifest_line_endings": "LF",
+  "manifest_sha256_semantic": "819630293dcc8e66884dc211ea84b3fe568235850f3b71a5cf80f8f5ad9cdbcb",
+  "manifest_semantic_hash_scheme": "csv_rows_sorted_canonical_json_v1",
   "image_counts": {
     "test": {
       "NORMAL": 314,
@@ -33,6 +37,13 @@
       "PNEUMONIA": 167
     }
   },
+  "subject_count_field_note": "Counts are based on filename-derived grouping tokens, not verified patient identifiers.",
   "total_images": 5856,
-  "link_mode": "hardlink"
+  "link_mode": "hardlink",
+  "verification": {
+    "file_hashes_recomputed": true,
+    "missing_file_count": 0,
+    "digest_mismatch_count": 0,
+    "non_hardlink_count": 0
+  }
 }

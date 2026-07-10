@@ -14,16 +14,29 @@ SRC_ROOT = PROJECT_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from PIL import Image, UnidentifiedImageError
-from flask import Flask, jsonify, request, send_file, send_from_directory
+from PIL import Image, UnidentifiedImageError  # noqa: E402
+from flask import Flask, jsonify, request, send_file, send_from_directory  # noqa: E402
 
-from xray_pneumonia.inference import DEFAULT_CHECKPOINT, XRayPredictor, resolve_project_path
+from xray_pneumonia.inference import (  # noqa: E402
+    DEFAULT_CHECKPOINT,
+    XRayPredictor,
+    resolve_project_path,
+)
 
 WEB_ROOT = PROJECT_ROOT / "web"
-SAMPLE_XRAY_CANDIDATES = (
-    PROJECT_ROOT / "sample_images/normal_IM-0001-0001.jpeg",
-    PROJECT_ROOT / "data/raw/chest_xray/test/NORMAL/IM-0001-0001.jpeg",
-)
+SAMPLE_XRAYS = {
+    "normal": (
+        PROJECT_ROOT / "sample_images/normal_IM-0001-0001.jpeg",
+        PROJECT_ROOT / "data/raw/chest_xray/test/NORMAL/IM-0001-0001.jpeg",
+    ),
+    "pneumonia": (
+        PROJECT_ROOT / "sample_images/pneumonia_person100_bacteria_475.jpeg",
+        PROJECT_ROOT / "data/raw/chest_xray/test/PNEUMONIA/person100_bacteria_475.jpeg",
+    ),
+    "boundary": (
+        PROJECT_ROOT / "data/raw/chest_xray/test/PNEUMONIA/person108_bacteria_511.jpeg",
+    ),
+}
 MAX_UPLOAD_MB = 16
 
 
@@ -46,6 +59,8 @@ def create_app(
 ) -> Flask:
     app = Flask(__name__, static_folder=None)
     app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
+    if not 0.0 <= threshold <= 1.0:
+        raise ValueError("threshold must be in the interval [0, 1]")
 
     model_predictor = predictor or XRayPredictor(
         checkpoint_path=checkpoint,
@@ -68,7 +83,17 @@ def create_app(
 
     @app.get("/sample-xray")
     def sample_xray():
-        for sample_path in SAMPLE_XRAY_CANDIDATES:
+        for sample_path in SAMPLE_XRAYS["normal"]:
+            if sample_path.exists():
+                return send_file(sample_path)
+        return ("sample image not found", 404)
+
+    @app.get("/sample-xray/<sample_name>")
+    def named_sample_xray(sample_name: str):
+        candidates = SAMPLE_XRAYS.get(sample_name)
+        if candidates is None:
+            return ("sample image not found", 404)
+        for sample_path in candidates:
             if sample_path.exists():
                 return send_file(sample_path)
         return ("sample image not found", 404)
@@ -79,7 +104,6 @@ def create_app(
             {
                 "ok": True,
                 "model": model_predictor.model_name,
-                "checkpoint": model_predictor.checkpoint_path.as_posix(),
                 "device": str(model_predictor.device_obj),
                 "threshold": model_predictor.threshold,
             }
@@ -97,17 +121,32 @@ def create_app(
                 result: dict[str, Any] = model_predictor.predict_image(image)
         except UnidentifiedImageError:
             return jsonify({"ok": False, "error": "无法读取该文件，请上传 JPG、PNG 等常见图片格式。"}), 400
-        except Exception as exc:
-            return jsonify({"ok": False, "error": f"模型推理失败：{exc}"}), 500
+        except Exception:
+            app.logger.exception("Model inference failed")
+            return jsonify({"ok": False, "error": "模型推理暂时不可用，请稍后重试。"}), 500
 
         result.update(
             {
                 "ok": True,
                 "filename": uploaded.filename,
-                "clinical_warning": "本结果仅用于课程设计演示，不能替代医生诊断。若有症状或检查异常，请尽快咨询专业医生。",
+                "clinical_warning": "本结果仅用于研究演示，不能替代医生诊断。若有症状或检查异常，请尽快咨询专业医生。",
             }
         )
-        return jsonify(result)
+        public_fields = {
+            "ok",
+            "filename",
+            "predicted_label",
+            "predicted_label_cn",
+            "probabilities",
+            "normal_probability",
+            "pneumonia_probability",
+            "threshold",
+            "confidence",
+            "model",
+            "image_size",
+            "clinical_warning",
+        }
+        return jsonify({key: value for key, value in result.items() if key in public_fields})
 
     @app.errorhandler(413)
     def too_large(_error):

@@ -6,7 +6,7 @@
   "sample_count": 624,
   "exported_case_count": 76,
   "counts": {
-    "correct": 548,
+    "correct": 554,
     "false_positive": 67,
     "false_negative": 3,
     "high_confidence_false_positive": 37,
@@ -14,5 +14,8 @@
     "borderline": 11
   },
   "csv_output": "./results/error_cases_kermany_test_convnext_tiny.csv",
-  "grid_rendered": 16
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

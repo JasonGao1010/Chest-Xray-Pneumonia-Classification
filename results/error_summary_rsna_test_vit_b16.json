@@ -6,7 +6,7 @@
   "sample_count": 442,
   "exported_case_count": 150,
   "counts": {
-    "correct": 292,
+    "correct": 306,
     "false_positive": 106,
     "false_negative": 30,
     "high_confidence_false_positive": 55,
@@ -14,5 +14,8 @@
     "borderline": 30
   },
   "csv_output": "./results/error_cases_rsna_test_vit_b16.csv",
-  "grid_rendered": 16
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

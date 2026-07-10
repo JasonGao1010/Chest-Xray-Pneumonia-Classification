@@ -6,7 +6,7 @@
   "sample_count": 624,
   "exported_case_count": 118,
   "counts": {
-    "correct": 506,
+    "correct": 524,
     "false_positive": 77,
     "false_negative": 23,
     "high_confidence_false_positive": 17,
@@ -14,5 +14,8 @@
     "borderline": 38
   },
   "csv_output": "./results/error_cases_kermany_test_densenet121_no_pretrained.csv",
-  "grid_rendered": 16
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

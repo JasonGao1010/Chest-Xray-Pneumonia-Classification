@@ -53,12 +53,17 @@ def load_binary_predictions(
         if missing:
             raise ValueError(f"Missing required prediction columns in {csv_path}: {sorted(missing)}")
         for row in reader:
+            score = float(row[score_column])
+            if not math.isfinite(score) or not 0.0 <= score <= 1.0:
+                raise ValueError(
+                    f"Invalid probability {score!r} in {csv_path}; expected a finite value in [0, 1]"
+                )
             rows.append(
                 CalibratedPrediction(
                     path=str(row["path"]),
                     true_label=str(row["true_label"]),
                     predicted_label=str(row["predicted_label"]),
-                    score=clip_probability(float(row[score_column])),
+                    score=score,
                 )
             )
     if not rows:

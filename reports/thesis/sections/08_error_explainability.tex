@@ -1,7 +1,0 @@
-\chapter{错误样本与可解释性分析}
-
-Kermany test 上，ViT-B/16 默认阈值下有 53 个 false positive、9 个 false negative、11 个边界样本。高置信 false positive 为 33 个，高置信 false negative 为 2 个。这个结果说明主数据集上的主要错误来自正常样本误报。
-
-扩容 RSNA test 后，错误结构更加清楚。Kermany 训练的 ViT-B/16 在 RSNA test 上有 106 个 false positive、30 个 false negative 和 30 个边界样本；Kermany 训练的 DenseNet121 有 97 个 false positive、21 个 false negative 和 18 个边界样本。两者的 false positive 都明显多于 false negative，与外部测试中 specificity 偏低的现象一致。也就是说，跨来源下降主要不是肺炎召回完全崩掉，而是模型把较多外部正常片推向肺炎类。
-
-错误样本网格和 CSV 已输出。DenseNet121 已生成 Kermany 错误样本 Grad-CAM、扩容 RSNA true positive Grad-CAM 和 NIH true positive Grad-CAM，其中扩容 RSNA 图为 \texttt{figures/gradcam\_rsna\_positive\_cases\_densenet121\_expanded.png}。Grad-CAM 只能解释模型分类贡献区域，不能作为医学病灶定位证据。

@@ -1,9 +1,4 @@
 path,true_label,predicted_label,prob_pneumonia,confidence,error_type,coarse_type
-test/NORMAL/14a17c79-36ac-4794-8f6b-797df627ea4d.png,NORMAL,NORMAL,0.40360692,0.59639308,correct_borderline,correct
-test/NORMAL/195991cd-bb4f-435e-992c-730d741cfec1.png,NORMAL,NORMAL,0.42025977,0.57974023,correct_borderline,correct
-test/NORMAL/1bd9de29-597c-4cba-8581-83355af4c667.png,NORMAL,NORMAL,0.42035636,0.57964364,correct_borderline,correct
-test/PNEUMONIA/09147009-39a9-497a-ac10-a07cf7126d58.png,PNEUMONIA,PNEUMONIA,0.57721549,0.57721549,correct_borderline,correct
-test/PNEUMONIA/17709922-a966-48f3-ae70-32fa7b5d418e.png,PNEUMONIA,PNEUMONIA,0.53727937,0.53727937,correct_borderline,correct
 test/PNEUMONIA/2d09d0bb-a4fb-4a50-99c4-496ad756533e.png,PNEUMONIA,NORMAL,0.00173763,0.99826237,high_confidence_false_negative,false_negative
 test/PNEUMONIA/0c4c0dd9-1685-48c3-a09e-817816695016.png,PNEUMONIA,NORMAL,0.00593591,0.99406409,high_confidence_false_negative,false_negative
 test/PNEUMONIA/239f7e39-e679-4892-9c87-04d1e4fd240f.png,PNEUMONIA,NORMAL,0.03376758,0.96623242,high_confidence_false_negative,false_negative
@@ -127,3 +122,8 @@ test/NORMAL/0ecc15e9-fe6a-47ff-a622-43e23c8a73ff.png,NORMAL,PNEUMONIA,0.55667484
 test/NORMAL/03cf39fd-692c-46db-80d2-f1efb09b0e31.png,NORMAL,PNEUMONIA,0.52643543,0.52643543,false_positive,false_positive
 test/NORMAL/183c08d2-a4e6-4e2e-80b4-a547d6f0ed5c.png,NORMAL,PNEUMONIA,0.50238413,0.50238413,false_positive,false_positive
 test/NORMAL/1a63ca9b-22c9-4856-960f-7cdca38bdfd9.png,NORMAL,PNEUMONIA,0.50022429,0.50022429,false_positive,false_positive
+test/NORMAL/14a17c79-36ac-4794-8f6b-797df627ea4d.png,NORMAL,NORMAL,0.40360692,0.59639308,correct_borderline,correct
+test/NORMAL/195991cd-bb4f-435e-992c-730d741cfec1.png,NORMAL,NORMAL,0.42025977,0.57974023,correct_borderline,correct
+test/NORMAL/1bd9de29-597c-4cba-8581-83355af4c667.png,NORMAL,NORMAL,0.42035636,0.57964364,correct_borderline,correct
+test/PNEUMONIA/09147009-39a9-497a-ac10-a07cf7126d58.png,PNEUMONIA,PNEUMONIA,0.57721549,0.57721549,correct_borderline,correct
+test/PNEUMONIA/17709922-a966-48f3-ae70-32fa7b5d418e.png,PNEUMONIA,PNEUMONIA,0.53727937,0.53727937,correct_borderline,correct

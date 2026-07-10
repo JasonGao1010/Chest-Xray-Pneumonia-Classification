@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Audit split independence and prediction/result consistency.
+"""Audit split grouping integrity and prediction/result consistency.
 
 The audit is intentionally read-only. It detects exact duplicate images,
-subject identifiers crossing data splits, label conflicts, and stale evaluation
-JSON files. It does not reinterpret medical labels.
+dataset-specific grouping identifiers crossing data splits, label conflicts,
+and stale evaluation JSON files. It does not reinterpret medical labels or
+claim that filename tokens are verified patient identifiers.
 """
 
 from __future__ import annotations
@@ -36,14 +37,65 @@ def resolve(path: Path | str) -> Path:
     return path if path.is_absolute() else PROJECT_ROOT / path
 
 
-def subject_id(path: Path, label: str) -> str:
-    """Extract the subject-like identifier encoded by Kermany filenames."""
+def infer_dataset_kind(root: Path) -> str:
+    """Infer the supported dataset family from a local directory name."""
+    value = root.as_posix().lower()
+    if "nih" in value:
+        return "nih"
+    if "rsna" in value:
+        return "rsna"
+    if "kermany" in value or root.name == "chest_xray":
+        return "kermany"
+    return "kermany"
+
+
+def kermany_filename_token(path: Path, label: str, subtype_sensitive: bool = True) -> str:
+    """Return a conservative filename-derived grouping token.
+
+    Pneumonia ``personN`` counters are namespaced by the filename subtype when
+    ``subtype_sensitive`` is true.  The public data package does not provide a
+    subject table that proves equal bare counters across bacterial and viral
+    filenames denote the same person.
+    """
     stem = path.stem
     if label == "PNEUMONIA":
         match = re.match(r"(person\d+)_", stem, flags=re.IGNORECASE)
+        token = (match.group(1) if match else stem).lower()
+        subtype_match = re.search(r"_(bacteria|virus)_", stem, flags=re.IGNORECASE)
+        subtype = subtype_match.group(1).lower() if subtype_match else "unknown"
+        return f"{subtype}:{token}" if subtype_sensitive else token
     else:
         match = re.match(r"((?:normal\d+-)?im-\d+)(?:-|$)", stem, flags=re.IGNORECASE)
-    return (match.group(1) if match else stem).lower()
+        return f"normal:{(match.group(1) if match else stem).lower()}"
+
+
+def filename_group_id(
+    path: Path,
+    label: str,
+    dataset_kind: str,
+    *,
+    kermany_subtype_sensitive: bool = True,
+) -> str:
+    """Extract a dataset-specific, explicitly non-universal grouping key."""
+    if dataset_kind == "nih":
+        match = re.match(r"(\d{8})(?:_|$)", path.stem)
+        return f"nih_patient_id:{match.group(1) if match else path.stem.lower()}"
+    if dataset_kind == "rsna":
+        return f"rsna_patient_id:{path.stem.lower()}"
+    return (
+        "kermany_filename_cluster:"
+        f"{kermany_filename_token(path, label, subtype_sensitive=kermany_subtype_sensitive)}"
+    )
+
+
+def subject_id(path: Path, label: str) -> str:
+    """Backward-compatible alias for the bare Kermany filename token.
+
+    New code should use :func:`filename_group_id` and name the result a group
+    or filename cluster, not a verified subject/patient identifier.
+    """
+    token = kermany_filename_token(path, label, subtype_sensitive=False)
+    return token.removeprefix("normal:")
 
 
 def iter_images(root: Path) -> Iterable[tuple[str, str, Path]]:
@@ -57,43 +109,137 @@ def iter_images(root: Path) -> Iterable[tuple[str, str, Path]]:
                     yield split, label, path
 
 
-def audit_dataset(root: Path, hash_images: bool) -> dict[str, Any]:
+def _kermany_token_sensitivity(
+    rows: list[tuple[str, str, Path]],
+) -> dict[str, Any]:
+    by_split_subtype: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    for split, label, path in rows:
+        if label != "PNEUMONIA":
+            continue
+        stem = path.stem
+        subtype_match = re.search(r"_(bacteria|virus)_", stem, flags=re.IGNORECASE)
+        subtype = subtype_match.group(1).lower() if subtype_match else "unknown"
+        by_split_subtype[split][subtype].add(
+            kermany_filename_token(path, label, subtype_sensitive=False)
+        )
+
+    comparisons: list[dict[str, Any]] = []
+    for left, right in (("train", "val"), ("train", "test"), ("val", "test")):
+        same_subtype: list[dict[str, Any]] = []
+        cross_subtype: list[dict[str, Any]] = []
+        for left_subtype in sorted(by_split_subtype[left]):
+            for right_subtype in sorted(by_split_subtype[right]):
+                overlap = sorted(
+                    by_split_subtype[left][left_subtype]
+                    & by_split_subtype[right][right_subtype]
+                )
+                if not overlap:
+                    continue
+                item = {
+                    "left_subtype": left_subtype,
+                    "right_subtype": right_subtype,
+                    "count": len(overlap),
+                    "tokens": overlap,
+                }
+                if left_subtype == right_subtype:
+                    same_subtype.append(item)
+                else:
+                    cross_subtype.append(item)
+        comparisons.append(
+            {
+                "left": left,
+                "right": right,
+                "same_subtype": same_subtype,
+                "same_subtype_count": sum(item["count"] for item in same_subtype),
+                "cross_subtype": cross_subtype,
+                "cross_subtype_count": sum(item["count"] for item in cross_subtype),
+            }
+        )
+    return {
+        "bare_person_token_semantics": (
+            "Sensitivity diagnostic only: equal bare personN counters across "
+            "bacteria/virus namespaces are not treated as verified patient identity."
+        ),
+        "comparisons": comparisons,
+    }
+
+
+def audit_dataset(
+    root: Path,
+    hash_images: bool,
+    dataset_kind: str | None = None,
+) -> dict[str, Any]:
+    dataset_kind = dataset_kind or infer_dataset_kind(root)
     counts: dict[str, Counter[str]] = defaultdict(Counter)
-    subjects: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    groups: dict[str, set[str]] = defaultdict(set)
     hashes: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
-    for split, label, path in iter_images(root):
+    rows = list(iter_images(root))
+    group_labels: dict[str, set[str]] = defaultdict(set)
+    for split, label, path in rows:
         counts[split][label] += 1
-        subjects[label][split].add(subject_id(path, label))
+        group = filename_group_id(
+            path,
+            label,
+            dataset_kind,
+            # The rebuilt split deliberately treats equal bare personN tokens
+            # as one conservative cluster. The subtype-aware alternative is
+            # reported separately below and is not promoted to patient truth.
+            kermany_subtype_sensitive=False,
+        )
+        groups[split].add(group)
+        group_labels[group].add(label)
         if hash_images:
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             hashes[digest].append((split, label, path.relative_to(root).as_posix()))
 
-    subject_overlap: list[dict[str, Any]] = []
-    for label, by_split in subjects.items():
-        for left, right in (("train", "val"), ("train", "test"), ("val", "test")):
-            overlap = sorted(by_split[left] & by_split[right])
-            if overlap:
-                subject_overlap.append(
-                    {"label": label, "left": left, "right": right, "count": len(overlap), "ids": overlap}
-                )
+    group_overlap: list[dict[str, Any]] = []
+    for left, right in (("train", "val"), ("train", "test"), ("val", "test")):
+        overlap = sorted(groups[left] & groups[right])
+        if overlap:
+            group_overlap.append(
+                {"left": left, "right": right, "count": len(overlap), "ids": overlap}
+            )
 
     cross_split_duplicates = []
     label_conflicts = []
-    for digest, rows in hashes.items():
-        if len({row[0] for row in rows}) > 1:
-            cross_split_duplicates.append({"sha256": digest, "files": rows})
-        if len({row[1] for row in rows}) > 1:
-            label_conflicts.append({"sha256": digest, "files": rows})
+    for digest, hash_rows in hashes.items():
+        if len({row[0] for row in hash_rows}) > 1:
+            cross_split_duplicates.append({"sha256": digest, "files": hash_rows})
+        if len({row[1] for row in hash_rows}) > 1:
+            label_conflicts.append({"sha256": digest, "files": hash_rows})
 
-    return {
+    group_label_conflicts = [
+        {"group_id": group, "labels": sorted(labels)}
+        for group, labels in sorted(group_labels.items())
+        if len(labels) > 1
+    ]
+    split_integrity_ok = not group_overlap and not cross_split_duplicates and not label_conflicts
+    payload: dict[str, Any] = {
         "root": root.as_posix(),
+        "dataset_kind": dataset_kind,
+        "grouping_unit": {
+            "kermany": (
+                "conservative subtype-agnostic filename cluster sensitivity "
+                "(not a verified patient ID)"
+            ),
+            "nih": "8-digit NIH Patient ID parsed from image filename",
+            "rsna": "RSNA patientId/image filename stem",
+        }[dataset_kind],
         "counts": {split: dict(value) for split, value in counts.items()},
-        "subject_overlap": subject_overlap,
+        "group_counts": {split: len(values) for split, values in groups.items()},
+        "group_overlap": group_overlap,
+        "group_label_conflicts": group_label_conflicts,
         "cross_split_duplicate_groups": cross_split_duplicates,
         "label_conflict_groups": label_conflicts,
         "hash_images": hash_images,
-        "independent_split_ok": not subject_overlap and not cross_split_duplicates and not label_conflicts,
+        "group_disjoint_ok": not group_overlap,
+        "split_integrity_ok": split_integrity_ok,
+        # Retained for old consumers; the grouping unit above defines semantics.
+        "independent_split_ok": split_integrity_ok,
     }
+    if dataset_kind == "kermany":
+        payload["bare_token_sensitivity"] = _kermany_token_sensitivity(rows)
+    return payload
 
 
 def recompute_metrics(rows: list[dict[str, str]]) -> dict[str, Any]:
@@ -118,7 +264,8 @@ def audit_evaluations(results_dir: Path, tolerance: float = 2e-7) -> dict[str, A
     checked = 0
     mismatches: list[dict[str, Any]] = []
     missing_predictions: list[dict[str, str]] = []
-    for json_path in sorted(results_dir.glob("eval_*.json")):
+    evaluation_paths = sorted(results_dir.glob("*eval_*.json"))
+    for json_path in evaluation_paths:
         payload = json.loads(json_path.read_text(encoding="utf-8"))
         prediction_value = payload.get("predictions_output")
         if not prediction_value:
@@ -143,6 +290,8 @@ def audit_evaluations(results_dir: Path, tolerance: float = 2e-7) -> dict[str, A
             if not equal:
                 mismatches.append({"evaluation": json_path.as_posix(), "field": field, "stored": old, "recomputed": value})
     return {
+        "file_pattern": "*eval_*.json",
+        "discovered_files": len(evaluation_paths),
         "checked_files": checked,
         "missing_predictions": missing_predictions,
         "metric_mismatches": mismatches,
@@ -162,12 +311,14 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     datasets = args.dataset or [Path("data/raw/chest_xray"), Path("data/processed/rsna_binary"), Path("data/processed/nih_binary")]
-    payload = {
-        "schema_version": 1,
+    payload: dict[str, Any] = {
+        "schema_version": 2,
         "datasets": [audit_dataset(resolve(path), not args.skip_image_hashes) for path in datasets if resolve(path).exists()],
         "evaluations": audit_evaluations(resolve(args.results_dir)),
     }
-    payload["ok"] = payload["evaluations"]["ok"] and all(item["independent_split_ok"] for item in payload["datasets"])
+    payload["ok"] = payload["evaluations"]["ok"] and all(
+        item["split_integrity_ok"] for item in payload["datasets"]
+    )
     output = resolve(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

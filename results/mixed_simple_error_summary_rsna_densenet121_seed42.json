@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "predictions": "./results/mixed_simple_predictions_rsna_test_densenet121_seed42.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 442,
+  "exported_case_count": 123,
+  "counts": {
+    "correct": 341,
+    "false_positive": 42,
+    "false_negative": 59,
+    "high_confidence_false_positive": 11,
+    "high_confidence_false_negative": 18,
+    "borderline": 40
+  },
+  "csv_output": "./results/mixed_simple_error_cases_rsna_densenet121_seed42.csv",
+  "grid_output": "./figures/mixed_simple_error_grid_rsna_densenet121_seed42.png",
+  "grid_rendered": 16,
+  "grid_selection": {
+    "policy_version": 1,
+    "policy": "deterministic four-bucket quota: extreme FP, extreme FN, nearest-threshold FP, nearest-threshold FN; redistribute shortages to remaining errors; use correct borderline cases only after exhausting errors",
+    "requested_limit": 16,
+    "quota_targets": {
+      "extreme_false_positive": 4,
+      "extreme_false_negative": 4,
+      "near_threshold_false_positive": 4,
+      "near_threshold_false_negative": 4
+    },
+    "selected_count": 16,
+    "selected_by_bucket": {
+      "extreme_false_positive": 4,
+      "extreme_false_negative": 4,
+      "near_threshold_false_positive": 4,
+      "near_threshold_false_negative": 4
+    },
+    "selected_by_coarse_type": {
+      "false_positive": 8,
+      "false_negative": 8
+    },
+    "selected_paths": [
+      "test/NORMAL/08b76292-b24f-4130-ae4f-3af518a9d5a3.png",
+      "test/NORMAL/10950638-0710-43fb-9705-f33942b65bf9.png",
+      "test/NORMAL/088265f7-0350-4c51-a7fc-99f1ddc89ae1.png",
+      "test/NORMAL/06e30df6-253e-4a03-b16e-49305fb0f165.png",
+      "test/PNEUMONIA/20d3f1cf-6f6b-4119-8008-bc5c6e105464.png",
+      "test/PNEUMONIA/1d247b6c-0687-40bf-839e-fd30e01c585d.png",
+      "test/PNEUMONIA/0c122fd9-6dc8-4224-baae-812ed5c4bd12.png",
+      "test/PNEUMONIA/131dd766-23cb-43e2-9653-13033d70765c.png",
+      "test/NORMAL/115d5f48-c01c-485a-8d92-da9529dd428b.png",
+      "test/NORMAL/1a63ca9b-22c9-4856-960f-7cdca38bdfd9.png",
+      "test/NORMAL/0bc55dd2-15ee-4f8e-94a1-df2e8dfffd89.png",
+      "test/NORMAL/09a71d45-931c-4089-958d-3eca0f1e303a.png",
+      "test/PNEUMONIA/06a4f477-34ca-4625-945b-81bfa9e77273.png",
+      "test/PNEUMONIA/1ee29f7c-f059-47b3-8d59-6edd3ede27d0.png",
+      "test/PNEUMONIA/0c89ca38-27ca-4cd0-88cb-18093fdcb04b.png",
+      "test/PNEUMONIA/32f3d89e-418f-4146-8036-7583ad6f1f0a.png"
+    ]
+  },
+  "grid_rendering": {
+    "font_family": "Times New Roman",
+    "dpi": 300,
+    "image_mode": "grayscale",
+    "crop": "none",
+    "intensity_adjustment": "none"
+  }
+}

@@ -8,6 +8,7 @@ import csv
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = PROJECT_ROOT / "src"
@@ -31,7 +32,7 @@ def write_json(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def write_bins_csv(path: Path, bins: list[dict[str, object]]) -> None:
+def write_bins_csv(path: Path, bins: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = ["bin_index", "lower", "upper", "count", "accuracy", "confidence", "gap"]
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -40,7 +41,7 @@ def write_bins_csv(path: Path, bins: list[dict[str, object]]) -> None:
         writer.writerows(bins)
 
 
-def write_reliability_figure(path: Path, bins: list[dict[str, object]], title: str) -> None:
+def write_reliability_figure(path: Path, bins: list[dict[str, Any]], title: str) -> None:
     import matplotlib.pyplot as plt
 
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -97,20 +98,20 @@ def main() -> int:
 
     temperature_source = "fixed"
     temperature = 1.0 if args.temperature is None else float(args.temperature)
-    fit_report: dict[str, object] | None = None
+    fit_report: dict[str, Any] | None = None
     if args.calibration_predictions is not None:
         calibration_path = resolve_project_path(args.calibration_predictions)
         calibration_records = load_binary_predictions(
             calibration_path,
             positive_class=args.positive_class,
         )
-        fit_report = fit_temperature_grid(
+        fit_report = dict(fit_temperature_grid(
             calibration_records,
             positive_class=args.positive_class,
             minimum=args.temperature_min,
             maximum=args.temperature_max,
             step=args.temperature_step,
-        )
+        ))
         temperature = float(fit_report["temperature"])
         fit_report["calibration_predictions"] = calibration_path.as_posix()
         fit_report["search_range"] = {

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "member_count": 1707,
+  "expected_member_count": 1707,
+  "metadata": {
+    "path": "data/processed/rsna_binary/metadata.csv",
+    "sha256": "1169566e5590442a7aa09a5aac0ec043dae2c67c1163c80acacd5eae5e0142a4"
+  },
+  "manifest": {
+    "path": "data/splits/rsna_available_1707_manifest.csv",
+    "sha256": "76ea17aae923954deca87834c1cdca6de0383bee3e461de29840a4564d247ae1",
+    "hash_algorithm": "SHA-256",
+    "path_format": "project-relative POSIX"
+  },
+  "split_label_counts": {
+    "test": {
+      "NORMAL": 215,
+      "PNEUMONIA": 227
+    },
+    "train": {
+      "NORMAL": 560,
+      "PNEUMONIA": 492
+    },
+    "val": {
+      "NORMAL": 107,
+      "PNEUMONIA": 106
+    }
+  },
+  "source_batch_counts": {
+    "rsna_hf_subset_download": 88,
+    "rsna_hf_subset_download_expanded": 1485,
+    "unknown": 134
+  },
+  "source_reports": [
+    {
+      "path": "results/rsna_hf_subset_download.json",
+      "sha256": "d04710f0a3a270887957e4ec3507713ded256163b5d6383d32e16d40d2948461",
+      "listed_member_count": 88,
+      "source_provider": "Hugging Face mirror Baldezo313/rsna-pneumonia-dataset"
+    },
+    {
+      "path": "results/rsna_hf_subset_download_expanded.json",
+      "sha256": "33a3da6bd5b565e1b45c1d8f73b2a1797dafbd5c87b5a23b16e2ffb461ec6646",
+      "listed_member_count": 1573,
+      "source_provider": "Hugging Face mirror Baldezo313/rsna-pneumonia-dataset"
+    }
+  ],
+  "source_batch_semantics": "Earliest retained downloader report listing the member; this records documented availability, not a proven first-download event. Members absent from all retained reports are marked unknown.",
+  "raw_and_processed_data_modified": false
+}

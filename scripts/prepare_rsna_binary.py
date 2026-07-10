@@ -206,23 +206,59 @@ def parse_args() -> argparse.Namespace:
         help="Prepare only patients with images present under --images-dir.",
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Delete existing output paths before rebuilding. Without this flag, existing outputs are never overwritten.",
+    )
     return parser.parse_args()
+
+
+def prepare_output_paths(paths: list[Path], *, force: bool) -> None:
+    """Refuse implicit replacement and remove outputs only after explicit consent."""
+    existing = [path for path in paths if path.exists() or path.is_symlink()]
+    if existing and not force:
+        rendered = "\n  - ".join(path.as_posix() for path in existing)
+        raise FileExistsError(
+            "Refusing to overwrite existing RSNA outputs. "
+            "Choose new paths or rerun with --force:\n  - " + rendered
+        )
+    for path in existing:
+        if path.is_symlink() or path.is_file():
+            path.unlink()
+        elif path.is_dir():
+            shutil.rmtree(path)
 
 
 def main() -> int:
     args = parse_args()
+    if args.train_fraction <= 0 or args.val_fraction <= 0 or args.train_fraction + args.val_fraction >= 1:
+        raise ValueError("fractions must be positive and leave a non-empty test fraction")
     raw_root = resolve_project_path(args.raw_root)
     images_dir = resolve_project_path(args.images_dir or raw_root / "stage_2_train_images")
     labels_csv = resolve_project_path(args.labels_csv or raw_root / "stage_2_train_labels.csv")
     class_info_csv = resolve_project_path(args.class_info_csv or raw_root / "stage_2_detailed_class_info.csv")
     output_root = resolve_project_path(args.output_root)
+    splits_output = resolve_project_path(args.splits_output)
+    summary_output = resolve_project_path(args.summary_output)
+    figure_output = resolve_project_path(args.figure_output)
 
     if not labels_csv.is_file():
         raise FileNotFoundError(f"RSNA labels CSV not found: {labels_csv}")
     if not images_dir.is_dir():
         raise FileNotFoundError(f"RSNA image directory not found: {images_dir}")
-    if output_root.exists() and not args.dry_run:
-        shutil.rmtree(output_root)
+    resolved_output = output_root.resolve()
+    protected_roots = (raw_root.resolve(), images_dir.resolve())
+    if resolved_output == PROJECT_ROOT.resolve() or any(
+        resolved_output.is_relative_to(root) or root.is_relative_to(resolved_output)
+        for root in protected_roots
+    ):
+        raise ValueError("--output-root must not overlap the project, raw-data, or image roots")
+    if not args.dry_run:
+        prepare_output_paths(
+            [output_root, splits_output, summary_output, figure_output],
+            force=args.force,
+        )
 
     labels = read_label_rows(labels_csv)
     full_label_patient_count = len(labels)
@@ -275,7 +311,7 @@ def main() -> int:
     if not args.dry_run:
         write_metadata(output_root / "metadata.csv", metadata_rows)
         write_sample_manifests(output_root, metadata_rows)
-        write_distribution_figure(resolve_project_path(args.figure_output), counts)
+        write_distribution_figure(figure_output, counts)
 
     split_payload = {
         "seed": args.seed,
@@ -300,10 +336,14 @@ def main() -> int:
         "missing_images": missing_images,
         "dry_run": bool(args.dry_run),
     }
-    write_json(resolve_project_path(args.splits_output), split_payload)
-    write_json(resolve_project_path(args.summary_output), summary)
+    if not args.dry_run:
+        write_json(splits_output, split_payload)
+        write_json(summary_output, summary)
     print(f"Prepared RSNA binary metadata rows: {len(metadata_rows)}")
-    print(f"Wrote summary: {resolve_project_path(args.summary_output).as_posix()}")
+    if args.dry_run:
+        print("Dry run: no output files were written or removed")
+    else:
+        print(f"Wrote summary: {summary_output.as_posix()}")
     return 0 if not missing_images else 1
 
 

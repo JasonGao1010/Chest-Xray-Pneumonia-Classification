@@ -6,7 +6,7 @@
   "sample_count": 26,
   "exported_case_count": 15,
   "counts": {
-    "correct": 11,
+    "correct": 13,
     "false_positive": 6,
     "false_negative": 7,
     "high_confidence_false_positive": 2,
@@ -14,5 +14,8 @@
     "borderline": 2
   },
   "csv_output": "./results/error_cases_nih_test_vit_b16.csv",
-  "grid_rendered": 15
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

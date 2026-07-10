@@ -1,7 +1,0 @@
-\chapter{阈值、校准与概率可靠性}
-
-在 Kermany test 上，ViT-B/16 未校准 ECE 为 0.0645，Brier score 为 0.0850。使用官方 val 做 temperature scaling 后，ECE 变为 0.0858，Brier score 变为 0.0918，没有改善概率可靠性。主要原因可能是 val 只有 16 张，不能代表测试集分布。
-
-扩容 RSNA 后，val 包含 NORMAL 107 张和 PNEUMONIA 106 张，已经达到本轮提升计划中温度缩放分析的最低样本要求。Kermany 训练的 ViT-B/16 直接测试 RSNA test 时，未校准 ECE 为 0.1919，Brier score 为 0.2434；使用 RSNA val 学习温度参数后，temperature 为 4.27，RSNA test ECE 降到 0.0263，Brier score 降到 0.2041。DenseNet121 的对应结果为：未校准 ECE 0.1968、Brier score 0.2325；temperature 为 4.14，校准后 ECE 0.0272、Brier score 0.1874。
-
-这说明外部数据上的原始概率明显过度自信，temperature scaling 可以改善概率可信度。但校准只改变概率尺度，不改变样本排序，也不等同于提高分类能力。报告中仍应把 accuracy、recall 和 specificity 与校准指标分开解释，不能把 ECE 下降写成模型已经完成可靠外部部署。

@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "predictions": "./results/mixed_simple_predictions_kermany_grouped_test_densenet121_seed42.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 1170,
+  "exported_case_count": 38,
+  "counts": {
+    "correct": 1137,
+    "false_positive": 10,
+    "false_negative": 23,
+    "high_confidence_false_positive": 6,
+    "high_confidence_false_negative": 7,
+    "borderline": 9
+  },
+  "csv_output": "./results/mixed_simple_error_cases_kermany_grouped_densenet121_seed42.csv",
+  "grid_output": "./figures/mixed_simple_error_grid_kermany_grouped_densenet121_seed42.png",
+  "grid_rendered": 16,
+  "grid_selection": {
+    "policy_version": 1,
+    "policy": "deterministic four-bucket quota: extreme FP, extreme FN, nearest-threshold FP, nearest-threshold FN; redistribute shortages to remaining errors; use correct borderline cases only after exhausting errors",
+    "requested_limit": 16,
+    "quota_targets": {
+      "extreme_false_positive": 4,
+      "extreme_false_negative": 4,
+      "near_threshold_false_positive": 4,
+      "near_threshold_false_negative": 4
+    },
+    "selected_count": 16,
+    "selected_by_bucket": {
+      "extreme_false_positive": 4,
+      "extreme_false_negative": 4,
+      "near_threshold_false_positive": 4,
+      "near_threshold_false_negative": 4
+    },
+    "selected_by_coarse_type": {
+      "false_positive": 8,
+      "false_negative": 8
+    },
+    "selected_paths": [
+      "test/NORMAL/IM-0022-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-0232-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-0330-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-0222-0001.jpeg",
+      "test/PNEUMONIA/person706_virus_1304.jpeg",
+      "test/PNEUMONIA/person1461_virus_2510.jpeg",
+      "test/PNEUMONIA/person279_virus_576.jpeg",
+      "test/PNEUMONIA/person788_virus_1419.jpeg",
+      "test/NORMAL/NORMAL2-IM-1064-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-1436-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-1247-0001.jpeg",
+      "test/NORMAL/NORMAL2-IM-1086-0001.jpeg",
+      "test/PNEUMONIA/person498_bacteria_2102.jpeg",
+      "test/PNEUMONIA/person1199_bacteria_3149.jpeg",
+      "test/PNEUMONIA/person1056_virus_1755.jpeg",
+      "test/PNEUMONIA/person279_bacteria_1315.jpeg"
+    ]
+  },
+  "grid_rendering": {
+    "font_family": "Times New Roman",
+    "dpi": 300,
+    "image_mode": "grayscale",
+    "crop": "none",
+    "intensity_adjustment": "none"
+  }
+}

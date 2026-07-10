@@ -14,5 +14,8 @@
     "borderline": 0
   },
   "csv_output": "./results/error_cases_nih_test_convnext_tiny.csv",
-  "grid_rendered": 14
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

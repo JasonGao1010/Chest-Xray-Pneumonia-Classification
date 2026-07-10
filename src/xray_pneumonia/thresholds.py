@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable, Sequence
@@ -62,11 +63,16 @@ def load_prediction_csv(
             raise ValueError(f"Missing required prediction columns in {csv_path}: {sorted(missing)}")
 
         for row in reader:
+            score = float(row[score_name])
+            if not math.isfinite(score) or not 0.0 <= score <= 1.0:
+                raise ValueError(
+                    f"Invalid probability {score!r} in {csv_path}; expected a finite value in [0, 1]"
+                )
             records.append(
                 PredictionRecord(
                     path=str(row["path"]),
                     true_label=str(row["true_label"]),
-                    score=float(row[score_name]),
+                    score=score,
                 )
             )
 
@@ -81,6 +87,8 @@ def compute_threshold_metrics(
     positive_class: str = "PNEUMONIA",
 ) -> ThresholdMetrics:
     """Compute confusion-matrix and scalar metrics for one threshold."""
+    if not 0.0 <= threshold <= 1.0:
+        raise ValueError("threshold must be in the interval [0, 1]")
     tp = tn = fp = fn = 0
     for record in records:
         is_positive = record.true_label == positive_class

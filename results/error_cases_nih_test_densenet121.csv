@@ -1,5 +1,4 @@
 path,true_label,predicted_label,prob_pneumonia,confidence,error_type,coarse_type
-test/PNEUMONIA/00000398_002.png,PNEUMONIA,PNEUMONIA,0.53586942,0.53586942,correct_borderline,correct
 test/PNEUMONIA/00001108_004.png,PNEUMONIA,NORMAL,0.00376149,0.99623851,high_confidence_false_negative,false_negative
 test/PNEUMONIA/00001317_000.png,PNEUMONIA,NORMAL,0.01325847,0.98674153,high_confidence_false_negative,false_negative
 test/PNEUMONIA/00000772_002.png,PNEUMONIA,NORMAL,0.04115262,0.95884738,high_confidence_false_negative,false_negative
@@ -12,3 +11,4 @@ test/NORMAL/00000742_004.png,NORMAL,PNEUMONIA,0.97247720,0.97247720,high_confide
 test/NORMAL/00000278_005.png,NORMAL,PNEUMONIA,0.93675286,0.93675286,high_confidence_false_positive,false_positive
 test/NORMAL/00000832_002.png,NORMAL,PNEUMONIA,0.92568070,0.92568070,high_confidence_false_positive,false_positive
 test/NORMAL/00000181_056.png,NORMAL,PNEUMONIA,0.56189144,0.56189144,false_positive,false_positive
+test/PNEUMONIA/00000398_002.png,PNEUMONIA,PNEUMONIA,0.53586942,0.53586942,correct_borderline,correct

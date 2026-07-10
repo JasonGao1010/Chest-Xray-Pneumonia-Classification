@@ -54,10 +54,20 @@ def create_classifier_model(
     num_classes: int,
     timm_module: Any,
 ) -> Any:
-    if model_name == "torchvision:vit_b_16":
+    if model_name in {"torchvision:vit_b_16", "vit_b16"}:
         from torchvision.models import vit_b_16
 
         return vit_b_16(weights=None, num_classes=num_classes)
+
+    if model_name in {"torchvision:densenet121", "densenet121"}:
+        from torchvision.models import densenet121
+
+        return densenet121(weights=None, num_classes=num_classes)
+
+    if model_name in {"torchvision:convnext_tiny", "convnext_tiny"}:
+        from torchvision.models import convnext_tiny
+
+        return convnext_tiny(weights=None, num_classes=num_classes)
 
     return timm_module.create_model(model_name, pretrained=False, num_classes=num_classes)
 
@@ -70,6 +80,8 @@ class XRayPredictor:
     project_root: Path | None = None
 
     def __post_init__(self) -> None:
+        if not 0.0 <= self.threshold <= 1.0:
+            raise ValueError("threshold must be in the interval [0, 1]")
         import timm
         import torch
         from torchvision import transforms
@@ -79,12 +91,16 @@ class XRayPredictor:
         checkpoint = load_checkpoint(torch, self.checkpoint_path)
         self.settings = dict(checkpoint.get("settings") or {})
         self.class_names = tuple(checkpoint.get("classes") or self.settings.get("classes") or ("NORMAL", "PNEUMONIA"))
+        if len(self.class_names) != 2 or "PNEUMONIA" not in self.class_names:
+            raise ValueError(
+                "The web predictor requires exactly two classes including PNEUMONIA"
+            )
         self.model_name = str(self.settings.get("model", "tf_efficientnetv2_s.in1k"))
         self.image_size = int(self.settings.get("image_size", 224))
         self.device_obj = choose_device(self.device, torch)
         self.transform = build_eval_transform(self.settings, transforms)
-        self.positive_index = self.class_names.index("PNEUMONIA") if "PNEUMONIA" in self.class_names else min(1, len(self.class_names) - 1)
-        self.negative_index = 0 if self.positive_index != 0 else min(1, len(self.class_names) - 1)
+        self.positive_index = self.class_names.index("PNEUMONIA")
+        self.negative_index = 1 - self.positive_index
 
         model = create_classifier_model(self.model_name, len(self.class_names), timm)
         model.load_state_dict(checkpoint["model_state"])
@@ -109,14 +125,18 @@ class XRayPredictor:
 
         return {
             "predicted_label": predicted_label,
-            "predicted_label_cn": "疑似肺炎" if predicted_label == "PNEUMONIA" else "未见肺炎模式",
+            "predicted_label_cn": (
+                "PNEUMONIA 标签倾向"
+                if predicted_label == "PNEUMONIA"
+                else "NORMAL 标签倾向"
+            ),
             "probabilities": probabilities,
             "normal_probability": probabilities.get("NORMAL"),
             "pneumonia_probability": pneumonia_probability,
             "threshold": self.threshold,
             "confidence": max(probabilities.values()) if probabilities else None,
             "model": self.model_name,
-            "checkpoint": self.checkpoint_path.as_posix(),
+            "checkpoint": Path(self.checkpoint_path).as_posix(),
             "device": str(self.device_obj),
             "image_size": self.image_size,
         }

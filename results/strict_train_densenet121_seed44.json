@@ -1,0 +1,165 @@
+{
+  "ok": true,
+  "run_id": "20260710_153625_torchvision:densenet121",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/processed/kermany_grouped_seed42",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:densenet121",
+    "pretrained": true,
+    "epochs": 5,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 44,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null,
+    "domain_balanced_prefixes": [],
+    "freeze_mode": "none"
+  },
+  "dataset": {
+    "root": "./data/processed/kermany_grouped_seed42",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1113,
+        "PNEUMONIA": 2994
+      },
+      "val": {
+        "NORMAL": 156,
+        "PNEUMONIA": 423
+      }
+    },
+    "total_images": 4686,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 1113,
+    "PNEUMONIA": 2994
+  },
+  "domain_balanced_counts": {},
+  "freeze": {
+    "mode": "none",
+    "trainable_parameters": 6955906
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.17177399845092234,
+        "accuracy": 0.9410762113464816,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.11395912734222227,
+        "accuracy": 0.9602763385146805,
+        "samples": 579
+      },
+      "learning_rate": 9.045084971874738e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.09280238184775855,
+        "accuracy": 0.9663988312636961,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.10836218418380558,
+        "accuracy": 0.9637305699481865,
+        "samples": 579
+      },
+      "learning_rate": 6.545084971874737e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.0638915760937415,
+        "accuracy": 0.9780861943024105,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.06866007587741353,
+        "accuracy": 0.9758203799654577,
+        "samples": 579
+      },
+      "learning_rate": 3.454915028125263e-05
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.0496276617685112,
+        "accuracy": 0.9836863890917945,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.06147081096061877,
+        "accuracy": 0.9792746113989638,
+        "samples": 579
+      },
+      "learning_rate": 9.549150281252631e-06
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.027314494877132094,
+        "accuracy": 0.9922084246408571,
+        "samples": 4107
+      },
+      "val": {
+        "loss": 0.07305628681472552,
+        "accuracy": 0.9775474956822107,
+        "samples": 579
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260710_153625_torchvision:densenet121/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260710_153625_torchvision:densenet121/last.pt"
+}

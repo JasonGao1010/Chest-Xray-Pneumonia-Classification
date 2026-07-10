@@ -1,7 +1,0 @@
-\chapter{外部数据集泛化分析}
-
-RSNA 处理脚本已经实现 DICOM 转 PNG、二分类标签生成、固定划分、metadata 和 samples manifest 输出。本轮使用 Hugging Face 镜像整理 1707 张图像，test 包含 NORMAL 215 张和 PNEUMONIA 227 张。Kermany 训练模型直接迁移到 RSNA test 后，ViT-B/16 F1 为 0.7434、AUC 为 0.7735；DenseNet121 F1 为 0.7774、AUC 为 0.8090；ConvNeXt-Tiny F1 为 0.7556、AUC 为 0.7865。三者均保持较高 recall，但 specificity 明显下降，错误主要来自正常样本误报。
-
-补充训练实验覆盖了 RSNA 内部基线、Kermany+RSNA 简单混合、domain-balanced sampling、冻结分类头和最后 block 解冻。RSNA-only DenseNet121 在 RSNA test 上 F1 为 0.7403、AUC 为 0.8218；简单混合在 RSNA test 上 accuracy 为 0.7602、AUC 为 0.8568，但 recall 降到 0.6432，且 Kermany test accuracy 降到 0.8606；domain-balanced 在 Kermany test 上保持 accuracy 0.9022、F1 0.9266，但 RSNA test F1 为 0.7098。冻结分类头和最后 block 解冻在 RSNA test 上分别取得 F1 0.7812 和 0.7826，但 specificity 仍偏低。
-
-NIH ChestX-ray14 弱标签子集作为第二个外部压力测试。该子集 test 只有 26 张图像，NORMAL 和 PNEUMONIA 各 13 张。Kermany 训练模型直接迁移到 NIH test 后，ViT-B/16 F1 为 0.4800，DenseNet121 F1 为 0.5385，ConvNeXt-Tiny F1 为 0.5000。RSNA 和 NIH 结果共同提示跨来源泛化风险明显，但受标签定义、年龄结构、图像格式和 NIH 弱标签影响，不能把它们解释为稳定临床外部验证。

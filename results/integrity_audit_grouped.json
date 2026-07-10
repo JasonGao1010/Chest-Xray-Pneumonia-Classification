@@ -1,8 +1,10 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "datasets": [
     {
       "root": "./data/processed/kermany_grouped_seed42",
+      "dataset_kind": "kermany",
+      "grouping_unit": "conservative subtype-agnostic filename cluster sensitivity (not a verified patient ID)",
       "counts": {
         "train": {
           "NORMAL": 1113,
@@ -17,15 +19,86 @@
           "PNEUMONIA": 856
         }
       },
-      "subject_overlap": [],
+      "group_counts": {
+        "train": 2183,
+        "val": 311,
+        "test": 624
+      },
+      "group_overlap": [],
+      "group_label_conflicts": [],
       "cross_split_duplicate_groups": [],
       "label_conflict_groups": [],
       "hash_images": true,
+      "group_disjoint_ok": true,
+      "split_integrity_ok": true,
+      "independent_split_ok": true,
+      "bare_token_sensitivity": {
+        "bare_person_token_semantics": "Sensitivity diagnostic only: equal bare personN counters across bacteria/virus namespaces are not treated as verified patient identity.",
+        "comparisons": [
+          {
+            "left": "train",
+            "right": "val",
+            "same_subtype": [],
+            "same_subtype_count": 0,
+            "cross_subtype": [],
+            "cross_subtype_count": 0
+          },
+          {
+            "left": "train",
+            "right": "test",
+            "same_subtype": [],
+            "same_subtype_count": 0,
+            "cross_subtype": [],
+            "cross_subtype_count": 0
+          },
+          {
+            "left": "val",
+            "right": "test",
+            "same_subtype": [],
+            "same_subtype_count": 0,
+            "cross_subtype": [],
+            "cross_subtype_count": 0
+          }
+        ]
+      }
+    },
+    {
+      "root": "./data/processed/rsna_binary",
+      "dataset_kind": "rsna",
+      "grouping_unit": "RSNA patientId/image filename stem",
+      "counts": {
+        "train": {
+          "NORMAL": 560,
+          "PNEUMONIA": 492
+        },
+        "val": {
+          "NORMAL": 107,
+          "PNEUMONIA": 106
+        },
+        "test": {
+          "NORMAL": 215,
+          "PNEUMONIA": 227
+        }
+      },
+      "group_counts": {
+        "train": 1052,
+        "val": 213,
+        "test": 442
+      },
+      "group_overlap": [],
+      "group_label_conflicts": [],
+      "cross_split_duplicate_groups": [],
+      "label_conflict_groups": [],
+      "hash_images": true,
+      "group_disjoint_ok": true,
+      "split_integrity_ok": true,
       "independent_split_ok": true
     }
   ],
   "evaluations": {
-    "checked_files": 40,
+    "file_pattern": "*eval_*.json",
+    "discovered_files": 94,
+    "checked_files": 94,
     "missing_predictions": [],
     "metric_mismatches": [],
     "ok": true

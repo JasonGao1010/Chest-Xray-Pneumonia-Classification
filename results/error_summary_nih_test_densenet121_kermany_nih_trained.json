@@ -14,5 +14,8 @@
     "borderline": 2
   },
   "csv_output": "./results/error_cases_nih_test_densenet121_kermany_nih_trained.csv",
-  "grid_rendered": 12
+  "grid_output": null,
+  "grid_rendered": null,
+  "grid_selection": null,
+  "grid_rendering": null
 }

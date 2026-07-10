@@ -35,13 +35,6 @@ models/*.onnx
 deliverables/
 *.zip
 
-# Private workspace notes
-MANIFEST.md
-task_plan.md
-progress.md
-findings.md
-REPRODUCE_RESULTS.md
-
 # Keep only stable public figures by default.
 figures/*
 !figures/confusion_matrix_test_vit_b16.png
@@ -86,6 +79,13 @@ figures/*
 !figures/error_case_grid_nih_test_densenet121_kermany_nih_trained.png
 !figures/gradcam_kermany_error_cases_densenet121.png
 !figures/gradcam_nih_positive_cases_densenet121.png
+!figures/strict_confusion_kermany_grouped_test_densenet121_seed42.png
+!figures/strict_confusion_rsna_test_densenet121_seed42.png
+!figures/mixed_simple_confusion_rsna_test_densenet121_seed42.png
+!figures/strict_error_grid_kermany_grouped_densenet121_seed42.png
+!figures/strict_error_grid_rsna_densenet121_seed42.png
+!figures/mixed_simple_error_grid_kermany_grouped_densenet121_seed42.png
+!figures/mixed_simple_error_grid_rsna_densenet121_seed42.png
 
 # Keep only stable public result files by default.
 results/*
@@ -175,26 +175,14 @@ results/*
 !results/robust_summary.json
 !results/mixed_strict_summary.json
 !results/kermany_official_unique_subject_sensitivity.json
-
-# Keep report source and final PDF; ignore generated office/intermediate files.
-reports/*
-!reports/course_report.md
-!reports/course_report.tex
-!reports/course_report.pdf
-!reports/audit_review.md
-!reports/thesis/
-!reports/thesis/**
-reports/thesis/*.aux
-reports/thesis/*.bbl
-reports/thesis/*.blg
-reports/thesis/*.fdb_latexmk
-reports/thesis/*.fls
-reports/thesis/*.log
-reports/thesis/*.out
-reports/thesis/*.toc
-reports/thesis/*.xdv
-reports/thesis/*.lof
-reports/thesis/*.lot
+!results/strict_*.json
+!results/strict_*.csv
+!results/robust_*.json
+!results/robust_*.csv
+!results/mixed_simple_*.json
+!results/mixed_simple_*.csv
+!results/mixed_domain_balanced_*.json
+!results/mixed_domain_balanced_*.csv
 
 # Public config
 configs/*
@@ -203,7 +191,7 @@ configs/*
 !configs/convnext_tiny.yaml
 !configs/densenet121_robust.yaml
 
-# Course/private source materials are not needed in the public repository.
+# Local source materials are not needed in the public repository.
 docs/*
 
 # Keep public scripts only.
@@ -229,6 +217,19 @@ scripts/*
 !scripts/summarize_strict_results.py
 !scripts/analyze_domain_shift.py
 !scripts/evaluate_frozen_thresholds.py
+!scripts/freeze_rsna_manifest.py
+!scripts/render_report_figures.py
+!scripts/capture_web_demo.py
+
+# Keep compact formal-run logs; model checkpoints remain ignored under outputs/.
+!logs/
+logs/*
+!logs/strict/
+!logs/strict/**
+!logs/robust/
+!logs/robust/**
+!logs/mixed_strict/
+!logs/mixed_strict/**
 
 # System files
 .DS_Store

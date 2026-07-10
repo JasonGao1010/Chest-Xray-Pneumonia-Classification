@@ -1,3 +1,0 @@
-\chapter{结论}
-
-本项目已经稳定复现 Kermany 主结果，并补充 DenseNet121、ConvNeXt-Tiny、扩容 RSNA 外部验证、RSNA-only 与 Kermany+RSNA 训练、domain-balanced sampling、冻结/解冻微调、NIH 外部弱标签验证、校准指标、可靠性曲线和错误样本导出。当前真实结果支持的结论是：DenseNet121 在 Kermany 默认阈值下略优，ViT-B/16 仍是稳定主基线，ConvNeXt-Tiny 排序能力较强；扩容 RSNA test 上三类 Kermany 训练模型的 F1 为 0.7434 到 0.7774，明显低于同分布测试，主要问题是正常样本误报增加；temperature scaling 可以显著降低外部数据 ECE，但不直接解决分类 trade-off；DenseNet121 的简单混合、domain-balanced、RSNA-only 和冻结/解冻微调各有取舍，没有一种策略同时稳定提高 RSNA 与 Kermany 两个测试集。这个项目现在能支撑“单数据集高分不等于跨来源可靠”的研究结论，但不能写成临床部署模型已经完成验证。

@@ -16,7 +16,13 @@ SRC_ROOT = PROJECT_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from xray_pneumonia.data import DEFAULT_CLASSES, XRayImageDataset, XRaySampleDataset, validate_dataset_layout
+from xray_pneumonia.data import (  # noqa: E402
+    DEFAULT_CLASSES,
+    XRayImageDataset,
+    XRaySampleDataset,
+    validate_dataset_layout,
+)
+from xray_pneumonia.plotting import configure_report_figure_typography  # noqa: E402
 
 
 def timestamp() -> str:
@@ -144,6 +150,13 @@ def compute_metrics(
     positive_scores: list[float],
     class_names: tuple[str, ...],
 ) -> dict[str, Any]:
+    if len(class_names) != 2:
+        raise ValueError("Binary evaluation requires exactly two classes")
+    if not (len(y_true) == len(y_pred) == len(positive_scores)) or not y_true:
+        raise ValueError("Evaluation arrays must be non-empty and have equal lengths")
+    if any(not 0.0 <= score <= 1.0 for score in positive_scores):
+        raise ValueError("Positive-class scores must lie in [0, 1]")
+
     from sklearn.metrics import (
         accuracy_score,
         brier_score_loss,
@@ -193,8 +206,14 @@ def expected_calibration_error(
     n_bins: int = 10,
     threshold: float = 0.5,
 ) -> float:
+    if len(labels_binary) != len(positive_scores):
+        raise ValueError("labels and scores must have equal lengths")
+    if n_bins <= 0:
+        raise ValueError("n_bins must be positive")
     if not labels_binary:
         return 0.0
+    if any(not 0.0 <= score <= 1.0 for score in positive_scores):
+        raise ValueError("scores must lie in [0, 1]")
     buckets: list[list[tuple[float, int]]] = [[] for _ in range(n_bins)]
     for label, score in zip(labels_binary, positive_scores):
         predicted_positive = score >= threshold
@@ -252,6 +271,9 @@ def write_predictions(path: Path, rows: list[dict[str, Any]], class_names: tuple
 
 
 def write_confusion_matrix(path: Path, matrix: list[list[int]], class_names: tuple[str, ...]) -> None:
+    import matplotlib as mpl
+
+    configure_report_figure_typography(mpl)
     import matplotlib.pyplot as plt
     import seaborn as sns
 
@@ -265,13 +287,14 @@ def write_confusion_matrix(path: Path, matrix: list[list[int]], class_names: tup
         xticklabels=class_names,
         yticklabels=class_names,
         cbar=False,
+        annot_kws={"fontsize": 10},
         ax=ax,
     )
     ax.set_xlabel("Predicted")
     ax.set_ylabel("True")
     ax.set_title("Confusion Matrix")
     fig.tight_layout()
-    fig.savefig(path, dpi=180)
+    fig.savefig(path, dpi=300)
     plt.close(fig)
 
 
@@ -287,10 +310,13 @@ def evaluate(args: argparse.Namespace) -> dict[str, Any]:
     checkpoint = load_checkpoint(torch, checkpoint_path)
     settings = dict(checkpoint.get("settings") or {})
     class_names = tuple(checkpoint.get("classes") or settings.get("classes") or DEFAULT_CLASSES)
+    if len(class_names) != 2 or "PNEUMONIA" not in class_names:
+        raise ValueError("Evaluation requires exactly two classes including PNEUMONIA")
     data_root = resolve_project_path(args.data_root or settings.get("data_root", "data/raw/chest_xray"))
 
     device = choose_device(args.device, torch)
     samples_csv = resolve_project_path(args.samples_csv) if args.samples_csv is not None else None
+    dataset: Any
     if samples_csv is not None:
         explicit_samples = load_samples_csv(samples_csv, data_root, class_names)
         dataset = XRaySampleDataset(

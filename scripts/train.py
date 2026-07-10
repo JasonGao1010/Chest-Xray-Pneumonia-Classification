@@ -22,7 +22,6 @@ if str(SRC_ROOT) not in sys.path:
 
 from xray_pneumonia.data import (  # noqa: E402
     DEFAULT_CLASSES,
-    DEFAULT_SPLITS,
     XRayImageDataset,
     build_class_weights,
     stratified_holdout_indices,
@@ -855,6 +854,7 @@ def run_epoch(
         labels = labels.to(device)
 
         if training:
+            assert optimizer is not None
             optimizer.zero_grad(set_to_none=True)
             with autocast_context(torch_module, use_amp, device):
                 logits = model(images)
@@ -1141,9 +1141,9 @@ def main() -> int:
         report = readiness_report(settings)
         print_readiness(report)
         if args.json_output is not None:
-            output_path = resolve_project_path(args.json_output)
-            write_json(output_path, report)
-            print(f"Wrote readiness report: {output_path.as_posix()}")
+            readiness_output = resolve_project_path(args.json_output)
+            write_json(readiness_output, report)
+            print(f"Wrote readiness report: {readiness_output.as_posix()}")
         return 0 if report["ok"] else 1
 
     output_path = resolve_project_path(args.json_output) if args.json_output is not None else None

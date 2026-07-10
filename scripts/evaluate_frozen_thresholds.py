@@ -13,7 +13,7 @@ SRC = PROJECT_ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from xray_pneumonia.thresholds import (
+from xray_pneumonia.thresholds import (  # noqa: E402
     compute_threshold_metrics,
     load_prediction_csv,
     make_threshold_grid,

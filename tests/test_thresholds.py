@@ -75,6 +75,11 @@ class ThresholdAnalysisTest(unittest.TestCase):
         self.assertEqual([record.true_label for record in records], ["NORMAL", "PNEUMONIA"])
         self.assertEqual([record.score for record in records], [0.1, 0.9])
 
+    def test_compute_threshold_metrics_rejects_invalid_threshold(self) -> None:
+        records = [PredictionRecord("a.png", "NORMAL", 0.2)]
+        with self.assertRaises(ValueError):
+            compute_threshold_metrics(records, 1.1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -98,7 +98,7 @@ def output_suffix(predictions_path: Path) -> str:
 def metric_row(name: str, metrics: ThresholdMetrics | None) -> dict[str, Any] | None:
     if metrics is None:
         return None
-    row = metrics.to_dict()
+    row: dict[str, Any] = metrics.to_dict()
     row["name"] = name
     return row
 

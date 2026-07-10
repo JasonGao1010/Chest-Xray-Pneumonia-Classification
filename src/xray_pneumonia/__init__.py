@@ -1,4 +1,4 @@
-"""Utilities for the X-ray pneumonia classification course design project."""
+"""Utilities for the X-ray pneumonia classification research repository."""
 
 from xray_pneumonia.data import (
     DEFAULT_CLASSES,

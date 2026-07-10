@@ -1,7 +1,9 @@
 {
-  "sample_count": 3000,
-  "kermany_count": 1500,
-  "rsna_count": 1500,
+  "schema_version": 2,
+  "sampling": {
+    "method": "deterministic evenly spaced subsample over sorted split/label/path rows",
+    "limit_per_source": 1500
+  },
   "features": [
     "mean",
     "std",
@@ -27,62 +29,297 @@
     "center_std",
     "entropy"
   ],
+  "cross_validation": {
+    "method": "5-fold StratifiedGroupKFold",
+    "shuffle": true,
+    "random_state": 42,
+    "grouping": "source-prefixed subtype-aware filename clusters for Kermany and RSNA patientId filename stems for RSNA"
+  },
+  "analyses": {
+    "unadjusted": {
+      "counts": {
+        "total": 3000,
+        "by_source": {
+          "kermany": 1500,
+          "rsna": 1500
+        },
+        "by_source_and_label": {
+          "kermany": {
+            "NORMAL": 406,
+            "PNEUMONIA": 1094
+          },
+          "rsna": {
+            "NORMAL": 776,
+            "PNEUMONIA": 724
+          }
+        }
+      },
+      "group_count": 2894,
+      "folds": [
+        {
+          "fold": 1,
+          "sample_count": 600,
+          "accuracy": 0.885,
+          "roc_auc": 0.9423500000000001
+        },
+        {
+          "fold": 2,
+          "sample_count": 600,
+          "accuracy": 0.8966666666666666,
+          "roc_auc": 0.9651333333333334
+        },
+        {
+          "fold": 3,
+          "sample_count": 600,
+          "accuracy": 0.895,
+          "roc_auc": 0.9607888888888889
+        },
+        {
+          "fold": 4,
+          "sample_count": 600,
+          "accuracy": 0.8816666666666667,
+          "roc_auc": 0.9467333333333332
+        },
+        {
+          "fold": 5,
+          "sample_count": 600,
+          "accuracy": 0.8866666666666667,
+          "roc_auc": 0.9526333333333333
+        }
+      ],
+      "overall_accuracy": 0.889,
+      "overall_roc_auc": 0.9531206666666666
+    },
+    "label_matched": {
+      "counts": {
+        "total": 2260,
+        "by_source": {
+          "kermany": 1130,
+          "rsna": 1130
+        },
+        "by_source_and_label": {
+          "kermany": {
+            "NORMAL": 406,
+            "PNEUMONIA": 724
+          },
+          "rsna": {
+            "NORMAL": 406,
+            "PNEUMONIA": 724
+          }
+        }
+      },
+      "group_count": 2217,
+      "folds": [
+        {
+          "fold": 1,
+          "sample_count": 452,
+          "accuracy": 0.8672566371681416,
+          "roc_auc": 0.9398151773827238
+        },
+        {
+          "fold": 2,
+          "sample_count": 452,
+          "accuracy": 0.8672566371681416,
+          "roc_auc": 0.9487822069073537
+        },
+        {
+          "fold": 3,
+          "sample_count": 452,
+          "accuracy": 0.8429203539823009,
+          "roc_auc": 0.9222726916751508
+        },
+        {
+          "fold": 4,
+          "sample_count": 452,
+          "accuracy": 0.8783185840707964,
+          "roc_auc": 0.9497219829274022
+        },
+        {
+          "fold": 5,
+          "sample_count": 452,
+          "accuracy": 0.8893805309734514,
+          "roc_auc": 0.9542838123580546
+        }
+      ],
+      "overall_accuracy": 0.8690265486725663,
+      "overall_roc_auc": 0.9422883546088182,
+      "matching": "equal source counts separately within each diagnosis label"
+    },
+    "label_stratified": {
+      "NORMAL": {
+        "counts": {
+          "total": 1182,
+          "by_source": {
+            "kermany": 406,
+            "rsna": 776
+          },
+          "by_source_and_label": {
+            "kermany": {
+              "NORMAL": 406,
+              "PNEUMONIA": 0
+            },
+            "rsna": {
+              "NORMAL": 776,
+              "PNEUMONIA": 0
+            }
+          }
+        },
+        "group_count": 1182,
+        "folds": [
+          {
+            "fold": 1,
+            "sample_count": 237,
+            "accuracy": 0.9240506329113924,
+            "roc_auc": 0.9838709677419355
+          },
+          {
+            "fold": 2,
+            "sample_count": 236,
+            "accuracy": 0.9110169491525424,
+            "roc_auc": 0.9666268418956591
+          },
+          {
+            "fold": 3,
+            "sample_count": 237,
+            "accuracy": 0.9029535864978903,
+            "roc_auc": 0.9615384615384616
+          },
+          {
+            "fold": 4,
+            "sample_count": 236,
+            "accuracy": 0.885593220338983,
+            "roc_auc": 0.960653126244524
+          },
+          {
+            "fold": 5,
+            "sample_count": 236,
+            "accuracy": 0.923728813559322,
+            "roc_auc": 0.9781760254878534
+          }
+        ],
+        "overall_accuracy": 0.9094754653130288,
+        "overall_roc_auc": 0.9691896043877914
+      },
+      "PNEUMONIA": {
+        "counts": {
+          "total": 1818,
+          "by_source": {
+            "kermany": 1094,
+            "rsna": 724
+          },
+          "by_source_and_label": {
+            "kermany": {
+              "NORMAL": 0,
+              "PNEUMONIA": 1094
+            },
+            "rsna": {
+              "NORMAL": 0,
+              "PNEUMONIA": 724
+            }
+          }
+        },
+        "group_count": 1712,
+        "folds": [
+          {
+            "fold": 1,
+            "sample_count": 364,
+            "accuracy": 0.8818681318681318,
+            "roc_auc": 0.9515981735159817
+          },
+          {
+            "fold": 2,
+            "sample_count": 364,
+            "accuracy": 0.8846153846153846,
+            "roc_auc": 0.938151472209101
+          },
+          {
+            "fold": 3,
+            "sample_count": 363,
+            "accuracy": 0.8787878787878788,
+            "roc_auc": 0.9282505536222715
+          },
+          {
+            "fold": 4,
+            "sample_count": 364,
+            "accuracy": 0.8653846153846154,
+            "roc_auc": 0.9370177924736262
+          },
+          {
+            "fold": 5,
+            "sample_count": 363,
+            "accuracy": 0.9090909090909091,
+            "roc_auc": 0.9601090816844241
+          }
+        ],
+        "overall_accuracy": 0.8839383938393839,
+        "overall_roc_auc": 0.9430229680729646
+      }
+    }
+  },
+  "sample_count": 3000,
+  "kermany_count": 1500,
+  "rsna_count": 1500,
   "folds": [
     {
       "fold": 1,
-      "accuracy": 0.8933333333333333,
-      "roc_auc": 0.9564555555555556
+      "sample_count": 600,
+      "accuracy": 0.885,
+      "roc_auc": 0.9423500000000001
     },
     {
       "fold": 2,
-      "accuracy": 0.8666666666666667,
-      "roc_auc": 0.9452777777777778
+      "sample_count": 600,
+      "accuracy": 0.8966666666666666,
+      "roc_auc": 0.9651333333333334
     },
     {
       "fold": 3,
-      "accuracy": 0.9,
-      "roc_auc": 0.9584555555555555
+      "sample_count": 600,
+      "accuracy": 0.895,
+      "roc_auc": 0.9607888888888889
     },
     {
       "fold": 4,
-      "accuracy": 0.8766666666666667,
-      "roc_auc": 0.9546555555555556
+      "sample_count": 600,
+      "accuracy": 0.8816666666666667,
+      "roc_auc": 0.9467333333333332
     },
     {
       "fold": 5,
-      "accuracy": 0.9033333333333333,
-      "roc_auc": 0.9622222222222223
+      "sample_count": 600,
+      "accuracy": 0.8866666666666667,
+      "roc_auc": 0.9526333333333333
     }
   ],
-  "overall_accuracy": 0.888,
-  "overall_roc_auc": 0.9551337777777777,
+  "overall_accuracy": 0.889,
+  "overall_roc_auc": 0.9531206666666666,
   "source_feature_means": {
     "kermany": {
-      "mean": 0.4831717759370804,
-      "std": 0.22266878160834314,
-      "p10": 0.12263399029740443,
-      "median": 0.5238797557651996,
-      "p90": 0.7396130872766177,
-      "border_mean": 0.33042662170529363,
-      "border_std": 0.27290680426359176,
-      "center_mean": 0.5790038864413897,
-      "center_std": 0.13930521453668673,
-      "aspect_ratio": 1.4446101417987394,
-      "entropy": 3.051716806305468
+      "mean": 0.48038283131519954,
+      "std": 0.22226039763788383,
+      "p10": 0.12134091835965713,
+      "median": 0.5200980561474959,
+      "p90": 0.7371801461577415,
+      "border_mean": 0.3279134990175565,
+      "border_std": 0.27170225201547143,
+      "center_mean": 0.5781483299732209,
+      "center_std": 0.13882309773812693,
+      "aspect_ratio": 1.451994408970773,
+      "entropy": 3.0497696934223573
     },
     "rsna": {
-      "mean": 0.503344425290823,
-      "std": 0.23163266205290953,
-      "p10": 0.16743974286690355,
-      "median": 0.524028772091493,
-      "p90": 0.7985754367510478,
-      "border_mean": 0.39406311861736076,
-      "border_std": 0.2848041645946602,
-      "center_mean": 0.5295339201291402,
-      "center_std": 0.17794112579524518,
+      "mean": 0.502572732269764,
+      "std": 0.23169357451299827,
+      "p10": 0.16538667086573938,
+      "median": 0.5228444582729911,
+      "p90": 0.7980855021476746,
+      "border_mean": 0.39091576692989716,
+      "border_std": 0.28424943509573736,
+      "center_mean": 0.5323182280858357,
+      "center_std": 0.17661699810872475,
       "aspect_ratio": 1.0,
-      "entropy": 3.139015369817261
+      "entropy": 3.1373819317301326
     }
   },
-  "interpretation": "High source-classification performance indicates measurable acquisition/style differences; it does not identify a causal mechanism for pneumonia errors."
+  "interpretation": "Label-matched and within-label source classification quantify residual source separability after controlling diagnosis composition. They do not identify an acquisition mechanism or establish causality for pneumonia errors."
 }
