@@ -7,5 +7,5 @@ authors:
     alias: "JasonGao1010"
 repository-code: "https://github.com/JasonGao1010/Chest-Xray-Pneumonia-Classification"
 license: MIT
-version: "1.1.4"
+version: "1.1.5"
 date-released: "2026-07-11"

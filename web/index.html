@@ -45,15 +45,15 @@
   <section class="section" id="summary">
     <div class="section-head"><span class="section-index">01 / 主要结果</span><div><h2>四项关键结果</h2><p class="section-note">以下数值均根据仓库中的逐图预测重新计算，百分数保留两位小数。</p></div></div>
     <div class="finding-grid">
-      <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16。测试集有 1,170 张图像，按 624 个保守文件名簇分组。</p></article>
+      <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16。测试集有 1,170 张图像，按文件名归为 624 组。</p></article>
       <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>同样来自 ViT-B/16，但固定阈值下的平衡准确率只有 65.94%。</p></article>
-      <article class="finding"><span>混合训练后的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet 严格基线高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
+      <article class="finding"><span>混合训练后的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet 基准方案高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
       <article class="finding"><span>控制标签比例后的来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两套处理后图像仍具有较高可分性，但现有证据无法确定差异的具体来源。</p></article>
     </div>
   </section>
 
   <section class="section" id="models">
-    <div class="section-head"><span class="section-index">02 / 模型表现</span><div><h2>三种模型的跨来源性能均明显下降</h2><p class="section-note">每组结果先对三个随机种子的预测概率取平均，再计算评价指标和分组自助区间。</p></div></div>
+    <div class="section-head"><span class="section-index">02 / 模型表现</span><div><h2>三种模型的跨来源性能均明显下降</h2><p class="section-note">每组结果先对三个随机种子的预测概率取平均，再计算评价指标；置信区间通过按组重采样获得。</p></div></div>
     <div class="chart-grid">
       <article class="chart-panel">
         <div class="panel-title"><div><h3>同一模型在两套测试集上的表现</h3><p>可切换平衡准确率、AUROC 和 Brier 分数</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
@@ -94,20 +94,20 @@
   </section>
 
   <section class="section" id="interventions">
-    <div class="section-head"><span class="section-index">04 / 训练方案</span><div><h2>不同训练方案的性能变化</h2><p class="section-note">圆点表示相对 DenseNet 严格基线的平衡准确率差值，横线表示 95% 成对分组自助区间，单位为百分点。</p></div></div>
+    <div class="section-head"><span class="section-index">04 / 训练方案</span><div><h2>不同训练方案的性能变化</h2><p class="section-note">圆点表示相对 DenseNet 基准方案的平衡准确率差值，横线表示按相同分组重采样得到的 95% 置信区间，单位为百分点。</p></div></div>
     <div class="delta-panel">
       <div class="delta-header"><span>策略 / 评价来源</span><span>95% CI</span><span>差值</span></div>
       <div id="deltaRows"></div>
       <div class="delta-axis"><span></span><div class="delta-ticks"><span>-5</span><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></div><span></span></div>
-      <p class="chart-caption">简单混合和域均衡方案均使用了 RSNA 训练标签，因此这里反映的是已知目标域上的训练效果，不能解释为对未知医院的零样本泛化。</p>
+      <p class="chart-caption">直接混合训练和来源均衡混合训练均使用了 RSNA 标签，因此这里反映的是已知测试来源上的训练效果，不能解释为对未知医院的零样本泛化。</p>
     </div>
   </section>
 
   <section class="section" id="datasets">
     <div class="section-head"><span class="section-index">05 / 数据划分</span><div><h2>数据规模与划分构成</h2><p class="section-note">柱长表示训练、验证和测试部分在整套数据中的占比，深色代表 PNEUMONIA 标签。</p></div></div>
     <div class="data-grid">
-      <article class="data-panel"><div class="dataset-total"><h3>Kermany保守文件名簇划分</h3><strong>5,856</strong></div><div id="kermanySplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">4107 / 579 / 1170。分组键来自文件名，不等同于经过验证的患者编号。</p></article>
-      <article class="data-panel"><div class="dataset-total"><h3>RSNA冻结子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">1052 / 213 / 442。按RSNA patientId隔离；可从官方完整训练集按冻结清单和哈希重建。</p></article>
+      <article class="data-panel"><div class="dataset-total"><h3>Kermany 按文件名分组划分</h3><strong>5,856</strong></div><div id="kermanySplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">训练集、验证集和测试集分别为 4,107、579 和 1,170 张图像。分组依据来自文件名，不能视为已经核实的患者编号。</p></article>
+      <article class="data-panel"><div class="dataset-total"><h3>RSNA 固定子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">训练集、验证集和测试集分别为 1,052、213 和 442 张图像。各部分按 RSNA patientId 分开，并可从官方完整训练集按固定清单和哈希重建。</p></article>
     </div>
   </section>
 
@@ -115,11 +115,11 @@
     <div class="section-head"><span class="section-index">06 / 核查结果</span><div><h2>来源差异与结果完整性</h2><p class="section-note">来源分类用于衡量两套处理后图像的可分性；右侧审计检查数据划分、预测文件和复算指标是否一致。</p></div></div>
     <div class="evidence-grid">
       <article class="source-chart"><div class="panel-title"><div><h3>标签比例匹配后的来源分类</h3><p>5 折分层分组交叉验证</p></div></div><div class="source-number"><strong>0.9441</strong><span>总体 AUROC<br>样本数 2,260，分组数 2,191</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>第 1 折</span><span>第 2 折</span><span>第 3 折</span><span>第 4 折</span><span>第 5 折</span></div><p class="chart-caption">匹配两套数据的标签比例后，分类器仍能较准确地识别图像来源。现有分析尚不能确定差异来自医院、设备还是采集流程。</p></article>
-      <article class="audit-panel"><div class="panel-title"><div><h3>结果文件核查</h3><p>以当前严格结果为准</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany 分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId 跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>已核对的评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失的逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">这些检查说明文件、划分和计算能够相互对应，但不能说明数据标签达到了临床金标准。</p></article>
+      <article class="audit-panel"><div class="panel-title"><div><h3>结果文件核查</h3><p>以当前主要结果为准</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany 分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId 跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>已核对的评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失的逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">这些检查说明文件、划分和计算能够相互对应，但不能说明数据标签达到了临床金标准。</p></article>
     </div>
   </section>
 
-  <section class="boundary"><h3>结果解释的边界</h3><ul><li>Kermany 采用保守文件名簇分组，不能表述为已经实现患者级独立划分。</li><li>RSNA 结果来自 1,707 张冻结子集，且测试集已用于多轮分析。</li><li>混合训练使用了 RSNA 标签，不能据此声称模型能够零样本适应未知医院。</li><li>本页用于课程研究和方法比较，不构成临床验证。</li></ul></section>
+  <section class="boundary"><h3>结果解释的边界</h3><ul><li>Kermany 依据文件名进行分组，不能表述为已经实现患者级独立划分。</li><li>RSNA 结果来自固定的 1,707 张图像，且测试集已用于多轮分析。</li><li>混合训练使用了 RSNA 标签，不能据此声称模型能够零样本适应未知医院。</li><li>本页用于课程研究和方法比较，不构成临床验证。</li></ul></section>
 </main>
 
 <footer><span>胸片肺炎二分类实验</span><span>数值依据 strict_summary.json 与审计结果整理</span></footer>
@@ -132,9 +132,9 @@ const DATA={
   {name:"ViT-B/16",short:"ViT",internal:{bacc:.9816841776,auc:.9968450503,brier:.0165625566},external:{bacc:.6593689171,auc:.8236451183,brier:.2832613065}}
  ],
  deltas:[
-  {strategy:"稳健配方",source:"Kermany",value:.0688,low:-.5377,high:.7862},{strategy:"稳健配方",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
-  {strategy:"简单混合",source:"Kermany",value:-.5841,low:-1.3417,high:.1389},{strategy:"简单混合",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
-  {strategy:"域均衡混合",source:"Kermany",value:-.9290,low:-1.9040,high:-.0364},{strategy:"域均衡混合",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
+  {strategy:"增强与标签平滑",source:"Kermany",value:.0688,low:-.5377,high:.7862},{strategy:"增强与标签平滑",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
+  {strategy:"直接混合训练",source:"Kermany",value:-.5841,low:-1.3417,high:.1389},{strategy:"直接混合训练",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
+  {strategy:"来源均衡混合训练",source:"Kermany",value:-.9290,low:-1.9040,high:-.0364},{strategy:"来源均衡混合训练",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
  ],
  kermany:[{name:"训练",normal:1113,pneumonia:2994},{name:"验证",normal:156,pneumonia:423},{name:"测试",normal:314,pneumonia:856}],
  rsna:[{name:"训练",normal:560,pneumonia:492},{name:"验证",normal:107,pneumonia:106},{name:"测试",normal:215,pneumonia:227}],
@@ -146,12 +146,12 @@ const DATA={
   {scope:"architecture",experiment:"DenseNet-121",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6591230407,prec:.6117318436,recall:.9647577093,spec:.3534883721,f1:.7487179487,auc:.8151623809,auprc:.8036194820,brier:.2919496597,ece:null},
   {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"RSNA",n:442,groups:442,acc:.6764705882,bacc:.6695318103,prec:.625,recall:.9251101322,spec:.4139534884,f1:.7460035524,auc:.8039545129,auprc:.8042785175,brier:.2596788402,ece:null},
   {scope:"architecture",experiment:"ViT-B/16",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6593689171,prec:.6129943503,recall:.9559471366,spec:.3627906977,f1:.7469879518,auc:.8236451183,auprc:.8299617258,brier:.2832613065,ece:null},
-  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
-  {scope:"strategy",experiment:"稳健配方 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
-  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
-  {scope:"strategy",experiment:"简单混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
-  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
-  {scope:"strategy",experiment:"域均衡混合 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
+  {scope:"strategy",experiment:"增强与标签平滑 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
+  {scope:"strategy",experiment:"增强与标签平滑 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
+  {scope:"strategy",experiment:"直接混合训练 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
+  {scope:"strategy",experiment:"直接混合训练 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
+  {scope:"strategy",experiment:"来源均衡混合训练 DenseNet",domain:"Kermany",n:1170,groups:624,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
+  {scope:"strategy",experiment:"来源均衡混合训练 DenseNet",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
  ]
 };
 const METRICS=[

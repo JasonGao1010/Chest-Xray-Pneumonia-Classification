@@ -31,5 +31,8 @@ def test_html_tracks_latest_strict_and_domain_shift_artifacts():
 
 def test_html_has_no_retired_public_numbers_or_wording():
     html = (ROOT / "web/index.html").read_text(encoding="utf-8")
-    for stale in ("94.23%", "group=2,217", "RSNA镜像便利子集", "1,707张镜像便利子集"):
+    for stale in (
+        "94.23%", "group=2,217", "RSNA镜像便利子集", "1,707张镜像便利子集",
+        "稳健配方", "保守文件名簇", "简单混合", "域均衡混合", "严格基线",
+    ):
         assert stale not in html
