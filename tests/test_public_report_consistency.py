@@ -45,11 +45,19 @@ def test_html_defines_every_public_model_and_method_code():
         ("ConvNeXt-Tiny", "torchvision ConvNeXt Tiny"),
         ("ViT-B/16", "torchvision Vision Transformer B/16"),
         ("ERM", "经验风险最小化"),
-        ("ERM-Reg", "正则化 ERM"),
+        ("ERM-Reg", "加入正则化的 ERM"),
         ("JT", "联合训练"),
-        ("JT-DBS", "来源均衡联合训练"),
+        ("JT-DBS", "采用来源均衡采样的联合训练"),
     ):
         assert code in html
         assert meaning in html
     for retired_model_code in ("DN121", "CNXT-T", "ViT-B16"):
         assert retired_model_code not in html
+
+
+def test_html_keeps_long_result_labels_visible_and_explains_table_scrolling():
+    html = (ROOT / "web/index.html").read_text(encoding="utf-8")
+    assert ".rank-row>span{min-width:0" in html
+    assert "text-overflow:ellipsis" not in html
+    assert "表格可左右滑动，实验名称会固定在左侧" in html
+    assert 'tabindex="0" aria-label="实验指标表，可横向滚动"' in html
