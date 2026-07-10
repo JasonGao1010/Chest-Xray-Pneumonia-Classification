@@ -41,9 +41,9 @@ def test_html_has_no_retired_public_numbers_or_wording():
 def test_html_defines_every_public_model_and_method_code():
     html = (ROOT / "web/index.html").read_text(encoding="utf-8")
     for code, meaning in (
-        ("DN121", "DenseNet121"),
-        ("CNXT-T", "ConvNeXt-Tiny"),
-        ("ViT-B16", "ViT-B/16"),
+        ("DenseNet121", "torchvision DenseNet-121"),
+        ("ConvNeXt-Tiny", "torchvision ConvNeXt Tiny"),
+        ("ViT-B/16", "torchvision Vision Transformer B/16"),
         ("BASE", "基础训练"),
         ("AUG-LS", "增强与标签平滑"),
         ("MIX", "直接混合训练"),
@@ -51,3 +51,5 @@ def test_html_defines_every_public_model_and_method_code():
     ):
         assert code in html
         assert meaning in html
+    for retired_model_code in ("DN121", "CNXT-T", "ViT-B16"):
+        assert retired_model_code not in html
