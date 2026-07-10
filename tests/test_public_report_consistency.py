@@ -17,7 +17,7 @@ def test_html_tracks_latest_strict_and_domain_shift_artifacts():
 
     matched = domain["analyses"]["label_matched"]
     assert f"{matched['overall_roc_auc']:.4f}" in html
-    assert f"group={matched['group_count']:,}" in html
+    assert f"分组数 {matched['group_count']:,}" in html
     for fold in matched["folds"]:
         token = f"{fold['roc_auc']:.10f}".removeprefix("0")
         assert token in html
