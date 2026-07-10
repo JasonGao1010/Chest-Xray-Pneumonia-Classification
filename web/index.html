@@ -44,10 +44,10 @@
 
 <main>
   <section class="section" id="summary">
-    <div class="section-head"><span class="section-index">01 / 主要结果</span><div><h2>先看四项关键结果</h2><p class="section-note">这里集中呈现最能说明问题的结果。所有数值均由仓库中的逐图预测重新计算，百分数保留两位小数。</p></div></div>
+    <div class="section-head"><span class="section-index">01 / 主要结果</span><div><h2>四项关键结果概览</h2><p class="section-note">本节汇总研究的主要结果。所有数值均由仓库中的逐图预测重新计算，百分数保留两位小数。</p></div></div>
     <div class="finding-grid">
       <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16 / ERM。测试集有 1,170 张图像，按文件名归为 624 组。</p></article>
-      <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>同样来自 ViT-B/16 / ERM，但固定阈值下的平衡准确率为 65.94%。</p></article>
+      <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>对应模型为 ViT-B/16 / ERM；在固定阈值下，其平衡准确率为 65.94%。</p></article>
       <article class="finding"><span>DenseNet121 / JT 的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet121 / ERM 高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
       <article class="finding"><span>控制标签比例后的来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两套处理后图像仍具有较高可分性，但现有证据无法确定差异的具体来源。</p></article>
     </div>
@@ -57,7 +57,7 @@
     <div class="section-head"><span class="section-index">02 / 模型表现</span><div><h2>更换模型架构并未消除跨来源性能下降</h2><p class="section-note">每组实验先对三个随机种子的预测概率取平均，再计算评价指标。置信区间采用分组重采样，避免把同组图像当作完全独立的样本。</p></div></div>
     <div class="chart-grid">
       <article class="chart-panel">
-        <div class="panel-title"><div><h3>同一模型在两套测试集上的表现</h3><p>可切换平衡准确率、AUROC 和 Brier 分数</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
+        <div class="panel-title"><div><h3>同一模型在两套测试集上的表现</h3><p>支持比较平衡准确率、AUROC 和 Brier 分数</p></div><div class="metric-tabs"><button class="active" data-metric="bacc">BAcc</button><button data-metric="auc">AUROC</button><button data-metric="brier">Brier</button></div></div>
         <div class="bar-chart" id="modelBars"></div><div class="axis" id="barAxis"></div>
         <p class="chart-caption" id="barCaption">三种模型在 Kermany 测试集上的平衡准确率均超过 97%，在 RSNA 测试集上则降至约 66%。</p>
       </article>
@@ -71,7 +71,7 @@
           <g font-size="10"><circle cx="93" cy="60" r="4" fill="#176c61"/><circle cx="337" cy="202" r="4" fill="#176c61"/><text x="82" y="63" text-anchor="end">97.65</text><text x="348" y="205">65.91</text>
           <circle cx="93" cy="66" r="4" fill="#476f91"/><circle cx="337" cy="192" r="4" fill="#476f91"/><text x="82" y="77" text-anchor="end">97.27</text><text x="348" y="195">66.95</text>
           <circle cx="93" cy="53" r="4" fill="#a06d22"/><circle cx="337" cy="211" r="4" fill="#a06d22"/><text x="82" y="48" text-anchor="end">98.17</text><text x="348" y="218">65.94</text></g>
-          <text x="215" y="126" text-anchor="middle" font-size="12" fill="#aa4349">下降 30.3–32.2 个百分点</text>
+          <text x="215" y="235" text-anchor="middle" font-size="12" fill="#aa4349">下降 30.3–32.2 个百分点</text>
         </svg>
         <p class="chart-caption">三种架构在 Kermany 测试集上的差异较小；在 RSNA 测试集上，平衡准确率均下降约 30 个百分点。</p>
       </article>
@@ -79,7 +79,7 @@
   </section>
 
   <section class="section" id="explorer">
-    <div class="section-head"><span class="section-index">03 / 详细指标</span><div><h2>逐项比较各组实验</h2><p class="section-note">这里列出 9 项常用评价指标，并补充训练方案的 ECE。筛选条件改变后，左侧排序和右侧表格会一起更新。</p></div></div>
+    <div class="section-head"><span class="section-index">03 / 详细指标</span><div><h2>各组实验的指标比较</h2><p class="section-note">本节列出 9 项常用评价指标，并补充各训练方案的 ECE。调整筛选条件后，排序与指标表将同步更新。</p></div></div>
     <div class="explorer">
       <div class="controls">
         <div class="control"><label for="metricSelect">比较指标</label><select id="metricSelect"></select></div>
@@ -101,16 +101,16 @@
       <div class="delta-header"><span>策略 / 评价来源</span><span>95% CI</span><span>差值</span></div>
       <div id="deltaRows"></div>
       <div class="delta-axis"><span></span><div class="delta-ticks"><span>-5</span><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></div><span></span></div>
-      <p class="chart-caption">直接混合训练和来源均衡混合训练均使用了 RSNA 标签，因此这里反映的是已知测试来源上的训练效果，不能解释为对未知医院的零样本泛化。</p>
+      <p class="chart-caption">JT 与 JT-DBS 均使用了 RSNA 标签，因此结果反映的是已知来源参与训练后的性能变化，不代表模型对未知医院的零样本泛化能力。</p>
     </div>
   </section>
 
   <section class="section" id="methods">
-    <div class="section-head"><span class="section-index">05 / 方法说明</span><div><h2>四种训练方法分别做了什么</h2><p class="section-note">英文简称用于统一标记实验。每项方法的训练数据、损失函数和采样方式如下，模型本身的正式名称不作改写。</p></div></div>
+    <div class="section-head"><span class="section-index">05 / 方法说明</span><div><h2>训练方法的定义与实现</h2><p class="section-note">英文简称用于统一标记实验。下文说明各方法采用的训练数据、损失函数和采样方式；模型名称沿用其正式写法。</p></div></div>
     <div class="method-grid">
       <article class="method-card"><code>ERM</code><div><h3>经验风险最小化</h3><p>只使用 Kermany-FG 训练，以类别加权交叉熵处理类别不均衡。模型采用 ImageNet 预训练，并使用水平翻转、轻微旋转和余弦学习率调度。</p></div></article>
-      <article class="method-card"><code>ERM-Reg</code><div><h3>加入正则化的 ERM</h3><p>训练数据仍限于 Kermany-FG。在 ERM 的设置上增加颜色扰动和 0.1 标签平滑，用于检验常见正则化能否改善跨来源表现。</p></div></article>
-      <article class="method-card"><code>JT</code><div><h3>联合训练</h3><p>合并 Kermany-FG 与 RSNA-1707 的训练集和验证集，再按统一流程训练 DenseNet121。由于训练阶段已经使用 RSNA 标签，这组结果不属于零样本外部验证。</p></div></article>
+      <article class="method-card"><code>ERM-Reg</code><div><h3>加入正则化的 ERM</h3><p>训练数据仍为 Kermany-FG。在 ERM 的设置上增加颜色扰动和 0.1 标签平滑，用于评估常见正则化对跨来源表现的影响。</p></div></article>
+      <article class="method-card"><code>JT</code><div><h3>联合训练</h3><p>合并 Kermany-FG 与 RSNA-1707 的训练集和验证集，再按统一流程训练 DenseNet121。由于训练阶段已经使用 RSNA 标签，该结果不属于零样本外部验证。</p></div></article>
       <article class="method-card"><code>JT-DBS</code><div><h3>采用来源均衡采样的联合训练</h3><p>训练数据与 JT 相同。加权采样使两个图像来源在训练过程中具有相同的期望抽样权重，避免样本量较大的来源主导参数更新。</p></div></article>
     </div>
     <div class="model-key"><span><b>DenseNet121</b> torchvision DenseNet-121</span><span><b>ConvNeXt-Tiny</b> torchvision ConvNeXt Tiny</span><span><b>ViT-B/16</b> torchvision Vision Transformer B/16</span></div>
@@ -128,11 +128,11 @@
     <div class="section-head"><span class="section-index">07 / 核查结果</span><div><h2>来源差异与结果完整性</h2><p class="section-note">来源分类用于衡量两套处理后图像的可分性；右侧审计检查数据划分、预测文件和复算指标是否一致。</p></div></div>
     <div class="evidence-grid">
       <article class="source-chart"><div class="panel-title"><div><h3>标签比例匹配后的来源分类</h3><p>5 折分层分组交叉验证</p></div></div><div class="source-number"><strong>0.9441</strong><span>总体 AUROC<br>样本数 2,260，分组数 2,191</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>第 1 折</span><span>第 2 折</span><span>第 3 折</span><span>第 4 折</span><span>第 5 折</span></div><p class="chart-caption">匹配两套数据的标签比例后，分类器仍能较准确地识别图像来源。现有分析尚不能确定差异来自医院、设备还是采集流程。</p></article>
-      <article class="audit-panel"><div class="panel-title"><div><h3>结果文件核查</h3><p>以当前主要结果为准</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany 分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId 跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>已核对的评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失的逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">这些检查说明文件、划分和计算能够相互对应，但不能说明数据标签达到了临床金标准。</p></article>
+      <article class="audit-panel"><div class="panel-title"><div><h3>结果文件核查</h3><p>核查范围覆盖当前主要结果</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany 分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId 跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>已核对的评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失的逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">核查结果表明文件、数据划分与指标计算可以相互对应；该结论不涉及数据标签是否达到临床金标准。</p></article>
     </div>
   </section>
 
-  <section class="boundary"><h3>结果解释的边界</h3><ul><li>Kermany 依据文件名进行分组，不能表述为已经实现患者级独立划分。</li><li>RSNA 结果来自固定的 1,707 张图像，且测试集已用于多轮分析。</li><li>混合训练使用了 RSNA 标签，不能据此声称模型能够零样本适应未知医院。</li><li>本页用于课程研究和方法比较，不构成临床验证。</li></ul></section>
+  <section class="boundary"><h3>结果解释的边界</h3><ul><li>Kermany 依据文件名进行分组，不能表述为已经实现患者级独立划分。</li><li>RSNA 结果来自固定的 1,707 张图像，且测试集已用于多轮分析。</li><li>JT 与 JT-DBS 使用了 RSNA 标签，相关结果不能支持对未知医院的零样本适应结论。</li><li>本报告用于课程研究和方法比较，不构成临床验证。</li></ul></section>
 </main>
 
 <footer><span>胸片肺炎二分类实验</span><span>数值依据 strict_summary.json 与审计结果整理</span></footer>
