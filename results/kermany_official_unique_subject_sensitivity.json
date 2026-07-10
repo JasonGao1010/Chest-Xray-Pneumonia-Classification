@@ -1,0 +1,26 @@
+{
+  "sample_count": 304,
+  "normal": 234,
+  "pneumonia": 70,
+  "unique_pneumonia_subjects": 32,
+  "metrics": {
+    "accuracy": 0.8223684210526315,
+    "balanced_accuracy": 0.8846153846153846,
+    "precision": 0.5645161290322581,
+    "recall": 1.0,
+    "specificity": 0.7692307692307693,
+    "f1": 0.7216494845360825,
+    "roc_auc": 0.97991452991453,
+    "confusion_matrix": [
+      [
+        180,
+        54
+      ],
+      [
+        0,
+        70
+      ]
+    ]
+  },
+  "note": "Post-hoc sensitivity analysis: official Kermany test with pneumonia images whose filename subject ID is absent from official train; all NORMAL test images retained. Not a pre-specified locked test."
+}

@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "seed": 42,
+  "source_root": "./data/raw/chest_xray",
+  "output_root": "./data/processed/kermany_grouped_seed42",
+  "manifest": "./data/splits/kermany_grouped_seed42.csv",
+  "manifest_sha256": "ef73fd9733898e6216723cfbb2105e25e20765e750a92f11135fd01b16996573",
+  "image_counts": {
+    "test": {
+      "NORMAL": 314,
+      "PNEUMONIA": 856
+    },
+    "train": {
+      "NORMAL": 1113,
+      "PNEUMONIA": 2994
+    },
+    "val": {
+      "NORMAL": 156,
+      "PNEUMONIA": 423
+    }
+  },
+  "subject_counts": {
+    "test": {
+      "NORMAL": 289,
+      "PNEUMONIA": 335
+    },
+    "train": {
+      "NORMAL": 1011,
+      "PNEUMONIA": 1172
+    },
+    "val": {
+      "NORMAL": 144,
+      "PNEUMONIA": 167
+    }
+  },
+  "total_images": 5856,
+  "link_mode": "hardlink"
+}

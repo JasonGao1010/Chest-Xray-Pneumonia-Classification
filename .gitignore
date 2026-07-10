@@ -86,7 +86,6 @@ figures/*
 !figures/error_case_grid_nih_test_densenet121_kermany_nih_trained.png
 !figures/gradcam_kermany_error_cases_densenet121.png
 !figures/gradcam_nih_positive_cases_densenet121.png
-!figures/*rsna*.png
 
 # Keep only stable public result files by default.
 results/*
@@ -98,6 +97,7 @@ results/*
 !results/threshold_analysis_test_reproduced_vit_b16.json
 !results/threshold_curve_test_reproduced_vit_b16.csv
 !results/baseline_manifest.json
+!results/integrity_audit.json
 !results/readiness_densenet121.json
 !results/readiness_convnext_tiny.json
 !results/eval_kermany_val_vit_b16.json
@@ -167,14 +167,21 @@ results/*
 !results/calibration_nih_test_densenet121_kermany_nih_trained.json
 !results/error_cases_nih_test_densenet121_kermany_nih_trained.csv
 !results/error_summary_nih_test_densenet121_kermany_nih_trained.json
-!results/*rsna*.json
-!results/*rsna*.csv
+!results/integrity_audit_grouped.json
+!results/kermany_grouped_summary.json
+!results/strict_summary.json
+!results/strict_summary.csv
+!results/domain_shift_diagnostic.json
+!results/robust_summary.json
+!results/mixed_strict_summary.json
+!results/kermany_official_unique_subject_sensitivity.json
 
 # Keep report source and final PDF; ignore generated office/intermediate files.
 reports/*
 !reports/course_report.md
 !reports/course_report.tex
 !reports/course_report.pdf
+!reports/audit_review.md
 !reports/thesis/
 !reports/thesis/**
 reports/thesis/*.aux
@@ -186,12 +193,15 @@ reports/thesis/*.log
 reports/thesis/*.out
 reports/thesis/*.toc
 reports/thesis/*.xdv
+reports/thesis/*.lof
+reports/thesis/*.lot
 
 # Public config
 configs/*
 !configs/vit_b16.yaml
 !configs/densenet121.yaml
 !configs/convnext_tiny.yaml
+!configs/densenet121_robust.yaml
 
 # Course/private source materials are not needed in the public repository.
 docs/*
@@ -214,6 +224,11 @@ scripts/*
 !scripts/download_rsna_hf_subset.py
 !scripts/prepare_mixed_binary.py
 !scripts/plot_probability_distribution.py
+!scripts/audit_integrity.py
+!scripts/prepare_kermany_grouped.py
+!scripts/summarize_strict_results.py
+!scripts/analyze_domain_shift.py
+!scripts/evaluate_frozen_thresholds.py
 
 # System files
 .DS_Store

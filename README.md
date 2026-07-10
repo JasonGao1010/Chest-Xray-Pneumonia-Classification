@@ -4,6 +4,23 @@
 
 本项目只用于课程设计和研究训练，不构成临床诊断依据。
 
+## 2026-07-10 严格审计与重建结果
+
+最终审计发现，Kermany 官方目录中有 170 个肺炎文件名患者编号同时出现在 train 和 test。旧指标可以复算，但只能作为公开目录复现，不能视为严格患者独立评价。项目已按患者重新划分全部 5856 张图像：train 4107、validation 579、locked test 1170；新划分没有患者交叉、跨集合精确重复或标签冲突。
+
+三种模型各运行 3 个随机种子。患者级内部测试的 accuracy 均值为 DenseNet121 0.9752、ConvNeXt-Tiny 0.9764、ViT-B/16 0.9781；直接迁移到 RSNA 后分别降到 0.6614、0.6840 和 0.6599，说明数据来源变化比结构差异更重要。
+
+当前综合表现最好的提升方案是患者级 Kermany 与 RSNA 简单混合训练：
+
+| 测试集 | Accuracy | Balanced accuracy | Recall | Specificity | ROC-AUC |
+|---|---:|---:|---:|---:|---:|
+| Kermany patient-level locked test | 0.9681±0.0044 | 0.9684±0.0040 | 0.9677±0.0053 | 0.9692±0.0049 | 0.9943±0.0012 |
+| RSNA test | 0.7632±0.0107 | 0.7645±0.0095 | 0.7151±0.0592 | 0.8140±0.0426 | 0.8565±0.0026 |
+
+这是有监督多域训练结果，不是对未知医院的零样本域泛化。RSNA 使用镜像可用子集，NIH 仍是小规模弱标签敏感性分析。
+
+完整审查见 `reports/audit_review.md`，机器审计见 `results/integrity_audit.json`，多随机种子汇总见 `results/strict_summary.json`、`results/robust_summary.json` 和 `results/mixed_strict_summary.json`。
+
 ## 项目内容
 
 公开发布包中建议保留以下内容：
@@ -235,13 +252,15 @@ python scripts/train.py \
 
 ## 报告和结果文件
 
-课程报告位于：
+最终课程报告位于：
 
 ```text
 reports/course_report.pdf
-reports/course_report.md
-reports/course_report.tex
+reports/thesis/main.tex
+reports/thesis/sections/
 ```
+
+最终 PDF 共 70 页，其中第1--12章连续正文52页；正文以数据审计、方法、实验、统计和讨论为主，不依靠单图附录凑页。
 
 主结果摘要位于：
 

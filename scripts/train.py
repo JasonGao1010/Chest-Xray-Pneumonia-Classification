@@ -105,6 +105,7 @@ class TrainSettings:
     init_checkpoint: Path | None
     domain_balanced_prefixes: tuple[str, ...]
     freeze_mode: str
+    label_smoothing: float
 
 
 def deep_merge(base: dict[str, Any], updates: dict[str, Any]) -> dict[str, Any]:
@@ -299,6 +300,7 @@ def to_jsonable_settings(settings: TrainSettings) -> dict[str, Any]:
         ),
         "domain_balanced_prefixes": list(settings.domain_balanced_prefixes),
         "freeze_mode": settings.freeze_mode,
+        "label_smoothing": settings.label_smoothing,
     }
 
 
@@ -359,6 +361,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=None)
     parser.add_argument("--image-size", type=int, default=None)
     parser.add_argument("--model", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--label-smoothing", type=float, default=None)
     parser.add_argument("--device", type=str, default="auto")
     parser.add_argument("--num-workers", type=int, default=None)
     parser.add_argument("--max-train-batches", type=int, default=None)
@@ -485,7 +489,11 @@ def build_settings(args: argparse.Namespace, config: dict[str, Any]) -> TrainSet
         ),
         optimizer=str(nested_get(config, "training", "optimizer", default="adamw")),
         scheduler=str(nested_get(config, "training", "scheduler", default="cosine")),
-        seed=int(nested_get(config, "training", "seed", default=42)),
+        seed=int(
+            args.seed
+            if args.seed is not None
+            else nested_get(config, "training", "seed", default=42)
+        ),
         mixed_precision=bool(mixed_precision),
         use_class_weights=bool(use_class_weights),
         num_workers=int(
@@ -512,6 +520,11 @@ def build_settings(args: argparse.Namespace, config: dict[str, Any]) -> TrainSet
         ),
         domain_balanced_prefixes=tuple(args.domain_balanced_prefixes or ()),
         freeze_mode=str(args.freeze_mode),
+        label_smoothing=float(
+            args.label_smoothing
+            if args.label_smoothing is not None
+            else nested_get(config, "training", "label_smoothing", default=0.0)
+        ),
     )
 
 
@@ -606,6 +619,15 @@ def set_seed(seed: int, np_module: Any, torch_module: Any) -> None:
     torch_module.manual_seed(seed)
     if torch_module.cuda.is_available():
         torch_module.cuda.manual_seed_all(seed)
+    # Make repeated runs auditable. Some CUDA operators can otherwise choose
+    # different kernels between runs even when all random seeds are fixed.
+    if hasattr(torch_module.backends, "cudnn"):
+        torch_module.backends.cudnn.benchmark = False
+        torch_module.backends.cudnn.deterministic = True
+    try:
+        torch_module.use_deterministic_algorithms(True, warn_only=True)
+    except (AttributeError, TypeError):
+        pass
 
 
 def build_transforms(settings: TrainSettings, transforms_module: Any, train: bool):
@@ -868,6 +890,8 @@ def run_epoch(
 def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
     if settings.train_holdout_fraction < 0 or settings.train_holdout_fraction >= 1:
         raise ValueError("--train-holdout-fraction must be in the interval [0, 1)")
+    if settings.label_smoothing < 0 or settings.label_smoothing >= 1:
+        raise ValueError("--label-smoothing must be in the interval [0, 1)")
 
     validation_splits = (
         (settings.train_split,)
@@ -1016,7 +1040,10 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
         else [1.0 for _ in settings.classes]
     )
     weights_tensor = torch_module.tensor(class_weights, dtype=torch_module.float32, device=device)
-    criterion = torch_module.nn.CrossEntropyLoss(weight=weights_tensor)
+    criterion = torch_module.nn.CrossEntropyLoss(
+        weight=weights_tensor,
+        label_smoothing=settings.label_smoothing,
+    )
     optimizer = build_optimizer(settings, torch_module, model)
     scheduler = build_scheduler(settings, torch_module, optimizer)
     scaler = build_scaler(torch_module, use_amp)

@@ -64,6 +64,19 @@ class CalibrationTest(unittest.TestCase):
         self.assertGreater(fit["temperature"], 0)
         self.assertIn("nll", fit)
 
+    def test_temperature_grid_can_search_above_default_range(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "predictions.csv"
+            path.write_text(
+                "path,true_label,predicted_label,prob_NORMAL,prob_PNEUMONIA\n"
+                "n1.jpeg,NORMAL,PNEUMONIA,0.01,0.99\n"
+                "p1.jpeg,PNEUMONIA,NORMAL,0.99,0.01\n",
+                encoding="utf-8",
+            )
+            records = load_binary_predictions(path)
+        fit = fit_temperature_grid(records, minimum=1.0, maximum=10.0, step=0.5)
+        self.assertGreater(fit["temperature"], 5.0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -81,6 +81,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--bins", type=int, default=10)
     parser.add_argument("--temperature", type=float, default=None)
+    parser.add_argument("--temperature-min", type=float, default=0.5)
+    parser.add_argument("--temperature-max", type=float, default=5.0)
+    parser.add_argument("--temperature-step", type=float, default=0.01)
     parser.add_argument("--json-output", type=Path, required=True)
     parser.add_argument("--bins-output", type=Path, default=None)
     parser.add_argument("--figure-output", type=Path, default=None)
@@ -104,9 +107,21 @@ def main() -> int:
         fit_report = fit_temperature_grid(
             calibration_records,
             positive_class=args.positive_class,
+            minimum=args.temperature_min,
+            maximum=args.temperature_max,
+            step=args.temperature_step,
         )
         temperature = float(fit_report["temperature"])
         fit_report["calibration_predictions"] = calibration_path.as_posix()
+        fit_report["search_range"] = {
+            "minimum": args.temperature_min,
+            "maximum": args.temperature_max,
+            "step": args.temperature_step,
+        }
+        fit_report["at_search_boundary"] = bool(
+            abs(temperature - args.temperature_min) < 1e-12
+            or abs(temperature - args.temperature_max) < 1e-12
+        )
         temperature_source = "calibration_predictions"
 
     before = calibration_summary(

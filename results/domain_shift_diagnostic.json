@@ -1,0 +1,88 @@
+{
+  "sample_count": 3000,
+  "kermany_count": 1500,
+  "rsna_count": 1500,
+  "features": [
+    "mean",
+    "std",
+    "p10",
+    "median",
+    "p90",
+    "border_mean",
+    "border_std",
+    "center_mean",
+    "center_std",
+    "aspect_ratio",
+    "entropy"
+  ],
+  "classifier_features": [
+    "mean",
+    "std",
+    "p10",
+    "median",
+    "p90",
+    "border_mean",
+    "border_std",
+    "center_mean",
+    "center_std",
+    "entropy"
+  ],
+  "folds": [
+    {
+      "fold": 1,
+      "accuracy": 0.8933333333333333,
+      "roc_auc": 0.9564555555555556
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.8666666666666667,
+      "roc_auc": 0.9452777777777778
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.9,
+      "roc_auc": 0.9584555555555555
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.8766666666666667,
+      "roc_auc": 0.9546555555555556
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.9033333333333333,
+      "roc_auc": 0.9622222222222223
+    }
+  ],
+  "overall_accuracy": 0.888,
+  "overall_roc_auc": 0.9551337777777777,
+  "source_feature_means": {
+    "kermany": {
+      "mean": 0.4831717759370804,
+      "std": 0.22266878160834314,
+      "p10": 0.12263399029740443,
+      "median": 0.5238797557651996,
+      "p90": 0.7396130872766177,
+      "border_mean": 0.33042662170529363,
+      "border_std": 0.27290680426359176,
+      "center_mean": 0.5790038864413897,
+      "center_std": 0.13930521453668673,
+      "aspect_ratio": 1.4446101417987394,
+      "entropy": 3.051716806305468
+    },
+    "rsna": {
+      "mean": 0.503344425290823,
+      "std": 0.23163266205290953,
+      "p10": 0.16743974286690355,
+      "median": 0.524028772091493,
+      "p90": 0.7985754367510478,
+      "border_mean": 0.39406311861736076,
+      "border_std": 0.2848041645946602,
+      "center_mean": 0.5295339201291402,
+      "center_std": 0.17794112579524518,
+      "aspect_ratio": 1.0,
+      "entropy": 3.139015369817261
+    }
+  },
+  "interpretation": "High source-classification performance indicates measurable acquisition/style differences; it does not identify a causal mechanism for pneumonia errors."
+}
