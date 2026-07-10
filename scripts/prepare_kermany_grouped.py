@@ -138,6 +138,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="With --verify-only, recompute every source/image SHA-256 and validate hard links.",
     )
+    parser.add_argument(
+        "--from-manifest",
+        action="store_true",
+        help="Materialize the output dataset from the existing frozen manifest and verify every source hash.",
+    )
     return parser.parse_args()
 
 
@@ -277,12 +282,51 @@ def verify_frozen_outputs(args: argparse.Namespace) -> int:
     return 0
 
 
+def materialize_from_manifest(args: argparse.Namespace) -> int:
+    source_root = resolve(args.source_root)
+    output_root = resolve(args.output_root)
+    manifest = resolve(args.manifest)
+    summary_path = resolve(args.summary)
+    if not manifest.is_file():
+        raise FileNotFoundError(f"Frozen manifest not found: {manifest}")
+    prepare_output_paths([output_root, summary_path], force=args.force)
+    rows = read_manifest(manifest)
+    try:
+        for row in rows:
+            source = source_root / row["source_path"]
+            destination = output_root / row["path"]
+            if not source.is_file():
+                raise FileNotFoundError(f"Missing Kermany source file: {source}")
+            if file_sha256(source) != row["sha256"]:
+                raise ValueError(f"Kermany source hash mismatch: {row['source_path']}")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                os.link(source, destination)
+            except OSError:
+                shutil.copy2(source, destination)
+        summary = build_summary(
+            rows=rows, seed=args.seed, source_root=source_root,
+            output_root=output_root, manifest=manifest, verify_files=True,
+        )
+        write_summary_safely(summary_path, summary, force=False)
+    except Exception:
+        if output_root.exists():
+            shutil.rmtree(output_root)
+        raise
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 0
+
+
 def main() -> int:
     args = parse_args()
+    if args.verify_only and args.from_manifest:
+        raise ValueError("--verify-only and --from-manifest are mutually exclusive")
     if args.verify_files and not args.verify_only:
         raise ValueError("--verify-files requires --verify-only")
     if args.verify_only:
         return verify_frozen_outputs(args)
+    if args.from_manifest:
+        return materialize_from_manifest(args)
     if args.train_fraction <= 0 or args.val_fraction <= 0 or args.train_fraction + args.val_fraction >= 1:
         raise ValueError("fractions must be positive and leave a non-empty test fraction")
     source_root, output_root = resolve(args.source_root), resolve(args.output_root)

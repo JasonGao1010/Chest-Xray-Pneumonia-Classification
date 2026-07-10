@@ -4,6 +4,7 @@ import pytest
 
 from scripts.prepare_mixed_binary import main as prepare_mixed_main
 from scripts.prepare_nih_binary import split_rows
+from scripts.prepare_rsna_binary import file_sha256, read_member_manifest
 
 
 def test_nih_split_keeps_each_patient_in_one_split():
@@ -68,3 +69,29 @@ def test_mixed_builder_rejects_output_inside_source(monkeypatch, tmp_path: Path)
 
     with pytest.raises(ValueError, match="overlap"):
         prepare_mixed_main()
+
+
+def test_rsna_member_manifest_and_hash(tmp_path: Path):
+    image = tmp_path / "sample.dcm"
+    image.write_bytes(b"fixed official bytes")
+    manifest = tmp_path / "members.csv"
+    manifest.write_text(
+        "patientId,target,split,source_sha256\n"
+        f"p1,1,test,{file_sha256(image)}\n",
+        encoding="utf-8",
+    )
+    rows = read_member_manifest(manifest)
+    assert rows["p1"]["split"] == "test"
+    assert rows["p1"]["source_sha256"] == file_sha256(image)
+
+
+def test_rsna_member_manifest_rejects_duplicates(tmp_path: Path):
+    manifest = tmp_path / "members.csv"
+    manifest.write_text(
+        "patientId,target,split,source_sha256\n"
+        "p1,1,test,abc\n"
+        "p1,1,test,abc\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="Duplicate"):
+        read_member_manifest(manifest)

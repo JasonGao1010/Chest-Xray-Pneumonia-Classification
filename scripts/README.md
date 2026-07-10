@@ -9,7 +9,18 @@ pytest -q
 python -m pytest -q
 ```
 
-两种入口均应得到相同结果。当前为 42 项通过。
+两种入口均应得到相同结果。当前为 44 项通过。
+
+## 完整复现入口
+
+完整实验不依靠手工拼接命令。先阅读仓库根目录的 `REPRODUCIBILITY.md`，然后运行：
+
+```bash
+python scripts/reproduce_all.py --dry-run
+python scripts/reproduce_all.py --stage all --device auto
+```
+
+总入口固定执行 18 次训练：严格基线 3 个模型乘 3 个种子，另加 DenseNet121 的 robust、mixed_simple、mixed_domain_balanced 各 3 个种子。每个训练模型都在 Kermany 和 RSNA 测试集评价。任何必需预测文件缺失时，完整性汇总门禁会失败；最终验收写入 `rebuild/reproduction_verification.json`。
 
 ## Kermany 数据与清单
 
@@ -59,6 +70,19 @@ python scripts/freeze_rsna_manifest.py \
 ```
 
 脚本记录 `patientId`、标签、集合、来源记录、原始 DICOM 与处理后 PNG 的仓库相对路径、文件大小和 SHA-256。它不修改任何图像。
+
+正式外部复现必须从官方完整 RSNA 数据按冻结清单重建，不使用 `--available-only` 动态形成样本集合：
+
+```bash
+python scripts/prepare_rsna_binary.py \
+  --raw-root data/raw/rsna_pneumonia \
+  --images-dir data/raw/rsna_pneumonia/stage_2_train_images \
+  --member-manifest data/splits/rsna_available_1707_manifest.csv \
+  --output-root rebuild/data/rsna_binary \
+  --splits-output rebuild/audit/rsna_splits.json \
+  --summary-output rebuild/audit/rsna_dataset_summary.json \
+  --figure-output rebuild/figures/rsna_class_distribution.png
+```
 
 ## 完整性审计
 

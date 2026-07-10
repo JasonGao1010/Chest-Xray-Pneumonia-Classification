@@ -16,6 +16,7 @@ env/
 data/raw/
 data/processed/
 outputs/
+rebuild/
 logs/
 experiments/
 notebooks/
@@ -218,6 +219,8 @@ scripts/*
 !scripts/analyze_domain_shift.py
 !scripts/evaluate_frozen_thresholds.py
 !scripts/freeze_rsna_manifest.py
+!scripts/reproduce_all.py
+!scripts/verify_reproduction.py
 !scripts/render_report_figures.py
 !scripts/capture_web_demo.py
 

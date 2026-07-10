@@ -106,6 +106,21 @@ python scripts/check_external_dataset.py \
 
 当前 1707 个成员已冻结在 `data/splits/rsna_available_1707_manifest.csv`。每行记录 patientId、标签、划分、来源记录、原始 DICOM 与处理后 PNG 的仓库相对路径、文件大小和 SHA-256。清单 SHA-256 为 `76ea17aae923954deca87834c1cdca6de0383bee3e461de29840a4564d247ae1`，摘要见 `data/splits/rsna_available_1707_manifest_summary.json`。
 
+对外完整复现不依赖历史 HF 下载记录。复现者下载官方 RSNA 完整训练集后，使用冻结清单逐项抽取 1707 个 `patientId`，复用记录的 train/val/test 划分，并核对每个原始 DICOM 的 SHA-256：
+
+```bash
+python scripts/prepare_rsna_binary.py \
+  --raw-root data/raw/rsna_pneumonia \
+  --images-dir data/raw/rsna_pneumonia/stage_2_train_images \
+  --member-manifest data/splits/rsna_available_1707_manifest.csv \
+  --output-root rebuild/data/rsna_binary \
+  --splits-output rebuild/audit/rsna_splits.json \
+  --summary-output rebuild/audit/rsna_dataset_summary.json \
+  --figure-output rebuild/figures/rsna_class_distribution.png
+```
+
+缺少成员、标签不符、划分非法或任一 DICOM 哈希不符都会返回失败。因此旧下载记录中的 134 条 `unknown` 只表示历史来源记录不完整，不再造成数据身份不可复现。
+
 两份保留的下载记录可追溯 1573 个成员：最早的小批次记录 88 个，扩展记录新增 1485 个。其余 134 个成员的原始文件真实存在且已固定哈希，但没有对应的保留下载记录，因此清单把来源批次和提供方明确写为 `unknown`。`source_batch` 表示“最早保留下来且列出该成员的下载记录”，不等同于可证明的首次下载时间。生成新清单时运行：
 
 ```bash

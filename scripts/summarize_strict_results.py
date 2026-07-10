@@ -284,6 +284,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-csv", type=Path, default=Path("results/strict_summary.csv"))
     parser.add_argument("--bootstrap", type=int, default=5000)
     parser.add_argument("--bootstrap-seed", type=int, default=BOOTSTRAP_SEED)
+    parser.add_argument(
+        "--require-complete",
+        action="store_true",
+        help="Fail unless every published model, dataset, seed, and comparison family is present.",
+    )
     return parser.parse_args()
 
 
@@ -329,6 +334,8 @@ def main() -> int:
             try:
                 loaded = load_probability_ensemble(results, "strict", dataset, model)
             except FileNotFoundError:
+                if args.require_complete:
+                    raise
                 continue
             groups = [filename_group_from_path(path, dataset) for path in loaded["paths"]]
             ensemble = metrics(loaded["labels"], loaded["ensemble_score"])
@@ -377,6 +384,8 @@ def main() -> int:
                     results, family, dataset, "densenet121"
                 )
             except FileNotFoundError:
+                if args.require_complete:
+                    raise
                 continue
             if candidate["paths"] != baseline["paths"]:
                 raise ValueError(
@@ -419,6 +428,20 @@ def main() -> int:
                 }
             )
 
+    if not rows_out:
+        raise RuntimeError("No complete strict three-seed result groups were found")
+    if args.require_complete:
+        expected_groups = len(models) * len(datasets)
+        expected_comparisons = len(comparison_families) * len(datasets)
+        if len(payload["groups"]) != expected_groups:
+            raise RuntimeError(
+                f"Incomplete strict matrix: {len(payload['groups'])}/{expected_groups} groups"
+            )
+        if len(payload["paired_comparisons"]) != expected_comparisons:
+            raise RuntimeError(
+                "Incomplete comparison matrix: "
+                f"{len(payload['paired_comparisons'])}/{expected_comparisons} comparisons"
+            )
     output_json = args.output_json if args.output_json.is_absolute() else PROJECT_ROOT / args.output_json
     output_csv = args.output_csv if args.output_csv.is_absolute() else PROJECT_ROOT / args.output_csv
     output_json.parent.mkdir(parents=True, exist_ok=True)
@@ -426,8 +449,6 @@ def main() -> int:
     output_json.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    if not rows_out:
-        raise RuntimeError("No complete strict three-seed result groups were found")
     with output_csv.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(
             handle, fieldnames=list(rows_out[0]), lineterminator="\n"

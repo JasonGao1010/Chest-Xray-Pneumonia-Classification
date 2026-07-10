@@ -73,6 +73,8 @@ The main evidence entry points are:
   source-separability analysis with diagnosis-label controls;
 - [`scripts/README.md`](scripts/README.md): reproducible commands and output
   conventions.
+- [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md): complete data-to-main-table
+  workflow, experiment matrix, and machine-verifiable acceptance criteria.
 
 ## Installation
 
@@ -87,7 +89,7 @@ python -m pip install -r requirements.txt
 pytest -q
 ```
 
-The current test suite contains 42 tests. GPU training additionally depends on
+The current test suite contains 44 tests. GPU training additionally depends on
 a compatible NVIDIA driver and CUDA runtime.
 
 ## Data preparation
@@ -132,6 +134,21 @@ python scripts/evaluate.py \
 
 The full multi-seed, calibration, threshold, error-analysis, and audit commands
 are listed in [`scripts/README.md`](scripts/README.md).
+
+## Complete reproduction
+
+After independently downloading the Kermany and official RSNA datasets into the
+documented raw-data directories, the complete frozen workflow is:
+
+```bash
+python scripts/reproduce_all.py --dry-run
+python scripts/reproduce_all.py --stage all --device auto
+```
+
+It reconstructs both frozen datasets with SHA-256 checks, runs the complete
+18-training-job experiment matrix, regenerates the main statistical summary,
+and fails unless `rebuild/reproduction_verification.json` reports `VERIFIED`.
+See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) before starting the full run.
 
 ## Local demo
 

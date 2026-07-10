@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import random
 import shutil
@@ -205,6 +206,15 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Prepare only patients with images present under --images-dir.",
     )
+    parser.add_argument(
+        "--member-manifest",
+        type=Path,
+        default=None,
+        help=(
+            "Frozen CSV containing patientId, target, split, and source_sha256. "
+            "Prepare exactly those members and reject missing or mismatched DICOM files."
+        ),
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--force",
@@ -212,6 +222,34 @@ def parse_args() -> argparse.Namespace:
         help="Delete existing output paths before rebuilding. Without this flag, existing outputs are never overwritten.",
     )
     return parser.parse_args()
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def read_member_manifest(path: Path) -> dict[str, dict[str, str]]:
+    with path.open("r", newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        required = {"patientId", "target", "split", "source_sha256"}
+        missing = required.difference(reader.fieldnames or ())
+        if missing:
+            raise ValueError(f"Member manifest is missing columns: {sorted(missing)}")
+        rows: dict[str, dict[str, str]] = {}
+        for row in reader:
+            patient_id = str(row["patientId"])
+            if patient_id in rows:
+                raise ValueError(f"Duplicate patientId in member manifest: {patient_id}")
+            if row["split"] not in {"train", "val", "test"}:
+                raise ValueError(f"Invalid split for {patient_id}: {row['split']}")
+            rows[patient_id] = {key: str(value) for key, value in row.items()}
+    if not rows:
+        raise ValueError("Member manifest is empty")
+    return rows
 
 
 def prepare_output_paths(paths: list[Path], *, force: bool) -> None:
@@ -238,6 +276,9 @@ def main() -> int:
     images_dir = resolve_project_path(args.images_dir or raw_root / "stage_2_train_images")
     labels_csv = resolve_project_path(args.labels_csv or raw_root / "stage_2_train_labels.csv")
     class_info_csv = resolve_project_path(args.class_info_csv or raw_root / "stage_2_detailed_class_info.csv")
+    member_manifest_path = (
+        resolve_project_path(args.member_manifest) if args.member_manifest else None
+    )
     output_root = resolve_project_path(args.output_root)
     splits_output = resolve_project_path(args.splits_output)
     summary_output = resolve_project_path(args.summary_output)
@@ -263,14 +304,34 @@ def main() -> int:
     labels = read_label_rows(labels_csv)
     full_label_patient_count = len(labels)
     class_info = read_class_info(class_info_csv)
-    assignments = split_patient_ids(
-        labels,
-        train_fraction=args.train_fraction,
-        val_fraction=args.val_fraction,
-        seed=args.seed,
-    )
     image_index = build_image_index(images_dir)
-    if args.available_only:
+    member_manifest = (
+        read_member_manifest(member_manifest_path) if member_manifest_path else None
+    )
+    hash_mismatches: list[dict[str, str]] = []
+    if member_manifest is not None:
+        unknown = sorted(set(member_manifest).difference(labels))
+        if unknown:
+            raise ValueError(f"Manifest patientIds missing from labels CSV: {unknown[:5]}")
+        label_mismatches = [
+            patient_id
+            for patient_id, row in member_manifest.items()
+            if int(row["target"]) != int(labels[patient_id]["target"])
+        ]
+        if label_mismatches:
+            raise ValueError(f"Manifest target mismatches: {label_mismatches[:5]}")
+        labels = {patient_id: labels[patient_id] for patient_id in member_manifest}
+        assignments = {
+            patient_id: row["split"] for patient_id, row in member_manifest.items()
+        }
+    else:
+        assignments = split_patient_ids(
+            labels,
+            train_fraction=args.train_fraction,
+            val_fraction=args.val_fraction,
+            seed=args.seed,
+        )
+    if args.available_only and member_manifest is None:
         labels = {patient_id: row for patient_id, row in labels.items() if patient_id in image_index}
 
     class_limits = {"NORMAL": 0, "PNEUMONIA": 0}
@@ -287,6 +348,14 @@ def main() -> int:
         if not source.exists():
             missing_images.append(patient_id)
             continue
+        if member_manifest is not None:
+            expected = member_manifest[patient_id]["source_sha256"].lower()
+            actual = file_sha256(source)
+            if actual != expected:
+                hash_mismatches.append(
+                    {"patientId": patient_id, "expected": expected, "actual": actual}
+                )
+                continue
 
         split = assignments[patient_id]
         destination = output_root / split / binary_label / f"{patient_id}.png"
@@ -321,7 +390,7 @@ def main() -> int:
         "assignments": assignments,
     }
     summary = {
-        "ok": not missing_images,
+        "ok": not missing_images and not hash_mismatches,
         "raw_root": raw_root.as_posix(),
         "images_dir": images_dir.as_posix(),
         "labels_csv": labels_csv.as_posix(),
@@ -332,6 +401,9 @@ def main() -> int:
         "label_patient_count": len(labels),
         "available_image_count": len(image_index),
         "available_only": bool(args.available_only),
+        "member_manifest": member_manifest_path.as_posix() if member_manifest_path else None,
+        "member_manifest_count": len(member_manifest) if member_manifest else None,
+        "hash_mismatches": hash_mismatches,
         "counts": counts,
         "missing_images": missing_images,
         "dry_run": bool(args.dry_run),
@@ -344,7 +416,7 @@ def main() -> int:
         print("Dry run: no output files were written or removed")
     else:
         print(f"Wrote summary: {summary_output.as_posix()}")
-    return 0 if not missing_images else 1
+    return 0 if not missing_images and not hash_mismatches else 1
 
 
 if __name__ == "__main__":
