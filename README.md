@@ -1,118 +1,83 @@
-# Chest X-ray Pneumonia Classification
+# 胸片肺炎二分类与跨来源评估
 
-PyTorch project for binary chest X-ray classification, data-integrity auditing,
-calibration, cross-source stress testing, and a local research demo.
+本仓库提供一个基于 PyTorch 的胸片二分类研究项目，覆盖数据完整性审计、模型训练、概率校准、跨来源压力测试和本地研究演示。
 
-This repository is for research and teaching only. It is not a medical device,
-and its outputs must not be used for diagnosis or patient risk assessment.
+本项目仅用于研究与教学，不是医疗器械，输出结果不得用于诊断或患者风险判断。
 
-## Main finding
+## 主要结论
 
-Performance measured within one public dataset does not transfer reliably to a
-different source. Three model families were trained with seeds 42, 43, and 44.
-Their probability ensembles performed well on the held-out Kermany split but
-degraded substantially on the RSNA subset:
+在单一公开数据集上取得的高性能，不能稳定迁移到不同来源的数据。DenseNet121、ConvNeXt-Tiny 和 ViT-B/16 均使用随机种子 42、43、44 训练，再对三个模型的阳性概率取平均。三种架构在 Kermany 保留测试集上表现较好，但在 RSNA 固定子集上均明显下降：
 
-| Model | Kermany balanced accuracy | RSNA balanced accuracy | RSNA specificity |
+| 模型 | Kermany 平衡准确率 | RSNA 平衡准确率 | RSNA 特异度 |
 |---|---:|---:|---:|
 | DenseNet121 | 0.9765 | 0.6591 | 0.3535 |
 | ConvNeXt-Tiny | 0.9727 | 0.6695 | 0.4140 |
 | ViT-B/16 | 0.9817 | 0.6594 | 0.3628 |
 
-The Kermany test contains 1,170 images grouped into 624 conservative
-filename-derived clusters. The RSNA test contains 442 images grouped by 442
-`patientId` values. These datasets differ in population, labels, image format,
-and distribution, so the comparison is a cross-source stress test rather than
-a clinical validation.
+Kermany 测试集包含 1,170 张图像，按 624 个保守文件名簇进行分组。RSNA 测试集包含 442 张图像，对应 442 个 `patientId`。两套数据在人群、标签、图像格式和分布上均有差异，因此这里衡量的是跨来源压力，而非临床外部验证。
 
-Simple supervised mixed-source training improved the DenseNet121 RSNA ensemble
-balanced accuracy from 0.6591 to 0.7813, while reducing recall from 0.9648 to
-0.7533 and slightly reducing Kermany accuracy. It therefore changes the
-operating trade-off and does not establish generalization to an unseen hospital.
-The paired grouped-bootstrap comparisons are recorded in
-[`results/strict_summary.json`](results/strict_summary.json).
+简单的有监督混合训练将 DenseNet121 在 RSNA 上的集成平衡准确率从 0.6591 提高到 0.7813，同时召回率从 0.9648 降至 0.7533，Kermany 性能也略有下降。这说明训练改变了工作点和错误取舍，不能据此声称模型已经泛化到未知医院。成对分组自助法结果见 [`results/strict_summary.json`](results/strict_summary.json)。
 
-## Evidence boundaries
+## 证据边界
 
-- Public Kermany metadata do not provide a verified patient mapping. The strict
-  split uses conservative filename-derived clusters and must not be described as
-  confirmed patient-level separation.
-- RSNA labels represent challenge target findings, not adjudicated clinical
-  diagnoses. The 1,707-image working subset came from a third-party mirror; 134
-  members have frozen hashes but incomplete retained download provenance.
-- The small historical NIH subset has weak report-derived labels and cross-split
-  patient overlap, so it is excluded from strict results.
-- Bootstrap intervals quantify test-sample uncertainty for frozen predictions;
-  they do not include the uncertainty of retraining additional seeds.
+- Kermany 的公开元数据没有经过核验的患者映射。严格划分采用保守文件名簇，不能表述为已确认的患者级隔离。
+- RSNA 标签对应挑战赛目标征象，不是经过临床复核的诊断结论。
+- 当前 1,707 张 RSNA 工作子集最初来自第三方镜像，其中 134 个成员缺少保留的历史下载记录；对外复现改为从官方完整数据中按冻结 `patientId` 和 SHA-256 精确抽取。
+- 早期 NIH 小子集使用较弱的报告文本标签，并存在跨划分患者重叠，因此不进入严格结果。
+- 自助区间衡量固定预测下的测试样本不确定性，不包含重新训练更多随机种子带来的不确定性。
 
-See [`data/README.md`](data/README.md) for data provenance and split semantics.
+数据来源、许可和划分语义见 [`data/README.md`](data/README.md)。
 
-## Repository contents
+## 仓库结构
 
 ```text
-configs/        Training configurations
-data/           Dataset instructions and tracked split manifests
-figures/        Selected result figures
-models/         Model-weight provenance and download instructions
-results/        Machine-readable metrics, predictions, and audit records
-scripts/        Data preparation, training, evaluation, and audit commands
-src/            Reusable Python package
-tests/          Automated tests
-web/            Local inference interface
+configs/        训练配置
+data/           数据说明和冻结划分清单
+figures/        主要结果图
+models/         模型权重来源与下载说明
+results/        指标、逐图预测和审计记录
+scripts/        数据准备、训练、评价和审计程序
+src/            可复用 Python 包
+tests/          自动测试
+web/            本地推理界面和离线结果报告
 ```
 
-The main evidence entry points are:
+主要证据入口包括：
 
-- [`results/strict_summary.json`](results/strict_summary.json): three-seed
-  ensembles, grouped bootstrap intervals, and paired comparisons;
-- [`results/integrity_audit.json`](results/integrity_audit.json): known problems
-  in the original Kermany and historical NIH layouts;
-- [`results/integrity_audit_grouped.json`](results/integrity_audit_grouped.json):
-  checks for the grouped Kermany and RSNA evaluation layouts;
-- [`results/domain_shift_diagnostic.json`](results/domain_shift_diagnostic.json):
-  source-separability analysis with diagnosis-label controls;
-- [`scripts/README.md`](scripts/README.md): reproducible commands and output
-  conventions.
-- [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md): complete data-to-main-table
-  workflow, experiment matrix, and machine-verifiable acceptance criteria.
+- [`results/strict_summary.json`](results/strict_summary.json)：三随机种子集成、分组自助区间和成对比较；
+- [`results/integrity_audit_grouped.json`](results/integrity_audit_grouped.json)：Kermany 分组数据和 RSNA 数据的完整性审计；
+- [`results/domain_shift_diagnostic.json`](results/domain_shift_diagnostic.json)：控制诊断标签构成后的来源可分性分析；
+- [`scripts/README.md`](scripts/README.md)：各阶段命令和输出约定；
+- [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)：从原始数据到主表的完整复现流程和机器验收标准。
 
-## Installation
+## 安装与测试
 
-Python 3.13.12 and the exact package versions in `requirements.txt` were used
-for the final audit. A separate virtual environment is recommended:
+最终审计使用 Python 3.13.12，准确依赖版本记录在 `requirements.txt`：
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-pytest -q
+python -m pytest -q
 ```
 
-The current test suite contains 44 tests. GPU training additionally depends on
-a compatible NVIDIA driver and CUDA runtime.
+当前测试套件包含 46 项测试。GPU 训练还需要相容的 NVIDIA 驱动和 CUDA 运行环境。
 
-## Data preparation
+## 完整复现
 
-Raw and processed images are intentionally excluded from Git. Dataset sources,
-licences, expected directory layouts, frozen manifests, and non-overwriting
-rebuild commands are documented in [`data/README.md`](data/README.md).
-
-To verify an existing local setup without replacing data:
+按照数据说明下载 Kermany 和官方 RSNA 数据后，可以先查看完整命令计划，再执行全部数据准备、18 次训练、双数据集评价、校准、阈值分析、错误分析和验收：
 
 ```bash
-python scripts/check_dataset.py --verify-images
-python scripts/prepare_kermany_grouped.py --verify-only --verify-files \
-  --summary /tmp/kermany_grouped_summary_check.json
+python scripts/reproduce_all.py --dry-run
+python scripts/reproduce_all.py --stage all --device auto
 ```
 
-Commands using `--force` may replace generated data and should only be used
-after reviewing their target paths.
+新产物统一写入 `rebuild/`，不会覆盖仓库中的发布证据。只有 `rebuild/reproduction_verification.json` 显示 `"status": "VERIFIED"`，才表示数据身份、实验矩阵和主要指标均通过验收。完整说明见 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)。
 
-## Training and evaluation
+## 数据准备与单次训练
 
-Run commands from the repository root. Write reproductions to a new directory
-so the published evidence remains unchanged:
+原始和处理后图像不会进入 Git。数据下载入口、许可、目录结构、冻结清单和非覆盖式重建命令见 [`data/README.md`](data/README.md)。单次 DenseNet121 训练示例：
 
 ```bash
 python scripts/train.py \
@@ -122,50 +87,21 @@ python scripts/train.py \
   --checkpoints-dir rebuild/checkpoints \
   --seed 42 \
   --json-output rebuild/results/strict_train_densenet121_seed42.json
-
-python scripts/evaluate.py \
-  --training-summary rebuild/results/strict_train_densenet121_seed42.json \
-  --data-root data/processed/kermany_grouped_seed42 \
-  --split test --device auto \
-  --json-output rebuild/results/strict_eval_kermany_test_densenet121_seed42.json \
-  --predictions-output rebuild/results/strict_predictions_kermany_test_densenet121_seed42.csv \
-  --no-update-latest
 ```
 
-The full multi-seed, calibration, threshold, error-analysis, and audit commands
-are listed in [`scripts/README.md`](scripts/README.md).
+完整的多模型、多种子和分析流程由总复现入口负责，避免手工遗漏实验。
 
-## Complete reproduction
+## 本地演示
 
-After independently downloading the Kermany and official RSNA datasets into the
-documented raw-data directories, the complete frozen workflow is:
-
-```bash
-python scripts/reproduce_all.py --dry-run
-python scripts/reproduce_all.py --stage all --device auto
-```
-
-It reconstructs both frozen datasets with SHA-256 checks, runs the complete
-18-training-job experiment matrix, regenerates the main statistical summary,
-and fails unless `rebuild/reproduction_verification.json` reports `VERIFIED`.
-See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) before starting the full run.
-
-## Local demo
-
-The downloadable `v1.0.0` weight is an earlier ViT-B/16 model trained on the
-original Kermany directory split. It is not one of the strict three-seed models.
-See [`models/README.md`](models/README.md) for its source and SHA-256 digest.
+`v1.0.0` Release 中的 ViT-B/16 权重来自早期 Kermany 官方目录划分，只用于本地研究演示，不属于最新严格三种子结果。权重来源和 SHA-256 见 [`models/README.md`](models/README.md)。
 
 ```bash
 python scripts/serve_patient_app.py \
   --checkpoint models/vit_b16_best.pt --device cpu --threshold 0.5
 ```
 
-Open `http://127.0.0.1:7860`. The interface is a research demonstration and its
-predictions do not represent clinical performance.
+浏览器访问 `http://127.0.0.1:7860`。界面展示的是模型分数与阈值判定，不代表临床性能。
 
-## Licence
+## 许可
 
-Project code is released under the [MIT License](LICENSE). Datasets, pretrained
-weights, and third-party assets remain subject to their original licences and
-terms.
+项目代码采用 [MIT License](LICENSE)。数据集、预训练权重和第三方资产仍受各自许可及使用条款约束。

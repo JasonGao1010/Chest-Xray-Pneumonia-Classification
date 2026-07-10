@@ -36,7 +36,7 @@
 <header>
   <div class="header-row">
     <div class="identity"><span class="code">XR-01</span><div><h1>胸片肺炎二分类实验结果</h1><p class="subtitle">离线可视化报告 · 数据、模型与跨来源评估</p></div></div>
-    <div class="header-meta"><span>3 ARCHITECTURES</span><span>3 SEEDS</span><span>95% GROUPED CI</span></div>
+    <div class="header-meta"><span>3 种架构</span><span>3 个随机种子</span><span>95% 分组区间</span></div>
   </div>
   <nav><a href="#summary">结论摘要</a><a href="#models">模型比较</a><a href="#explorer">多维对比</a><a href="#interventions">训练策略</a><a href="#datasets">数据构成</a><a href="#evidence">证据核验</a></nav>
 </header>
@@ -48,7 +48,7 @@
       <article class="finding"><span>内部最佳 BAcc</span><strong class="good">98.17%</strong><p>ViT-B/16，Kermany文件名簇隔离测试集，n=1,170。</p></article>
       <article class="finding"><span>RSNA最佳 AUROC</span><strong>82.36%</strong><p>ViT-B/16；固定阈值BAcc为65.94%，两种指标不等价。</p></article>
       <article class="finding"><span>简单混合训练 RSNA BAcc</span><strong class="good">78.13%</strong><p>相对严格DenseNet基线提高12.22个百分点，使用了RSNA标签。</p></article>
-      <article class="finding"><span>标签匹配来源分类 AUROC</span><strong class="warn">94.23%</strong><p>两个处理后来源高度可分，不指向具体设备或采集机制。</p></article>
+      <article class="finding"><span>标签匹配来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两个处理后来源高度可分，不指向具体设备或采集机制。</p></article>
     </div>
   </section>
 
@@ -107,22 +107,22 @@
     <div class="section-head"><span class="section-index">05 / DATA</span><div><h2>数据规模与划分构成</h2><p class="section-note">柱长表示各划分在该数据集中的占比，深色为PNEUMONIA标签。</p></div></div>
     <div class="data-grid">
       <article class="data-panel"><div class="dataset-total"><h3>Kermany保守文件名簇划分</h3><strong>5,856</strong></div><div id="kermanySplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">4107 / 579 / 1170。分组键来自文件名，不等同于经过验证的患者编号。</p></article>
-      <article class="data-panel"><div class="dataset-total"><h3>RSNA镜像便利子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">1052 / 213 / 442。按RSNA patientId隔离；该子集不是完整官方挑战集。</p></article>
+      <article class="data-panel"><div class="dataset-total"><h3>RSNA冻结子集</h3><strong>1,707</strong></div><div id="rsnaSplits"></div><div class="data-legend"><span><i style="background:var(--green3)"></i>NORMAL</span><span><i style="background:var(--green)"></i>PNEUMONIA</span></div><p class="data-note">1052 / 213 / 442。按RSNA patientId隔离；可从官方完整训练集按冻结清单和哈希重建。</p></article>
     </div>
   </section>
 
   <section class="section" id="evidence">
     <div class="section-head"><span class="section-index">06 / EVIDENCE</span><div><h2>来源差异与结果完整性</h2><p class="section-note">来源分类只量化可分性；审计结果用于确认数据划分与预测文件的一致性。</p></div></div>
     <div class="evidence-grid">
-      <article class="source-chart"><div class="panel-title"><div><h3>标签匹配后的来源分类</h3><p>5折 StratifiedGroupKFold</p></div></div><div class="source-number"><strong>0.9423</strong><span>总体AUROC<br>n=2,260，group=2,217</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span></div><p class="chart-caption">控制标签构成后仍能较好地区分来源，但不能据此归因于医院、设备或采集协议。</p></article>
+      <article class="source-chart"><div class="panel-title"><div><h3>标签匹配后的来源分类</h3><p>5折 StratifiedGroupKFold</p></div></div><div class="source-number"><strong>0.9441</strong><span>总体AUROC<br>n=2,260，group=2,191</span></div><div class="folds" id="foldChart"></div><div class="fold-labels"><span>F1</span><span>F2</span><span>F3</span><span>F4</span><span>F5</span></div><p class="chart-caption">控制标签构成后仍能较好地区分来源，但不能据此归因于医院、设备或采集协议。</p></article>
       <article class="audit-panel"><div class="panel-title"><div><h3>完整性审计</h3><p>当前严格结果包</p></div></div><div class="audit-table"><div class="audit-row"><span>Kermany分组跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>RSNA patientId跨划分重叠</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>跨划分相同文件哈希</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>正式评价文件</span><strong class="status-pass">94 / 94</strong></div><div class="audit-row"><span>缺失逐图预测文件</span><strong class="status-pass">0</strong></div><div class="audit-row"><span>复算指标不一致</span><strong class="status-pass">0</strong></div></div><p class="chart-caption">审计通过说明文件与计算关系一致，不等于数据标签具有临床金标准质量。</p></article>
     </div>
   </section>
 
-  <section class="boundary"><h3>解释边界</h3><ul><li>Kermany分组是文件名簇敏感性方案，不可称为患者独立划分。</li><li>RSNA结果来自1,707张镜像便利子集，测试集已参与多轮观察。</li><li>混合训练使用目标域标签，不能解释为未知域零样本泛化。</li><li>所有结果用于课程研究与方法评估，不构成临床验证。</li></ul></section>
+  <section class="boundary"><h3>解释边界</h3><ul><li>Kermany分组是文件名簇敏感性方案，不可称为患者独立划分。</li><li>RSNA结果来自1,707张冻结子集，测试集已参与多轮观察。</li><li>混合训练使用目标域标签，不能解释为未知域零样本泛化。</li><li>所有结果用于课程研究与方法评估，不构成临床验证。</li></ul></section>
 </main>
 
-<footer><span>Chest X-ray classification · Offline evidence report</span><span>Generated from strict_summary.json and audit artifacts</span></footer>
+<footer><span>胸片分类 · 离线证据报告</span><span>依据 strict_summary.json 与审计产物生成</span></footer>
 
 <script>
 const DATA={
@@ -132,13 +132,13 @@ const DATA={
   {name:"ViT-B/16",short:"ViT",internal:{bacc:.9816841776,auc:.9968450503,brier:.0165625566},external:{bacc:.6593689171,auc:.8236451183,brier:.2832613065}}
  ],
  deltas:[
-  {strategy:"稳健配方",source:"Kermany",value:.0688,low:-.5376,high:.7862},{strategy:"稳健配方",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
-  {strategy:"简单混合",source:"Kermany",value:-.5841,low:-1.3113,high:.1545},{strategy:"简单混合",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
-  {strategy:"域均衡混合",source:"Kermany",value:-.9290,low:-1.9298,high:.0033},{strategy:"域均衡混合",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
+  {strategy:"稳健配方",source:"Kermany",value:.0688,low:-.5377,high:.7862},{strategy:"稳健配方",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
+  {strategy:"简单混合",source:"Kermany",value:-.5841,low:-1.3417,high:.1389},{strategy:"简单混合",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
+  {strategy:"域均衡混合",source:"Kermany",value:-.9290,low:-1.9040,high:-.0364},{strategy:"域均衡混合",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
  ],
  kermany:[{name:"训练",normal:1113,pneumonia:2994},{name:"验证",normal:156,pneumonia:423},{name:"测试",normal:314,pneumonia:856}],
  rsna:[{name:"训练",normal:560,pneumonia:492},{name:"验证",normal:107,pneumonia:106},{name:"测试",normal:215,pneumonia:227}],
- folds:[.9398151774,.9487822069,.9222726917,.9497219829,.9542838124],
+ folds:[.9486059989,.9509945963,.9423408254,.9279896625,.9519147936],
  rows:[
   {scope:"architecture",experiment:"DenseNet-121",domain:"Kermany",n:1170,groups:624,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
   {scope:"architecture",experiment:"ConvNeXt-Tiny",domain:"Kermany",n:1170,groups:624,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
@@ -158,7 +158,7 @@ const METRICS=[
  {key:"acc",label:"Acc",better:"high"},{key:"bacc",label:"BAcc",better:"high"},{key:"prec",label:"Prec",better:"high"},{key:"recall",label:"Recall",better:"high"},{key:"spec",label:"Spec",better:"high"},{key:"f1",label:"F1",better:"high"},{key:"auc",label:"AUROC",better:"high"},{key:"auprc",label:"AUPRC",better:"high"},{key:"brier",label:"Brier",better:"low"},{key:"ece",label:"ECE",better:"low"}
 ];
 const pct=v=>(v*100).toFixed(2)+"%";
-function renderBars(metric){const lower=metric==="brier"?0:metric==="bacc"?.55:.75,upper=metric==="brier"?.35:1;const chart=document.querySelector("#modelBars");chart.innerHTML=DATA.models.map(m=>{const a=m.internal[metric],b=m.external[metric],w=v=>Math.max(0,(v-lower)/(upper-lower)*100);return `<div class="bar-group"><div class="bar-label"><strong>${m.name}</strong><small>3 seeds ensemble</small></div><div class="bars"><div class="bar-row"><div class="track"><div class="fill internal" style="width:${w(a)}%"></div></div><span class="bar-value">${metric==="brier"?a.toFixed(3):pct(a)}</span></div><div class="bar-row"><div class="track"><div class="fill external" style="width:${w(b)}%"></div></div><span class="bar-value">${metric==="brier"?b.toFixed(3):pct(b)}</span></div></div></div>`}).join("");const ticks=metric==="brier"?[0,.1,.2,.3]:metric==="bacc"?[.55,.7,.85,1]:[.75,.83,.92,1];document.querySelector("#barAxis").innerHTML=ticks.map(x=>`<span>${metric==="brier"?x.toFixed(1):Math.round(x*100)}</span>`).join("");const copy={bacc:"BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。",auc:"AUROC越高越好。RSNA上ViT最高，但三种架构的区间仍有重叠。",brier:"Brier越低越好。三个模型在RSNA上的概率误差均明显高于内部测试。"};document.querySelector("#barCaption").textContent=copy[metric]}
+function renderBars(metric){const lower=metric==="brier"?0:metric==="bacc"?.55:.75,upper=metric==="brier"?.35:1;const chart=document.querySelector("#modelBars");chart.innerHTML=DATA.models.map(m=>{const a=m.internal[metric],b=m.external[metric],w=v=>Math.max(0,(v-lower)/(upper-lower)*100);return `<div class="bar-group"><div class="bar-label"><strong>${m.name}</strong><small>3 个随机种子集成</small></div><div class="bars"><div class="bar-row"><div class="track"><div class="fill internal" style="width:${w(a)}%"></div></div><span class="bar-value">${metric==="brier"?a.toFixed(3):pct(a)}</span></div><div class="bar-row"><div class="track"><div class="fill external" style="width:${w(b)}%"></div></div><span class="bar-value">${metric==="brier"?b.toFixed(3):pct(b)}</span></div></div></div>`}).join("");const ticks=metric==="brier"?[0,.1,.2,.3]:metric==="bacc"?[.55,.7,.85,1]:[.75,.83,.92,1];document.querySelector("#barAxis").innerHTML=ticks.map(x=>`<span>${metric==="brier"?x.toFixed(1):Math.round(x*100)}</span>`).join("");const copy={bacc:"BAcc越高越好。三种模型在内部测试上均超过97%，到RSNA后均降至约66%。",auc:"AUROC越高越好。RSNA上ViT最高，但三种架构的区间仍有重叠。",brier:"Brier越低越好。三个模型在RSNA上的概率误差均明显高于内部测试。"};document.querySelector("#barCaption").textContent=copy[metric]}
 document.querySelectorAll("[data-metric]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-metric]").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderBars(b.dataset.metric)}));
 function pos(v){return (v+5)/26*100}document.querySelector("#deltaRows").innerHTML=DATA.deltas.map(d=>`<div class="delta-row"><div class="delta-label"><strong>${d.strategy}</strong><small>${d.source}</small></div><div class="ci-track"><i class="ci-zero"></i><i class="ci-line ${d.value<0?'negative':''}" style="left:${pos(d.low)}%;width:${pos(d.high)-pos(d.low)}%"></i><i class="ci-dot" style="left:${pos(d.value)}%"></i></div><span class="delta-value">${d.value>0?'+':''}${d.value.toFixed(2)}</span></div>`).join("");
 function renderSplits(id,rows){const total=rows.reduce((s,r)=>s+r.normal+r.pneumonia,0);document.querySelector(id).innerHTML=rows.map(r=>{const n=r.normal/total*100,p=r.pneumonia/total*100;return `<div class="split-row"><span>${r.name}</span><div class="stack"><i class="normal" style="width:${n}%"></i><i class="pneumonia" style="width:${p}%"></i></div><span class="split-count">${r.normal+r.pneumonia}</span></div>`}).join("")}
