@@ -3,8 +3,7 @@ message: "If you use this software or its published evidence, please cite it as 
 title: "Chest X-ray Pneumonia Classification: Calibration and Cross-source Stress Testing"
 type: software
 authors:
-  - family-names: "Gao"
-    given-names: "Jason"
+  - family-names: "JasonGao1010"
     alias: "JasonGao1010"
 repository-code: "https://github.com/JasonGao1010/Chest-Xray-Pneumonia-Classification"
 license: MIT

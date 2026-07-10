@@ -15,7 +15,7 @@ https://github.com/JasonGao1010/Chest-Xray-Pneumonia-Classification/releases/tag
 权重文件 SHA256：
 
 ```text
-78604698f504d8d96f5bdad9570608c77472e7625684cb13a6f222275c8381be
+a15ed64c740f521ed176dfc381c725e7a52d5ec235365e883d049828b277bf0f
 ```
 
 网页演示默认读取这个路径。该权重来自早期 Kermany 官方目录划分训练，不是 `results/strict_*` 对应的三随机种子模型：
