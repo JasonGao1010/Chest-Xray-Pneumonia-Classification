@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "checkpoint": "./outputs/checkpoints/20260710_092519_torchvision:densenet121/best.pt",
+  "split": "test",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:densenet121",
+  "device": "cuda",
+  "sample_count": 40,
+  "dataset": {
+    "root": "./data/processed/rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "test"
+    ],
+    "counts": {
+      "test": {
+        "NORMAL": 20,
+        "PNEUMONIA": 20
+      }
+    },
+    "total_images": 40,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "accuracy": 0.7,
+    "precision": 0.6538461538461539,
+    "recall": 0.85,
+    "f1": 0.7391304347826086,
+    "confusion_matrix": [
+      [
+        11,
+        9
+      ],
+      [
+        3,
+        17
+      ]
+    ],
+    "roc_auc": 0.8775000000000001
+  },
+  "predictions_output": "./results/predictions_rsna_test_densenet121_kermany_rsna_trained.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_rsna_test_densenet121_kermany_rsna_trained.png"
+}

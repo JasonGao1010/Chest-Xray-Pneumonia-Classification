@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "checkpoint": "./models/vit_b16_best.pt",
+  "split": "val",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:vit_b_16",
+  "device": "cuda",
+  "sample_count": 213,
+  "dataset": {
+    "root": "./data/processed/rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "val"
+    ],
+    "counts": {
+      "val": {
+        "NORMAL": 107,
+        "PNEUMONIA": 106
+      }
+    },
+    "total_images": 213,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "accuracy": 0.6713615023474179,
+    "precision": 0.618421052631579,
+    "recall": 0.8867924528301887,
+    "specificity": 0.45794392523364486,
+    "f1": 0.7286821705426356,
+    "balanced_accuracy": 0.6723681890319168,
+    "false_positive_rate": 0.5420560747663551,
+    "false_negative_rate": 0.11320754716981132,
+    "brier_score": 0.26878593342932117,
+    "ece": 0.2248529616301713,
+    "confusion_matrix": [
+      [
+        49,
+        58
+      ],
+      [
+        12,
+        94
+      ]
+    ],
+    "roc_auc": 0.7681184976194675
+  },
+  "predictions_output": "./results/predictions_rsna_val_vit_b16.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_rsna_val_vit_b16.png"
+}

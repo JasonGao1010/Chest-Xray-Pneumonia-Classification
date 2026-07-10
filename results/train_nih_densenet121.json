@@ -1,0 +1,158 @@
+{
+  "ok": true,
+  "run_id": "20260709_230808_torchvision:densenet121",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/processed/nih_binary",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:densenet121",
+    "pretrained": true,
+    "epochs": 5,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 42,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null
+  },
+  "dataset": {
+    "root": "./data/processed/nih_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 46,
+        "PNEUMONIA": 46
+      },
+      "val": {
+        "NORMAL": 6,
+        "PNEUMONIA": 6
+      }
+    },
+    "total_images": 104,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 46,
+    "PNEUMONIA": 46
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.7456293468889983,
+        "accuracy": 0.5,
+        "samples": 92
+      },
+      "val": {
+        "loss": 0.93280029296875,
+        "accuracy": 0.5,
+        "samples": 12
+      },
+      "learning_rate": 9.045084971874738e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.596012286517931,
+        "accuracy": 0.6521739130434783,
+        "samples": 92
+      },
+      "val": {
+        "loss": 0.738800048828125,
+        "accuracy": 0.5833333333333334,
+        "samples": 12
+      },
+      "learning_rate": 6.545084971874737e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.48464767051779706,
+        "accuracy": 0.8260869565217391,
+        "samples": 92
+      },
+      "val": {
+        "loss": 0.62054443359375,
+        "accuracy": 0.6666666666666666,
+        "samples": 12
+      },
+      "learning_rate": 3.454915028125263e-05
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.4495285697605299,
+        "accuracy": 0.8152173913043478,
+        "samples": 92
+      },
+      "val": {
+        "loss": 0.5905049443244934,
+        "accuracy": 0.5833333333333334,
+        "samples": 12
+      },
+      "learning_rate": 9.549150281252631e-06
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.42067552779031836,
+        "accuracy": 0.8913043478260869,
+        "samples": 92
+      },
+      "val": {
+        "loss": 0.5771382451057434,
+        "accuracy": 0.5833333333333334,
+        "samples": 12
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260709_230808_torchvision:densenet121/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260709_230808_torchvision:densenet121/last.pt"
+}

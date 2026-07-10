@@ -1,0 +1,4 @@
+file,predictions,temperature_source,temperature,ece,mce,brier_score,accuracy_at_threshold,negative_log_likelihood
+./results/calibration_kermany_test_vit_b16.json,./results/predictions_test_vit_b16.csv,calibration_predictions,0.5,0.08582233032316666,0.3413973404722399,0.09175205465023685,0.9006410256410257,0.6184902854474412
+./results/calibration_rsna_test_vit_b16.json,./results/predictions_rsna_test_vit_b16.csv,calibration_predictions,4.27,0.02627378900945992,0.07039664937126222,0.20414521970587166,0.6923076923076923,0.5959508607420761
+./results/calibration_rsna_test_densenet121.json,./results/predictions_rsna_test_densenet121.csv,calibration_predictions,4.14,0.027161288090692657,0.09209626868417709,0.1873647848622134,0.7330316742081447,0.5563900428501571

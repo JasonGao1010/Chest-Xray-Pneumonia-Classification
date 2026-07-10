@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "checkpoint": "./models/vit_b16_best.pt",
+  "split": "nih_val",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:vit_b_16",
+  "device": "cuda",
+  "sample_count": 12,
+  "dataset": {
+    "ok": true,
+    "root": "./data/processed/nih_binary",
+    "samples_csv": "./data/processed/nih_binary/samples_val.csv",
+    "sample_count": 12
+  },
+  "metrics": {
+    "accuracy": 0.8333333333333334,
+    "precision": 0.8333333333333334,
+    "recall": 0.8333333333333334,
+    "f1": 0.8333333333333334,
+    "confusion_matrix": [
+      [
+        5,
+        1
+      ],
+      [
+        1,
+        5
+      ]
+    ],
+    "roc_auc": 0.8611111111111112
+  },
+  "predictions_output": "./results/predictions_nih_val_vit_b16.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_nih_val_vit_b16.png"
+}

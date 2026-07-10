@@ -30,7 +30,11 @@ from xray_pneumonia.data import (  # noqa: E402
 )
 
 REQUIRED_TRAINING_MODULES = ("torch", "torchvision", "timm")
-TORCHVISION_MODELS = {"torchvision:vit_b_16"}
+TORCHVISION_MODELS = {
+    "torchvision:vit_b_16",
+    "torchvision:densenet121",
+    "torchvision:convnext_tiny",
+}
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "project": {
@@ -99,6 +103,8 @@ class TrainSettings:
     holdout_seed: int
     holdout_manifest_output: Path | None
     init_checkpoint: Path | None
+    domain_balanced_prefixes: tuple[str, ...]
+    freeze_mode: str
 
 
 def deep_merge(base: dict[str, Any], updates: dict[str, Any]) -> dict[str, Any]:
@@ -221,6 +227,26 @@ def create_classifier_model(
             return model
         return vit_b_16(weights=None, num_classes=num_classes)
 
+    if model_name == "torchvision:densenet121":
+        from torchvision.models import DenseNet121_Weights, densenet121
+
+        if pretrained:
+            model = densenet121(weights=DenseNet121_Weights.IMAGENET1K_V1)
+            in_features = model.classifier.in_features
+            model.classifier = torch_module.nn.Linear(in_features, num_classes)
+            return model
+        return densenet121(weights=None, num_classes=num_classes)
+
+    if model_name == "torchvision:convnext_tiny":
+        from torchvision.models import ConvNeXt_Tiny_Weights, convnext_tiny
+
+        if pretrained:
+            model = convnext_tiny(weights=ConvNeXt_Tiny_Weights.IMAGENET1K_V1)
+            in_features = model.classifier[-1].in_features
+            model.classifier[-1] = torch_module.nn.Linear(in_features, num_classes)
+            return model
+        return convnext_tiny(weights=None, num_classes=num_classes)
+
     return timm_module.create_model(
         model_name,
         pretrained=pretrained,
@@ -271,6 +297,8 @@ def to_jsonable_settings(settings: TrainSettings) -> dict[str, Any]:
             if settings.init_checkpoint is not None
             else None
         ),
+        "domain_balanced_prefixes": list(settings.domain_balanced_prefixes),
+        "freeze_mode": settings.freeze_mode,
     }
 
 
@@ -363,6 +391,24 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Optional checkpoint used to initialize model weights before training. "
             "This does not restore the old optimizer or scheduler state."
+        ),
+    )
+    parser.add_argument(
+        "--domain-balanced-prefixes",
+        nargs="+",
+        default=None,
+        help=(
+            "Optional filename prefixes used to balance source domains in mixed training, "
+            "for example: kermany rsna."
+        ),
+    )
+    parser.add_argument(
+        "--freeze-mode",
+        choices=["none", "classifier", "last_block"],
+        default="none",
+        help=(
+            "Optional fine-tuning mode. classifier freezes the backbone and trains "
+            "only the classification head; last_block also unfreezes the final feature block."
         ),
     )
 
@@ -464,6 +510,8 @@ def build_settings(args: argparse.Namespace, config: dict[str, Any]) -> TrainSet
             if args.init_checkpoint is not None
             else None
         ),
+        domain_balanced_prefixes=tuple(args.domain_balanced_prefixes or ()),
+        freeze_mode=str(args.freeze_mode),
     )
 
 
@@ -546,10 +594,10 @@ def import_training_stack():
     import numpy as np
     import timm
     import torch
-    from torch.utils.data import DataLoader, Subset
+    from torch.utils.data import DataLoader, Subset, WeightedRandomSampler
     from torchvision import transforms
 
-    return np, timm, torch, DataLoader, Subset, transforms
+    return np, timm, torch, DataLoader, Subset, WeightedRandomSampler, transforms
 
 
 def set_seed(seed: int, np_module: Any, torch_module: Any) -> None:
@@ -604,6 +652,39 @@ def class_counts_from_indices(
     return counts
 
 
+def domain_for_sample(path: Path, prefixes: tuple[str, ...]) -> str:
+    name = path.name
+    for prefix in prefixes:
+        normalized = prefix.rstrip("_")
+        if name.startswith(f"{normalized}_"):
+            return normalized
+    return "other"
+
+
+def build_domain_balanced_sampler(
+    torch_module: Any,
+    samples: list[tuple[Path, int]],
+    indices: list[int] | None,
+    prefixes: tuple[str, ...],
+) -> tuple[Any | None, dict[str, int]]:
+    if not prefixes:
+        return None, {}
+    active_indices = indices if indices is not None else list(range(len(samples)))
+    domain_counts: dict[str, int] = {}
+    domains: list[str] = []
+    for index in active_indices:
+        domain = domain_for_sample(samples[index][0], prefixes)
+        domains.append(domain)
+        domain_counts[domain] = domain_counts.get(domain, 0) + 1
+    weights = [1.0 / domain_counts[domain] for domain in domains]
+    sampler = torch_module.utils.data.WeightedRandomSampler(
+        weights=weights,
+        num_samples=len(weights),
+        replacement=True,
+    )
+    return sampler, domain_counts
+
+
 def write_holdout_manifest(
     path: Path,
     data_root: Path,
@@ -635,15 +716,18 @@ def choose_device(requested: str, torch_module: Any):
 
 def build_optimizer(settings: TrainSettings, torch_module: Any, model: Any):
     name = settings.optimizer.lower()
+    parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    if not parameters:
+        raise ValueError("No trainable parameters are available for the requested freeze mode.")
     if name == "adamw":
         return torch_module.optim.AdamW(
-            model.parameters(),
+            parameters,
             lr=settings.learning_rate,
             weight_decay=settings.weight_decay,
         )
     if name == "sgd":
         return torch_module.optim.SGD(
-            model.parameters(),
+            parameters,
             lr=settings.learning_rate,
             momentum=0.9,
             weight_decay=settings.weight_decay,
@@ -661,6 +745,50 @@ def build_scheduler(settings: TrainSettings, torch_module: Any, optimizer: Any):
             T_max=max(settings.epochs, 1),
         )
     raise ValueError(f"Unsupported scheduler: {settings.scheduler}")
+
+
+def set_trainable(module: Any, trainable: bool) -> None:
+    for parameter in module.parameters():
+        parameter.requires_grad = trainable
+
+
+def apply_freeze_mode(model: Any, model_name: str, freeze_mode: str) -> dict[str, Any]:
+    if freeze_mode == "none":
+        return {"mode": freeze_mode, "trainable_parameters": count_trainable_parameters(model)}
+
+    set_trainable(model, False)
+    unfrozen: list[str] = []
+    if model_name == "torchvision:densenet121":
+        set_trainable(model.classifier, True)
+        unfrozen.append("classifier")
+        if freeze_mode == "last_block":
+            set_trainable(model.features.denseblock4, True)
+            set_trainable(model.features.norm5, True)
+            unfrozen.extend(["features.denseblock4", "features.norm5"])
+    elif model_name == "torchvision:convnext_tiny":
+        set_trainable(model.classifier, True)
+        unfrozen.append("classifier")
+        if freeze_mode == "last_block":
+            set_trainable(model.features[-1], True)
+            unfrozen.append("features[-1]")
+    elif model_name == "torchvision:vit_b_16":
+        set_trainable(model.heads, True)
+        unfrozen.append("heads")
+        if freeze_mode == "last_block":
+            set_trainable(model.encoder.layers[-1], True)
+            unfrozen.append("encoder.layers[-1]")
+    else:
+        raise ValueError(f"Freeze mode is not configured for model: {model_name}")
+
+    return {
+        "mode": freeze_mode,
+        "unfrozen": unfrozen,
+        "trainable_parameters": count_trainable_parameters(model),
+    }
+
+
+def count_trainable_parameters(model: Any) -> int:
+    return int(sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad))
 
 
 def autocast_context(torch_module: Any, enabled: bool, device: Any):
@@ -754,7 +882,7 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
     if not validation.ok:
         raise RuntimeError("Dataset validation failed; run scripts/check_dataset.py for details.")
 
-    np_module, timm_module, torch_module, DataLoader, Subset, transforms_module = import_training_stack()
+    np_module, timm_module, torch_module, DataLoader, Subset, _WeightedRandomSampler, transforms_module = import_training_stack()
     set_seed(settings.seed, np_module, torch_module)
     device = choose_device(settings.device, torch_module)
     use_amp = settings.mixed_precision and device.type == "cuda"
@@ -820,6 +948,7 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
         }
     else:
         train_dataset = train_dataset_full
+        train_indices = None
         val_dataset = XRayImageDataset(
             settings.data_root,
             settings.val_split,
@@ -827,10 +956,17 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
             transform=build_transforms(settings, transforms_module, train=False),
         )
 
+    train_sampler, domain_counts = build_domain_balanced_sampler(
+        torch_module,
+        train_dataset_full.samples,
+        train_indices,
+        settings.domain_balanced_prefixes,
+    )
     train_loader = DataLoader(
         train_dataset,
         batch_size=settings.batch_size,
-        shuffle=True,
+        shuffle=train_sampler is None,
+        sampler=train_sampler,
         num_workers=settings.num_workers,
         pin_memory=device.type == "cuda",
     )
@@ -871,6 +1007,7 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
             "epoch": checkpoint.get("epoch"),
             "source_model": checkpoint_model,
         }
+    freeze_summary = apply_freeze_mode(model, settings.model, settings.freeze_mode)
     model.to(device)
 
     class_weights = (
@@ -951,6 +1088,8 @@ def train(settings: TrainSettings, json_output: Path | None) -> dict[str, Any]:
         "dataset": validation.to_dict(),
         "validation_source": validation_source,
         "class_weight_counts": class_weight_counts,
+        "domain_balanced_counts": domain_counts,
+        "freeze": freeze_summary,
         "holdout": holdout_summary,
         "init_checkpoint": init_checkpoint_summary,
         "history": history,

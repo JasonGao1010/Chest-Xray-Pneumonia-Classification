@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_nih_test_densenet121.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 26,
+  "exported_case_count": 13,
+  "counts": {
+    "correct": 13,
+    "false_positive": 6,
+    "false_negative": 6,
+    "high_confidence_false_positive": 5,
+    "high_confidence_false_negative": 4,
+    "borderline": 3
+  },
+  "csv_output": "./results/error_cases_nih_test_densenet121.csv",
+  "grid_rendered": 13
+}

@@ -1,0 +1,46 @@
+{
+  "ok": false,
+  "dataset": {
+    "root": "./data/processed/kermany_rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val",
+      "test"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1901,
+        "PNEUMONIA": 4367
+      },
+      "val": {
+        "NORMAL": 115,
+        "PNEUMONIA": 114
+      },
+      "test": {
+        "NORMAL": 0,
+        "PNEUMONIA": 0
+      }
+    },
+    "total_images": 6497,
+    "missing_dirs": [
+      "test"
+    ],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": false
+  },
+  "metadata": null
+}

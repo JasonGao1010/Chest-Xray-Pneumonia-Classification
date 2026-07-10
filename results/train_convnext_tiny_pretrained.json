@@ -1,0 +1,172 @@
+{
+  "ok": true,
+  "run_id": "20260709_225410_torchvision:convnext_tiny",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/raw/chest_xray",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:convnext_tiny",
+    "pretrained": true,
+    "epochs": 6,
+    "batch_size": 32,
+    "learning_rate": 5e-05,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 42,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null
+  },
+  "dataset": {
+    "root": "./data/raw/chest_xray",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1341,
+        "PNEUMONIA": 3875
+      },
+      "val": {
+        "NORMAL": 8,
+        "PNEUMONIA": 8
+      }
+    },
+    "total_images": 5232,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 1341,
+    "PNEUMONIA": 3875
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.12517335405858931,
+        "accuracy": 0.9488113496932515,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.09261029213666916,
+        "accuracy": 0.9375,
+        "samples": 16
+      },
+      "learning_rate": 4.665063509461097e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.05409965048575534,
+        "accuracy": 0.9787193251533742,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.35616469383239746,
+        "accuracy": 0.875,
+        "samples": 16
+      },
+      "learning_rate": 3.7500000000000003e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.03718549838758137,
+        "accuracy": 0.9879217791411042,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.024123335257172585,
+        "accuracy": 1.0,
+        "samples": 16
+      },
+      "learning_rate": 2.5e-05
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 0.020398720858212947,
+        "accuracy": 0.9936733128834356,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.1526651680469513,
+        "accuracy": 0.9375,
+        "samples": 16
+      },
+      "learning_rate": 1.2500000000000006e-05
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 0.011042481715586664,
+        "accuracy": 0.995398773006135,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.027347402647137642,
+        "accuracy": 1.0,
+        "samples": 16
+      },
+      "learning_rate": 3.3493649053890326e-06
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "loss": 0.010755358376158859,
+        "accuracy": 0.9959739263803681,
+        "samples": 5216
+      },
+      "val": {
+        "loss": 0.14902396500110626,
+        "accuracy": 0.9375,
+        "samples": 16
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260709_225410_torchvision:convnext_tiny/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260709_225410_torchvision:convnext_tiny/last.pt"
+}

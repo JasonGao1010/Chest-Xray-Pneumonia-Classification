@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "checkpoint": "./models/vit_b16_best.pt",
+  "split": "test",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:vit_b_16",
+  "device": "cuda",
+  "sample_count": 624,
+  "dataset": {
+    "root": "./data/raw/chest_xray",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "test"
+    ],
+    "counts": {
+      "test": {
+        "NORMAL": 234,
+        "PNEUMONIA": 390
+      }
+    },
+    "total_images": 624,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "accuracy": 0.9006410256410257,
+    "precision": 0.8778801843317973,
+    "recall": 0.9769230769230769,
+    "f1": 0.9247572815533981,
+    "confusion_matrix": [
+      [
+        181,
+        53
+      ],
+      [
+        9,
+        381
+      ]
+    ],
+    "roc_auc": 0.9709730440499672
+  },
+  "predictions_output": "./results/predictions_test_reproduced_vit_b16.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_test_reproduced_vit_b16.png"
+}

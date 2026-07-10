@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "source": "NIH ChestX-ray14 images_001.zip subset",
+  "label_rule": "PNEUMONIA if Finding Labels contains Pneumonia; NORMAL if Finding Labels is exactly No Finding.",
+  "weak_label_warning": "NIH ChestX-ray14 labels are report-mined weak labels and are not equivalent to Kermany or RSNA labels.",
+  "metadata_csv": "./data/raw/nih_chestxray14_Data_Entry_2017_v2020.csv",
+  "zip": "./data/raw/nih_chestxray14/images_001.zip",
+  "output_root": "./data/processed/nih_binary",
+  "sample_count": 130,
+  "counts": {
+    "train": {
+      "NORMAL": 46,
+      "PNEUMONIA": 46
+    },
+    "val": {
+      "NORMAL": 6,
+      "PNEUMONIA": 6
+    },
+    "test": {
+      "NORMAL": 13,
+      "PNEUMONIA": 13
+    }
+  },
+  "available_in_zip": {
+    "NORMAL": 2754,
+    "PNEUMONIA": 65
+  }
+}

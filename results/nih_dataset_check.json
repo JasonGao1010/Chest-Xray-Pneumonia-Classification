@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "dataset": {
+    "root": "./data/processed/nih_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val",
+      "test"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 46,
+        "PNEUMONIA": 46
+      },
+      "val": {
+        "NORMAL": 6,
+        "PNEUMONIA": 6
+      },
+      "test": {
+        "NORMAL": 13,
+        "PNEUMONIA": 13
+      }
+    },
+    "total_images": 130,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metadata": {
+    "path": "./data/processed/nih_binary/metadata.csv",
+    "rows": 130,
+    "counts": {
+      "test": {
+        "NORMAL": 13,
+        "PNEUMONIA": 13
+      },
+      "train": {
+        "NORMAL": 46,
+        "PNEUMONIA": 46
+      },
+      "val": {
+        "NORMAL": 6,
+        "PNEUMONIA": 6
+      }
+    }
+  }
+}

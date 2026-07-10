@@ -10,3 +10,5 @@ pillow
 tqdm
 pyyaml
 flask
+pydicom
+kagglehub

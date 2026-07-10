@@ -1,0 +1,46 @@
+{
+  "ok": false,
+  "dataset": {
+    "root": "./data/processed/kermany_nih_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val",
+      "test"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1387,
+        "PNEUMONIA": 3921
+      },
+      "val": {
+        "NORMAL": 14,
+        "PNEUMONIA": 14
+      },
+      "test": {
+        "NORMAL": 0,
+        "PNEUMONIA": 0
+      }
+    },
+    "total_images": 5336,
+    "missing_dirs": [
+      "test"
+    ],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": false
+  },
+  "metadata": null
+}

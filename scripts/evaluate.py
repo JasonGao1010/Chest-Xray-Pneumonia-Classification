@@ -146,6 +146,7 @@ def compute_metrics(
 ) -> dict[str, Any]:
     from sklearn.metrics import (
         accuracy_score,
+        brier_score_loss,
         confusion_matrix,
         f1_score,
         precision_score,
@@ -154,18 +155,62 @@ def compute_metrics(
     )
 
     positive_label = min(1, len(class_names) - 1)
+    matrix = confusion_matrix(y_true, y_pred, labels=list(range(len(class_names)))).tolist()
+    tn = fp = fn = tp = 0
+    if len(class_names) == 2 and len(matrix) == 2 and all(len(row) == 2 for row in matrix):
+        tn, fp = matrix[0]
+        fn, tp = matrix[1]
+    specificity = float(tn / (tn + fp)) if (tn + fp) else 0.0
+    recall = float(recall_score(y_true, y_pred, pos_label=positive_label, zero_division=0))
+    labels_binary = [1 if item == positive_label else 0 for item in y_true]
+    brier_score = float(brier_score_loss(labels_binary, positive_scores))
+    ece = expected_calibration_error(labels_binary, positive_scores)
+
     metrics: dict[str, Any] = {
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "precision": float(precision_score(y_true, y_pred, pos_label=positive_label, zero_division=0)),
-        "recall": float(recall_score(y_true, y_pred, pos_label=positive_label, zero_division=0)),
+        "recall": recall,
+        "specificity": specificity,
         "f1": float(f1_score(y_true, y_pred, pos_label=positive_label, zero_division=0)),
-        "confusion_matrix": confusion_matrix(y_true, y_pred, labels=list(range(len(class_names)))).tolist(),
+        "balanced_accuracy": (recall + specificity) / 2,
+        "false_positive_rate": float(fp / (tn + fp)) if (tn + fp) else 0.0,
+        "false_negative_rate": float(fn / (fn + tp)) if (fn + tp) else 0.0,
+        "brier_score": brier_score,
+        "ece": ece,
+        "confusion_matrix": matrix,
     }
     try:
         metrics["roc_auc"] = float(roc_auc_score(y_true, positive_scores))
     except ValueError:
         metrics["roc_auc"] = None
     return metrics
+
+
+def expected_calibration_error(
+    labels_binary: list[int],
+    positive_scores: list[float],
+    *,
+    n_bins: int = 10,
+    threshold: float = 0.5,
+) -> float:
+    if not labels_binary:
+        return 0.0
+    buckets: list[list[tuple[float, int]]] = [[] for _ in range(n_bins)]
+    for label, score in zip(labels_binary, positive_scores):
+        predicted_positive = score >= threshold
+        confidence = score if predicted_positive else 1.0 - score
+        correct = int(predicted_positive == bool(label))
+        index = min(int(confidence * n_bins), n_bins - 1)
+        buckets[index].append((confidence, correct))
+    total = len(labels_binary)
+    ece = 0.0
+    for bucket in buckets:
+        if not bucket:
+            continue
+        accuracy = sum(correct for _, correct in bucket) / len(bucket)
+        confidence = sum(confidence for confidence, _ in bucket) / len(bucket)
+        ece += (len(bucket) / total) * abs(accuracy - confidence)
+    return float(ece)
 
 
 def create_classifier_model(
@@ -178,6 +223,16 @@ def create_classifier_model(
         from torchvision.models import vit_b_16
 
         return vit_b_16(weights=None, num_classes=num_classes)
+
+    if model_name == "torchvision:densenet121":
+        from torchvision.models import densenet121
+
+        return densenet121(weights=None, num_classes=num_classes)
+
+    if model_name == "torchvision:convnext_tiny":
+        from torchvision.models import convnext_tiny
+
+        return convnext_tiny(weights=None, num_classes=num_classes)
 
     return timm_module.create_model(model_name, pretrained=False, num_classes=num_classes)
 

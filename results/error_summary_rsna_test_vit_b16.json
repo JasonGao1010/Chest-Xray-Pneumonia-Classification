@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_rsna_test_vit_b16.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 442,
+  "exported_case_count": 150,
+  "counts": {
+    "correct": 292,
+    "false_positive": 106,
+    "false_negative": 30,
+    "high_confidence_false_positive": 55,
+    "high_confidence_false_negative": 8,
+    "borderline": 30
+  },
+  "csv_output": "./results/error_cases_rsna_test_vit_b16.csv",
+  "grid_rendered": 16
+}

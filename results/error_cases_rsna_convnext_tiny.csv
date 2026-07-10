@@ -1,0 +1,14 @@
+path,true_label,predicted_label,prob_pneumonia,confidence,error_type,coarse_type
+test/PNEUMONIA/0409b97f-7673-42e2-9943-0656c6aaca69.png,PNEUMONIA,NORMAL,0.08697385,0.91302615,high_confidence_false_negative,false_negative
+test/PNEUMONIA/03e4827c-7338-4de3-9ac6-8831ba5637e9.png,PNEUMONIA,NORMAL,0.13036045,0.86963955,false_negative,false_negative
+test/PNEUMONIA/0488a028-fb77-46e1-85fb-f0b86cf57fee.png,PNEUMONIA,NORMAL,0.14914198,0.85085802,false_negative,false_negative
+test/NORMAL/01c7cc7c-7004-441f-9049-77b7b444dd6b.png,NORMAL,PNEUMONIA,0.99908137,0.99908137,high_confidence_false_positive,false_positive
+test/NORMAL/02e141b9-8bc0-45df-be3a-5508768412c6.png,NORMAL,PNEUMONIA,0.99511695,0.99511695,high_confidence_false_positive,false_positive
+test/NORMAL/02b20ea4-9c01-48b2-b3b3-5dae20e80095.png,NORMAL,PNEUMONIA,0.98982984,0.98982984,high_confidence_false_positive,false_positive
+test/NORMAL/023558cc-fcca-4fc2-9749-175e2727d49d.png,NORMAL,PNEUMONIA,0.98916465,0.98916465,high_confidence_false_positive,false_positive
+test/NORMAL/025b6ef8-0fd0-4900-8519-52dc9181f3f1.png,NORMAL,PNEUMONIA,0.97752404,0.97752404,high_confidence_false_positive,false_positive
+test/NORMAL/01d1f0be-5216-4af5-b2dc-a160c1c56122.png,NORMAL,PNEUMONIA,0.97279269,0.97279269,high_confidence_false_positive,false_positive
+test/NORMAL/01fe92f7-ff87-4f9e-9077-e00e670d1b47.png,NORMAL,PNEUMONIA,0.96352184,0.96352184,high_confidence_false_positive,false_positive
+test/NORMAL/01f6bf01-9887-498c-ab11-1d10c6a22221.png,NORMAL,PNEUMONIA,0.84187192,0.84187192,false_positive,false_positive
+test/NORMAL/0297e501-88b5-4ec0-a2fd-50a7c70b42eb.png,NORMAL,PNEUMONIA,0.69756287,0.69756287,false_positive,false_positive
+test/NORMAL/016b050d-bf68-4a32-8d3e-421338819519.png,NORMAL,PNEUMONIA,0.56773573,0.56773573,false_positive,false_positive

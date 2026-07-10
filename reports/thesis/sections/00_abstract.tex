@@ -1,0 +1,6 @@
+\chapter*{摘 要}
+\addcontentsline{toc}{chapter}{摘 要}
+
+本报告围绕胸部 X 光正常/肺炎二分类任务，整理现有 Kermany 数据集基线，并补充模型对照、RSNA 外部子集、NIH 弱标签压力测试、概率可靠性和错误样本分析。ViT-B/16 在 Kermany test 上取得 accuracy 0.9006、F1 0.9248、ROC-AUC 0.9710。新增 ImageNet 预训练 DenseNet121 在同一测试集上取得 F1 0.9288，ConvNeXt-Tiny 取得 ROC-AUC 0.9781。扩容 RSNA 外部 test 包含 NORMAL 215 张和 PNEUMONIA 227 张，三模型 F1 为 0.7434 到 0.7774；NIH ChestX-ray14 弱标签子集上，三模型 F1 为 0.4800 到 0.5385。结果提示单数据集结果不能直接代表跨来源稳定性。
+
+\textbf{关键词：} 胸部 X 光；肺炎识别；二分类；概率校准；错误样本分析

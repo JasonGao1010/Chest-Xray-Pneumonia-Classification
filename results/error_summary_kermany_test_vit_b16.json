@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_test_vit_b16.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 624,
+  "exported_case_count": 70,
+  "counts": {
+    "correct": 554,
+    "false_positive": 53,
+    "false_negative": 9,
+    "high_confidence_false_positive": 33,
+    "high_confidence_false_negative": 2,
+    "borderline": 11
+  },
+  "csv_output": "./results/error_cases_kermany_test_vit_b16.csv",
+  "grid_rendered": 16
+}

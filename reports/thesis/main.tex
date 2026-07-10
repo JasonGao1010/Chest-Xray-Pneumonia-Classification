@@ -1,0 +1,35 @@
+\documentclass[12pt,a4paper]{ctexrep}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
+\geometry{left=2.8cm,right=2.8cm,top=2.6cm,bottom=2.6cm}
+
+\title{胸部 X 光肺炎识别模型的构建、评价与跨数据集泛化分析}
+\author{张龙骥\quad 高金泽\quad 张文博\quad 李际宏\quad 蔡沐河}
+\date{2026 年 7 月}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{sections/00_abstract}
+\input{sections/01_introduction}
+\input{sections/02_dataset_task}
+\input{sections/03_method_models}
+\input{sections/04_experiment_design}
+\input{sections/05_main_results}
+\input{sections/06_external_generalization}
+\input{sections/07_calibration_threshold}
+\input{sections/08_error_explainability}
+\input{sections/09_system_demo}
+\input{sections/10_discussion}
+\input{sections/11_conclusion}
+\appendix
+\input{sections/12_reproducibility_appendix}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}

@@ -1,0 +1,100 @@
+\chapter{复现证据附录}
+
+本附录保留关键结果文件的原始内容，用于答辩或复查时追溯每一个指标。正文只引用主要结论，附录保存机器可读结果，避免只在文字中描述结果。
+
+\section{实验结果汇总}
+
+\VerbatimInput[fontsize=\tiny]{../../results/experiment_comparison.csv}
+
+\section{校准结果汇总}
+
+\VerbatimInput[fontsize=\tiny]{../../results/calibration_comparison.csv}
+
+\section{Kermany ViT-B/16 测试集逐图预测}
+
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_test_vit_b16.csv}
+
+\section{Kermany DenseNet121 测试集逐图预测}
+
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_kermany_test_densenet121.csv}
+
+\section{Kermany ConvNeXt-Tiny 测试集逐图预测}
+
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_kermany_test_convnext_tiny.csv}
+
+\section{NIH 外部测试逐图预测}
+
+\subsection{ViT-B/16}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_nih_test_vit_b16.csv}
+
+\subsection{DenseNet121}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_nih_test_densenet121.csv}
+
+\subsection{ConvNeXt-Tiny}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_nih_test_convnext_tiny.csv}
+
+\subsection{DenseNet121 Kermany+NIH 混合训练后 Kermany test}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_kermany_test_densenet121_kermany_nih_trained.csv}
+
+\subsection{DenseNet121 Kermany+NIH 混合训练后 NIH test}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_nih_test_densenet121_kermany_nih_trained.csv}
+
+\section{RSNA 外部测试逐图预测}
+
+\subsection{ViT-B/16}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_vit_b16.csv}
+
+\subsection{DenseNet121 Kermany 训练}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121.csv}
+
+\subsection{ConvNeXt-Tiny}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_convnext_tiny.csv}
+
+\subsection{DenseNet121 RSNA-only 训练}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121_expanded_rsna_only.csv}
+
+\subsection{DenseNet121 Kermany+RSNA 简单混合训练}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121_expanded_simple_mixed.csv}
+
+\subsection{DenseNet121 Kermany+RSNA domain-balanced 训练}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121_expanded_domain_balanced.csv}
+
+\subsection{DenseNet121 RSNA 冻结分类头微调}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121_expanded_finetune_head.csv}
+
+\subsection{DenseNet121 RSNA 最后 block 解冻微调}
+\VerbatimInput[fontsize=\tiny]{../../results/predictions_rsna_test_densenet121_expanded_last_block.csv}
+
+\section{错误样本导出}
+
+\subsection{Kermany ViT-B/16}
+\VerbatimInput[fontsize=\tiny]{../../results/error_cases_kermany_test_vit_b16.csv}
+
+\subsection{NIH ViT-B/16}
+\VerbatimInput[fontsize=\tiny]{../../results/error_cases_nih_test_vit_b16.csv}
+
+\subsection{NIH DenseNet121 Kermany+NIH 混合训练}
+\VerbatimInput[fontsize=\tiny]{../../results/error_cases_nih_test_densenet121_kermany_nih_trained.csv}
+
+\subsection{RSNA ViT-B/16}
+\VerbatimInput[fontsize=\tiny]{../../results/error_cases_rsna_test_vit_b16.csv}
+
+\subsection{RSNA DenseNet121}
+\VerbatimInput[fontsize=\tiny]{../../results/error_cases_rsna_test_densenet121.csv}
+
+\section{数据集与基线清单}
+
+\subsection{Kermany 基线清单}
+\VerbatimInput[fontsize=\tiny]{../../results/baseline_manifest.json}
+
+\subsection{NIH 数据集摘要}
+\VerbatimInput[fontsize=\tiny]{../../results/nih_dataset_summary.json}
+
+\subsection{RSNA 数据集摘要}
+\VerbatimInput[fontsize=\tiny]{../../results/rsna_dataset_summary.json}
+
+\subsection{Kermany+RSNA 混合数据集摘要}
+\VerbatimInput[fontsize=\tiny]{../../results/kermany_rsna_dataset_summary.json}
+
+\subsection{RSNA 数据检查状态}
+\VerbatimInput[fontsize=\tiny]{../../results/rsna_dataset_check.json}

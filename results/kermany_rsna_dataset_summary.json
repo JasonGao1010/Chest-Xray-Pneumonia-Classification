@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "sources": {
+    "kermany": "./data/raw/chest_xray",
+    "rsna": "./data/processed/rsna_binary"
+  },
+  "output_root": "./data/processed/kermany_rsna_binary",
+  "splits": [
+    "train",
+    "val"
+  ],
+  "counts": {
+    "train": {
+      "NORMAL": 1901,
+      "PNEUMONIA": 4367
+    },
+    "val": {
+      "NORMAL": 115,
+      "PNEUMONIA": 114
+    }
+  },
+  "by_source": {
+    "kermany": {
+      "train": {
+        "NORMAL": 1341,
+        "PNEUMONIA": 3875
+      },
+      "val": {
+        "NORMAL": 8,
+        "PNEUMONIA": 8
+      }
+    },
+    "rsna": {
+      "train": {
+        "NORMAL": 560,
+        "PNEUMONIA": 492
+      },
+      "val": {
+        "NORMAL": 107,
+        "PNEUMONIA": 106
+      }
+    }
+  },
+  "dataset": {
+    "root": "./data/processed/kermany_rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1901,
+        "PNEUMONIA": 4367
+      },
+      "val": {
+        "NORMAL": 115,
+        "PNEUMONIA": 114
+      }
+    },
+    "total_images": 6497,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  }
+}

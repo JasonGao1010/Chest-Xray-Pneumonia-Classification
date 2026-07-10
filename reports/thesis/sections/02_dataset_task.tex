@@ -1,0 +1,3 @@
+\chapter{数据集与任务定义}
+
+主数据集为 Chest X-Ray Images (Pneumonia)，本地可读图像 5856 张，其中 train 5216 张、val 16 张、test 624 张。标签来自目录名 NORMAL 和 PNEUMONIA。RSNA 外部子集来自 Hugging Face 镜像，按 Target 转换为二分类，并保存固定 seed=42 的划分和 metadata；本轮实际整理 1707 张图像，train 为 NORMAL 560 / PNEUMONIA 492，val 为 107 / 106，test 为 215 / 227。NIH ChestX-ray14 弱标签子集作为第二个外部压力测试，标签规则为 Finding Labels 包含 Pneumonia 记为 PNEUMONIA，Finding Labels 等于 No Finding 记为 NORMAL。

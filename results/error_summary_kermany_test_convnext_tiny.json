@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_kermany_test_convnext_tiny.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 624,
+  "exported_case_count": 76,
+  "counts": {
+    "correct": 548,
+    "false_positive": 67,
+    "false_negative": 3,
+    "high_confidence_false_positive": 37,
+    "high_confidence_false_negative": 1,
+    "borderline": 11
+  },
+  "csv_output": "./results/error_cases_kermany_test_convnext_tiny.csv",
+  "grid_rendered": 16
+}

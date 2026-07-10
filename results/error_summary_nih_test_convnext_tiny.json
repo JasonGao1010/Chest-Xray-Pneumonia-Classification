@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_nih_test_convnext_tiny.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 26,
+  "exported_case_count": 14,
+  "counts": {
+    "correct": 12,
+    "false_positive": 8,
+    "false_negative": 6,
+    "high_confidence_false_positive": 6,
+    "high_confidence_false_negative": 2,
+    "borderline": 0
+  },
+  "csv_output": "./results/error_cases_nih_test_convnext_tiny.csv",
+  "grid_rendered": 14
+}

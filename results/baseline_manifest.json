@@ -1,0 +1,33 @@
+{
+  "baseline": "kermany_test_vit_b16",
+  "model": "torchvision:vit_b_16",
+  "checkpoint": "models/vit_b16_best.pt",
+  "checkpoint_sha256": "78604698f504d8d96f5bdad9570608c77472e7625684cb13a6f222275c8381be",
+  "data_root": "data/raw/chest_xray",
+  "split": "test",
+  "sample_count": 624,
+  "class_counts": {
+    "NORMAL": 234,
+    "PNEUMONIA": 390
+  },
+  "threshold": 0.5,
+  "metrics": {
+    "accuracy": 0.9006410256410257,
+    "precision": 0.8778801843317973,
+    "recall": 0.9769230769230769,
+    "specificity": 0.7735042735042735,
+    "f1": 0.9247572815533981,
+    "roc_auc": 0.9709730440499672
+  },
+  "confusion_matrix": [
+    [181, 53],
+    [9, 381]
+  ],
+  "protected_outputs": [
+    "results/main_test_metrics.json",
+    "results/predictions_test_vit_b16.csv",
+    "figures/confusion_matrix_test_vit_b16.png",
+    "figures/threshold_curve_test_vit_b16.png"
+  ],
+  "note": "This manifest freezes the Kermany-only baseline. New experiments should write to separate files and should not overwrite the protected outputs."
+}

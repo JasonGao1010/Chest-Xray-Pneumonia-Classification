@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_rsna_test_densenet121_expanded_full_finetune.csv",
+  "threshold": 0.5,
+  "positive_class": "PNEUMONIA",
+  "sample_count": 442,
+  "exported_case_count": 128,
+  "counts": {
+    "correct": 314,
+    "false_positive": 107,
+    "false_negative": 16,
+    "high_confidence_false_positive": 70,
+    "high_confidence_false_negative": 8,
+    "borderline": 11
+  },
+  "csv_output": "./results/error_cases_rsna_test_densenet121_expanded_full_finetune.csv",
+  "grid_rendered": 16
+}

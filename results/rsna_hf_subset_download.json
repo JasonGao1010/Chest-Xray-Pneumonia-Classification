@@ -1,0 +1,559 @@
+{
+  "ok": true,
+  "source": "Hugging Face mirror Baldezo313/rsna-pneumonia-dataset",
+  "raw_root": "./data/raw/rsna_pneumonia",
+  "labels_csv": "./data/raw/rsna_pneumonia/stage_2_train_labels.csv",
+  "seed": 42,
+  "requested_per_split_class": {
+    "train": 20,
+    "val": 4,
+    "test": 20
+  },
+  "selected_count": 88,
+  "downloaded_count": 88,
+  "counts": {
+    "train": {
+      "NORMAL": 20,
+      "PNEUMONIA": 20
+    },
+    "val": {
+      "NORMAL": 4,
+      "PNEUMONIA": 4
+    },
+    "test": {
+      "NORMAL": 20,
+      "PNEUMONIA": 20
+    }
+  },
+  "failed": [],
+  "downloaded": [
+    {
+      "patientId": "0004cfab-14fd-4e49-80ba-63a80b6bddd6",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0004cfab-14fd-4e49-80ba-63a80b6bddd6.dcm"
+    },
+    {
+      "patientId": "0010f549-b242-4e94-87a8-57d79de215fc",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0010f549-b242-4e94-87a8-57d79de215fc.dcm"
+    },
+    {
+      "patientId": "002c591d-df62-4e34-8eda-838c664430a9",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/002c591d-df62-4e34-8eda-838c664430a9.dcm"
+    },
+    {
+      "patientId": "00322d4d-1c29-4943-afc9-b6754be640eb",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/00322d4d-1c29-4943-afc9-b6754be640eb.dcm"
+    },
+    {
+      "patientId": "003d8fa0-6bf1-40ed-b54c-ac657f8495c5",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/003d8fa0-6bf1-40ed-b54c-ac657f8495c5.dcm"
+    },
+    {
+      "patientId": "0049f7b2-229b-4a46-91a3-0e321a3ca80a",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0049f7b2-229b-4a46-91a3-0e321a3ca80a.dcm"
+    },
+    {
+      "patientId": "00569f44-917d-4c86-a842-81832af98c30",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/00569f44-917d-4c86-a842-81832af98c30.dcm"
+    },
+    {
+      "patientId": "0067d70b-0e6d-41ff-a9b8-8edf6d5e25e4",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0067d70b-0e6d-41ff-a9b8-8edf6d5e25e4.dcm"
+    },
+    {
+      "patientId": "006cec2e-6ce2-4549-bffa-eadfcd1e9970",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/006cec2e-6ce2-4549-bffa-eadfcd1e9970.dcm"
+    },
+    {
+      "patientId": "006e75c8-1fd9-4a5a-99e7-285addebed55",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/006e75c8-1fd9-4a5a-99e7-285addebed55.dcm"
+    },
+    {
+      "patientId": "00313ee0-9eaa-42f4-b0ab-c148ed3241cd",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/00313ee0-9eaa-42f4-b0ab-c148ed3241cd.dcm"
+    },
+    {
+      "patientId": "0092d9c5-26b6-4e66-b196-49b2224ab8d1",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0092d9c5-26b6-4e66-b196-49b2224ab8d1.dcm"
+    },
+    {
+      "patientId": "0088be53-27f2-4c30-882b-a73a3a5c8c71",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0088be53-27f2-4c30-882b-a73a3a5c8c71.dcm"
+    },
+    {
+      "patientId": "00a85be6-6eb0-421d-8acf-ff2dc0007e8a",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00a85be6-6eb0-421d-8acf-ff2dc0007e8a.dcm"
+    },
+    {
+      "patientId": "00d7c36e-3cdf-4df6-ac03-6c30cdc8e85b",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00d7c36e-3cdf-4df6-ac03-6c30cdc8e85b.dcm"
+    },
+    {
+      "patientId": "00dd08bb-b7ea-4617-801e-02b3051c3475",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00dd08bb-b7ea-4617-801e-02b3051c3475.dcm"
+    },
+    {
+      "patientId": "00ddefb9-d94e-4e86-b945-970be30483d7",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00ddefb9-d94e-4e86-b945-970be30483d7.dcm"
+    },
+    {
+      "patientId": "00ec0d87-8e2a-44bd-b79c-4b91cfabcacf",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00ec0d87-8e2a-44bd-b79c-4b91cfabcacf.dcm"
+    },
+    {
+      "patientId": "00f2de16-a231-40c3-9a5f-8198f530a4b0",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/00f2de16-a231-40c3-9a5f-8198f530a4b0.dcm"
+    },
+    {
+      "patientId": "000db696-cf54-4385-b10b-6b16fbb3f985",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/000db696-cf54-4385-b10b-6b16fbb3f985.dcm"
+    },
+    {
+      "patientId": "000fe35a-2649-43d4-b027-e67796d412e0",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/000fe35a-2649-43d4-b027-e67796d412e0.dcm"
+    },
+    {
+      "patientId": "0022073f-cec8-42ec-ab5f-bc2314649235",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0022073f-cec8-42ec-ab5f-bc2314649235.dcm"
+    },
+    {
+      "patientId": "00436515-870c-4b36-a041-de91049b9ab4",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/00436515-870c-4b36-a041-de91049b9ab4.dcm"
+    },
+    {
+      "patientId": "00704310-78a8-4b38-8475-49f4573b2dbb",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/00704310-78a8-4b38-8475-49f4573b2dbb.dcm"
+    },
+    {
+      "patientId": "0087bd3a-55a7-4045-b111-b018fa52d361",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0087bd3a-55a7-4045-b111-b018fa52d361.dcm"
+    },
+    {
+      "patientId": "00a05408-8291-4231-886e-13763e103161",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/00a05408-8291-4231-886e-13763e103161.dcm"
+    },
+    {
+      "patientId": "00c0b293-48e7-4e16-ac76-9269ba535a62",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/00c0b293-48e7-4e16-ac76-9269ba535a62.dcm"
+    },
+    {
+      "patientId": "00eeb3c9-a892-4fac-a67a-aaa6cc7ffd5c",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/00eeb3c9-a892-4fac-a67a-aaa6cc7ffd5c.dcm"
+    },
+    {
+      "patientId": "00f08de1-517e-4652-a04f-d1dc9ee48593",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/00f08de1-517e-4652-a04f-d1dc9ee48593.dcm"
+    },
+    {
+      "patientId": "0100515c-5204-4f31-98e0-f35e4b00004a",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0100515c-5204-4f31-98e0-f35e4b00004a.dcm"
+    },
+    {
+      "patientId": "0101174b-6643-4d4e-b4ba-b6d41d0ce46a",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0101174b-6643-4d4e-b4ba-b6d41d0ce46a.dcm"
+    },
+    {
+      "patientId": "010ccb9f-6d46-4380-af11-84f87397a1b8",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/010ccb9f-6d46-4380-af11-84f87397a1b8.dcm"
+    },
+    {
+      "patientId": "0174c4bb-28f5-41e3-a13f-a396badc18bd",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0174c4bb-28f5-41e3-a13f-a396badc18bd.dcm"
+    },
+    {
+      "patientId": "018951e6-9fb3-4e92-8ce7-e3a018daf93f",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/018951e6-9fb3-4e92-8ce7-e3a018daf93f.dcm"
+    },
+    {
+      "patientId": "019d950b-dd38-4cf3-a686-527a75728be6",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/019d950b-dd38-4cf3-a686-527a75728be6.dcm"
+    },
+    {
+      "patientId": "01b9e362-4950-40f5-88fa-7557ac2a45bb",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01b9e362-4950-40f5-88fa-7557ac2a45bb.dcm"
+    },
+    {
+      "patientId": "009482dc-3db5-48d4-8580-5c89c4f01334",
+      "split": "train",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/009482dc-3db5-48d4-8580-5c89c4f01334.dcm"
+    },
+    {
+      "patientId": "01cad8d0-45cd-4603-b099-94055d322310",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01cad8d0-45cd-4603-b099-94055d322310.dcm"
+    },
+    {
+      "patientId": "01dc817c-3cfa-49fe-8662-518edc30652a",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01dc817c-3cfa-49fe-8662-518edc30652a.dcm"
+    },
+    {
+      "patientId": "000924cf-0f8d-42bd-9158-1af53881a557",
+      "split": "val",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/000924cf-0f8d-42bd-9158-1af53881a557.dcm"
+    },
+    {
+      "patientId": "0022995a-45eb-4cfa-9a59-cd15f5196c64",
+      "split": "val",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0022995a-45eb-4cfa-9a59-cd15f5196c64.dcm"
+    },
+    {
+      "patientId": "0025d2de-bd78-4d36-9f72-e15a5e22ca82",
+      "split": "val",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0025d2de-bd78-4d36-9f72-e15a5e22ca82.dcm"
+    },
+    {
+      "patientId": "0053ee32-1e03-4dc2-a103-f46ad0448787",
+      "split": "val",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/0053ee32-1e03-4dc2-a103-f46ad0448787.dcm"
+    },
+    {
+      "patientId": "01be392f-a46d-4aef-a57e-9cd1a80dd47e",
+      "split": "train",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01be392f-a46d-4aef-a57e-9cd1a80dd47e.dcm"
+    },
+    {
+      "patientId": "001916b8-3d30-4935-a5d1-8eaddb1646cd",
+      "split": "val",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/001916b8-3d30-4935-a5d1-8eaddb1646cd.dcm"
+    },
+    {
+      "patientId": "001031d9-f904-4a23-b3e5-2c088acd19c6",
+      "split": "val",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/001031d9-f904-4a23-b3e5-2c088acd19c6.dcm"
+    },
+    {
+      "patientId": "01a7353d-25bb-4ff8-916b-f50dd541dccf",
+      "split": "val",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01a7353d-25bb-4ff8-916b-f50dd541dccf.dcm"
+    },
+    {
+      "patientId": "00293de0-a530-41dc-9621-0b3def01d06d",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/00293de0-a530-41dc-9621-0b3def01d06d.dcm"
+    },
+    {
+      "patientId": "005f5517-ab76-4b0d-8a26-f808d97171c4",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/005f5517-ab76-4b0d-8a26-f808d97171c4.dcm"
+    },
+    {
+      "patientId": "008b69b2-446a-43dd-9ba2-9ccff8f3da41",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/008b69b2-446a-43dd-9ba2-9ccff8f3da41.dcm"
+    },
+    {
+      "patientId": "009eb222-eabc-4150-8121-d5a6d06b8ebf",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/009eb222-eabc-4150-8121-d5a6d06b8ebf.dcm"
+    },
+    {
+      "patientId": "0124882b-de2f-4023-985f-debb74aa6ebb",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0124882b-de2f-4023-985f-debb74aa6ebb.dcm"
+    },
+    {
+      "patientId": "012a5620-d082-4bb8-9b3b-e72d8938000c",
+      "split": "val",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/012a5620-d082-4bb8-9b3b-e72d8938000c.dcm"
+    },
+    {
+      "patientId": "016b050d-bf68-4a32-8d3e-421338819519",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/016b050d-bf68-4a32-8d3e-421338819519.dcm"
+    },
+    {
+      "patientId": "01a4059c-22f7-4f51-8a27-50aff0b3aeb3",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01a4059c-22f7-4f51-8a27-50aff0b3aeb3.dcm"
+    },
+    {
+      "patientId": "01b56434-4dd9-4994-bcc5-0b70a36e415a",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01b56434-4dd9-4994-bcc5-0b70a36e415a.dcm"
+    },
+    {
+      "patientId": "01c7cc7c-7004-441f-9049-77b7b444dd6b",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01c7cc7c-7004-441f-9049-77b7b444dd6b.dcm"
+    },
+    {
+      "patientId": "01469010-0fab-4a07-86c6-962996ce2ca0",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/01469010-0fab-4a07-86c6-962996ce2ca0.dcm"
+    },
+    {
+      "patientId": "01d1f0be-5216-4af5-b2dc-a160c1c56122",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01d1f0be-5216-4af5-b2dc-a160c1c56122.dcm"
+    },
+    {
+      "patientId": "01fe92f7-ff87-4f9e-9077-e00e670d1b47",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01fe92f7-ff87-4f9e-9077-e00e670d1b47.dcm"
+    },
+    {
+      "patientId": "023558cc-fcca-4fc2-9749-175e2727d49d",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/023558cc-fcca-4fc2-9749-175e2727d49d.dcm"
+    },
+    {
+      "patientId": "025b6ef8-0fd0-4900-8519-52dc9181f3f1",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/025b6ef8-0fd0-4900-8519-52dc9181f3f1.dcm"
+    },
+    {
+      "patientId": "029216c8-ea0d-47bb-88fd-bf611cc5d1fc",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/029216c8-ea0d-47bb-88fd-bf611cc5d1fc.dcm"
+    },
+    {
+      "patientId": "0297e501-88b5-4ec0-a2fd-50a7c70b42eb",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0297e501-88b5-4ec0-a2fd-50a7c70b42eb.dcm"
+    },
+    {
+      "patientId": "02b20ea4-9c01-48b2-b3b3-5dae20e80095",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/02b20ea4-9c01-48b2-b3b3-5dae20e80095.dcm"
+    },
+    {
+      "patientId": "02e141b9-8bc0-45df-be3a-5508768412c6",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/02e141b9-8bc0-45df-be3a-5508768412c6.dcm"
+    },
+    {
+      "patientId": "0318e440-ca1b-435b-a04f-fceee5ef279b",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_1/0318e440-ca1b-435b-a04f-fceee5ef279b.dcm"
+    },
+    {
+      "patientId": "002cb550-2e31-42f1-a29d-fbc279977e71",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/002cb550-2e31-42f1-a29d-fbc279977e71.dcm"
+    },
+    {
+      "patientId": "00aecb01-a116-45a2-956c-08d2fa55433f",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/00aecb01-a116-45a2-956c-08d2fa55433f.dcm"
+    },
+    {
+      "patientId": "013c7df0-d66d-4cb1-b3bc-a70085160311",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/013c7df0-d66d-4cb1-b3bc-a70085160311.dcm"
+    },
+    {
+      "patientId": "01a6eaa6-222f-4ea8-9874-bbd89dc1a1ce",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01a6eaa6-222f-4ea8-9874-bbd89dc1a1ce.dcm"
+    },
+    {
+      "patientId": "01f6bf01-9887-498c-ab11-1d10c6a22221",
+      "split": "test",
+      "binary_label": "NORMAL",
+      "source_path": "stage_2_train_images_0/01f6bf01-9887-498c-ab11-1d10c6a22221.dcm"
+    },
+    {
+      "patientId": "02363fdb-4cd0-4631-b3d8-7a10fddffa28",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/02363fdb-4cd0-4631-b3d8-7a10fddffa28.dcm"
+    },
+    {
+      "patientId": "02743848-e50a-4faf-a3f4-a6215613a23d",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/02743848-e50a-4faf-a3f4-a6215613a23d.dcm"
+    },
+    {
+      "patientId": "0294b4aa-5614-4b33-80a4-2c31b639e5b3",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0294b4aa-5614-4b33-80a4-2c31b639e5b3.dcm"
+    },
+    {
+      "patientId": "031d627f-e6af-4588-8cca-6be8aa1222c7",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/031d627f-e6af-4588-8cca-6be8aa1222c7.dcm"
+    },
+    {
+      "patientId": "03249840-0a17-448c-bf41-7e156428ab59",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/03249840-0a17-448c-bf41-7e156428ab59.dcm"
+    },
+    {
+      "patientId": "03a512bc-1162-404e-8c71-dc9e0dc7258f",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/03a512bc-1162-404e-8c71-dc9e0dc7258f.dcm"
+    },
+    {
+      "patientId": "03cd7a5b-d5d7-40a1-81b1-c4264920530a",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/03cd7a5b-d5d7-40a1-81b1-c4264920530a.dcm"
+    },
+    {
+      "patientId": "03e4827c-7338-4de3-9ac6-8831ba5637e9",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/03e4827c-7338-4de3-9ac6-8831ba5637e9.dcm"
+    },
+    {
+      "patientId": "0409b97f-7673-42e2-9943-0656c6aaca69",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0409b97f-7673-42e2-9943-0656c6aaca69.dcm"
+    },
+    {
+      "patientId": "0488a028-fb77-46e1-85fb-f0b86cf57fee",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/0488a028-fb77-46e1-85fb-f0b86cf57fee.dcm"
+    },
+    {
+      "patientId": "05b22cd6-c876-4360-8361-92845c6de8ba",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/05b22cd6-c876-4360-8361-92845c6de8ba.dcm"
+    },
+    {
+      "patientId": "06089341-a69b-4777-817b-041be894b436",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/06089341-a69b-4777-817b-041be894b436.dcm"
+    },
+    {
+      "patientId": "061664a4-6a23-4cb2-a0da-0c5712b6e0a6",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/061664a4-6a23-4cb2-a0da-0c5712b6e0a6.dcm"
+    },
+    {
+      "patientId": "06420c87-02ee-4315-aa3a-63e911174435",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/06420c87-02ee-4315-aa3a-63e911174435.dcm"
+    },
+    {
+      "patientId": "06550cfd-e9d5-415e-bae9-3146329ed9e6",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_1/06550cfd-e9d5-415e-bae9-3146329ed9e6.dcm"
+    },
+    {
+      "patientId": "01adfd2f-7bc7-4cef-ab68-a0992752b620",
+      "split": "test",
+      "binary_label": "PNEUMONIA",
+      "source_path": "stage_2_train_images_0/01adfd2f-7bc7-4cef-ab68-a0992752b620.dcm"
+    }
+  ]
+}

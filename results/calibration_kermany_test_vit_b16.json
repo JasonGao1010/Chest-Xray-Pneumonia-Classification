@@ -1,0 +1,216 @@
+{
+  "ok": true,
+  "predictions": "./results/predictions_test_vit_b16.csv",
+  "positive_class": "PNEUMONIA",
+  "temperature_source": "calibration_predictions",
+  "temperature_fit": {
+    "temperature": 0.5,
+    "nll": 0.006842259904573052,
+    "calibration_predictions": "./results/predictions_kermany_val_vit_b16.csv"
+  },
+  "uncalibrated": {
+    "sample_count": 624,
+    "threshold": 0.5,
+    "temperature": 1.0,
+    "brier_score": 0.08496297270854151,
+    "ece": 0.06454327184294861,
+    "mce": 0.17499079454545452,
+    "accuracy_at_threshold": 0.9006410256410257,
+    "negative_log_likelihood": 0.3477335099107653,
+    "bins": [
+      {
+        "bin_index": 0,
+        "lower": 0.0,
+        "upper": 0.1,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 1,
+        "lower": 0.1,
+        "upper": 0.2,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 2,
+        "lower": 0.2,
+        "upper": 0.3,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 3,
+        "lower": 0.3,
+        "upper": 0.4,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 4,
+        "lower": 0.4,
+        "upper": 0.5,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 5,
+        "lower": 0.5,
+        "upper": 0.6,
+        "count": 11,
+        "accuracy": 0.7272727272727273,
+        "confidence": 0.5522819327272728,
+        "gap": 0.17499079454545452
+      },
+      {
+        "bin_index": 6,
+        "lower": 0.6,
+        "upper": 0.7,
+        "count": 14,
+        "accuracy": 0.6428571428571429,
+        "confidence": 0.6574313535714286,
+        "gap": 0.014574210714285663
+      },
+      {
+        "bin_index": 7,
+        "lower": 0.7,
+        "upper": 0.8,
+        "count": 22,
+        "accuracy": 0.6818181818181818,
+        "confidence": 0.7481894172727273,
+        "gap": 0.06637123545454549
+      },
+      {
+        "bin_index": 8,
+        "lower": 0.8,
+        "upper": 0.9,
+        "count": 40,
+        "accuracy": 0.7,
+        "confidence": 0.8496457952500001,
+        "gap": 0.1496457952500001
+      },
+      {
+        "bin_index": 9,
+        "lower": 0.9,
+        "upper": 1.0,
+        "count": 537,
+        "accuracy": 0.9348230912476723,
+        "confidence": 0.9919926721601489,
+        "gap": 0.05716958091247659
+      }
+    ]
+  },
+  "calibrated": {
+    "sample_count": 624,
+    "threshold": 0.5,
+    "temperature": 0.5,
+    "brier_score": 0.09175205465023685,
+    "ece": 0.08582233032316666,
+    "mce": 0.3413973404722399,
+    "accuracy_at_threshold": 0.9006410256410257,
+    "negative_log_likelihood": 0.6184902854474412,
+    "bins": [
+      {
+        "bin_index": 0,
+        "lower": 0.0,
+        "upper": 0.1,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 1,
+        "lower": 0.1,
+        "upper": 0.2,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 2,
+        "lower": 0.2,
+        "upper": 0.3,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 3,
+        "lower": 0.3,
+        "upper": 0.4,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 4,
+        "lower": 0.4,
+        "upper": 0.5,
+        "count": 0,
+        "accuracy": 0.0,
+        "confidence": 0.0,
+        "gap": 0.0
+      },
+      {
+        "bin_index": 5,
+        "lower": 0.5,
+        "upper": 0.6,
+        "count": 7,
+        "accuracy": 0.5714285714285714,
+        "confidence": 0.5707930859663589,
+        "gap": 0.0006354854622124817
+      },
+      {
+        "bin_index": 6,
+        "lower": 0.6,
+        "upper": 0.7,
+        "count": 4,
+        "accuracy": 1.0,
+        "confidence": 0.6586026595277601,
+        "gap": 0.3413973404722399
+      },
+      {
+        "bin_index": 7,
+        "lower": 0.7,
+        "upper": 0.8,
+        "count": 8,
+        "accuracy": 0.625,
+        "confidence": 0.7448319092501382,
+        "gap": 0.1198319092501382
+      },
+      {
+        "bin_index": 8,
+        "lower": 0.8,
+        "upper": 0.9,
+        "count": 19,
+        "accuracy": 0.5789473684210527,
+        "confidence": 0.8628285079394006,
+        "gap": 0.2838811395183479
+      },
+      {
+        "bin_index": 9,
+        "lower": 0.9,
+        "upper": 1.0,
+        "count": 586,
+        "accuracy": 0.9180887372013652,
+        "confidence": 0.9962981219056004,
+        "gap": 0.07820938470423522
+      }
+    ]
+  },
+  "note": "Temperature must be fit on validation/calibration predictions. Do not fit it on the same test predictions used for final reporting."
+}

@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "dataset": {
+    "root": "./data/processed/rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val",
+      "test"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 560,
+        "PNEUMONIA": 492
+      },
+      "val": {
+        "NORMAL": 107,
+        "PNEUMONIA": 106
+      },
+      "test": {
+        "NORMAL": 215,
+        "PNEUMONIA": 227
+      }
+    },
+    "total_images": 1707,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metadata": {
+    "path": "./data/processed/rsna_binary/metadata.csv",
+    "rows": 1707,
+    "counts": {
+      "train": {
+        "NORMAL": 560,
+        "PNEUMONIA": 492
+      },
+      "val": {
+        "NORMAL": 107,
+        "PNEUMONIA": 106
+      },
+      "test": {
+        "NORMAL": 215,
+        "PNEUMONIA": 227
+      }
+    }
+  }
+}

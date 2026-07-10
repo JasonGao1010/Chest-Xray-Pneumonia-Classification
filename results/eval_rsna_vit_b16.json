@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "checkpoint": "./models/vit_b16_best.pt",
+  "split": "test",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:vit_b_16",
+  "device": "cuda",
+  "sample_count": 40,
+  "dataset": {
+    "root": "./data/processed/rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "test"
+    ],
+    "counts": {
+      "test": {
+        "NORMAL": 20,
+        "PNEUMONIA": 20
+      }
+    },
+    "total_images": 40,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "accuracy": 0.625,
+    "precision": 0.5806451612903226,
+    "recall": 0.9,
+    "f1": 0.7058823529411765,
+    "confusion_matrix": [
+      [
+        7,
+        13
+      ],
+      [
+        2,
+        18
+      ]
+    ],
+    "roc_auc": 0.8025
+  },
+  "predictions_output": "./results/predictions_rsna_vit_b16.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_rsna_vit_b16.png"
+}

@@ -1,0 +1,130 @@
+{
+  "ok": true,
+  "run_id": "20260710_092519_torchvision:densenet121",
+  "settings": {
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "data_root": "./data/processed/kermany_rsna_binary",
+    "train_split": "train",
+    "val_split": "val",
+    "results_dir": "./results",
+    "checkpoints_dir": "./outputs/checkpoints",
+    "image_size": 224,
+    "normalize": "imagenet",
+    "model": "torchvision:densenet121",
+    "pretrained": true,
+    "epochs": 3,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "scheduler": "cosine",
+    "seed": 42,
+    "mixed_precision": true,
+    "use_class_weights": true,
+    "num_workers": 2,
+    "device": "auto",
+    "max_train_batches": null,
+    "max_val_batches": null,
+    "smoke_test": false,
+    "augment": {
+      "horizontal_flip": true,
+      "random_rotation_degrees": 7,
+      "color_jitter": false
+    },
+    "train_holdout_fraction": 0.0,
+    "holdout_seed": 42,
+    "holdout_manifest_output": null,
+    "init_checkpoint": null
+  },
+  "dataset": {
+    "root": "./data/processed/kermany_rsna_binary",
+    "classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ],
+    "splits": [
+      "train",
+      "val"
+    ],
+    "counts": {
+      "train": {
+        "NORMAL": 1361,
+        "PNEUMONIA": 3895
+      },
+      "val": {
+        "NORMAL": 12,
+        "PNEUMONIA": 12
+      }
+    },
+    "total_images": 5280,
+    "missing_dirs": [],
+    "empty_dirs": [],
+    "unexpected_class_dirs": {},
+    "invalid_images": [],
+    "image_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff"
+    ],
+    "ok": true
+  },
+  "validation_source": "val",
+  "class_weight_counts": {
+    "NORMAL": 1361,
+    "PNEUMONIA": 3895
+  },
+  "holdout": null,
+  "init_checkpoint": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 0.13699609591714937,
+        "accuracy": 0.9507229832572298,
+        "samples": 5256
+      },
+      "val": {
+        "loss": 0.30448728799819946,
+        "accuracy": 0.9166666666666666,
+        "samples": 24
+      },
+      "learning_rate": 7.500000000000001e-05
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 0.05750942186139173,
+        "accuracy": 0.9764079147640792,
+        "samples": 5256
+      },
+      "val": {
+        "loss": 0.5208892822265625,
+        "accuracy": 0.7916666666666666,
+        "samples": 24
+      },
+      "learning_rate": 2.5000000000000015e-05
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 0.03823548637307851,
+        "accuracy": 0.9872526636225266,
+        "samples": 5256
+      },
+      "val": {
+        "loss": 0.12091147899627686,
+        "accuracy": 0.9583333333333334,
+        "samples": 24
+      },
+      "learning_rate": 0.0
+    }
+  ],
+  "best_checkpoint": "./outputs/checkpoints/20260710_092519_torchvision:densenet121/best.pt",
+  "last_checkpoint": "./outputs/checkpoints/20260710_092519_torchvision:densenet121/last.pt"
+}

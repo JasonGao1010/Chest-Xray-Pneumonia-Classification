@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "checkpoint": "./outputs/checkpoints/20260709_225041_torchvision:densenet121/best.pt",
+  "split": "nih_test",
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "model": "torchvision:densenet121",
+  "device": "cuda",
+  "sample_count": 26,
+  "dataset": {
+    "ok": true,
+    "root": "./data/processed/nih_binary",
+    "samples_csv": "./data/processed/nih_binary/samples_test.csv",
+    "sample_count": 26
+  },
+  "metrics": {
+    "accuracy": 0.5384615384615384,
+    "precision": 0.5384615384615384,
+    "recall": 0.5384615384615384,
+    "f1": 0.5384615384615384,
+    "confusion_matrix": [
+      [
+        7,
+        6
+      ],
+      [
+        6,
+        7
+      ]
+    ],
+    "roc_auc": 0.6331360946745561
+  },
+  "predictions_output": "./results/predictions_nih_test_densenet121.csv",
+  "confusion_matrix_output": "./figures/confusion_matrix_nih_test_densenet121.png"
+}

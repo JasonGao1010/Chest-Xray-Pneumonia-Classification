@@ -56,7 +56,7 @@ Windows PowerShell 下激活命令通常为：
 
 ## 数据集准备
 
-本项目使用 Chest X-Ray Images (Pneumonia) 数据集。请将数据集整理为下面的目录结构：
+本项目使用 Chest X-Ray Images (Pneumonia) 数据集。该数据集来自 Kermany 等发布的儿童胸部 X 光图像数据，原始发布页为 Mendeley Data `10.17632/rscbjbr9sj.2`，常用下载入口为 Kaggle 的 `paultimothymooney/chest-xray-pneumonia`。请将数据集整理为下面的目录结构：
 
 ```text
 data/raw/chest_xray/
@@ -147,6 +147,76 @@ python scripts/analyze_thresholds.py \
 | PNEUMONIA | 9 | 381 |
 
 如果复现成功，`results/eval_test_reproduced_vit_b16.json` 中的指标应与上表基本一致。
+
+## 提升版实验
+
+本轮提升把当前 Kermany-only baseline 冻结在 `results/baseline_manifest.json`，新增结果均写入独立文件，不覆盖 `results/main_test_metrics.json`。
+
+新增模型配置：
+
+```text
+configs/densenet121.yaml
+configs/convnext_tiny.yaml
+```
+
+已补齐 ImageNet 预训练 DenseNet121 和 ConvNeXt-Tiny 的 Kermany test 评价，并把 RSNA Pneumonia Detection Challenge 的 Hugging Face 镜像子集扩容为外部测试集。NIH ChestX-ray14 `Pneumonia` vs `No Finding` 弱标签子集保留为第二个压力测试。
+
+| 模型 | 预训练 | Acc | Prec | Rec | Spec | F1 | AUC |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ViT-B/16 | ImageNet | 0.9006 | 0.8779 | 0.9769 | 0.7735 | 0.9248 | 0.9710 |
+| DenseNet121 | ImageNet | 0.9054 | 0.8770 | 0.9872 | 0.7692 | 0.9288 | 0.9743 |
+| ConvNeXt-Tiny | ImageNet | 0.8878 | 0.8524 | 0.9923 | 0.7137 | 0.9171 | 0.9781 |
+
+汇总表位于：
+
+```text
+results/experiment_comparison.csv
+results/calibration_comparison.csv
+```
+
+概率可靠性分析已经补充 ECE、Brier score 和可靠性曲线。Kermany test 上，ViT-B/16 未校准 ECE 为 0.0645，Brier score 为 0.0850；DenseNet121 的 ECE 为 0.0548，Brier score 为 0.0752；ConvNeXt-Tiny 的 ECE 为 0.0776，Brier score 为 0.0897。
+
+错误样本分析已经导出 false positive、false negative、高置信错误和边界样本。ViT-B/16 在默认阈值下共有 53 个 false positive、9 个 false negative，其中高置信 false positive 为 33 个，高置信 false negative 为 2 个。
+
+```text
+results/error_cases_kermany_test_vit_b16.csv
+results/error_summary_kermany_test_vit_b16.json
+figures/error_case_grid_kermany_test_vit_b16.png
+figures/reliability_kermany_test_vit_b16_uncalibrated.png
+figures/gradcam_kermany_error_cases_densenet121.png
+figures/gradcam_rsna_positive_cases_densenet121.png
+figures/gradcam_nih_positive_cases_densenet121.png
+```
+
+RSNA 外部子集来自 `Baldezo313/rsna-pneumonia-dataset` 镜像，按 seed=42 固定划分并转为二分类 PNG。当前扩容版共 1707 张，train 为 NORMAL 560 / PNEUMONIA 492，val 为 107 / 106，test 为 215 / 227。Kermany 训练模型直接迁移到扩容 RSNA test 后，DenseNet121 相对最好，但 accuracy 仍只有 0.7330，说明跨来源下降明显：
+
+| 模型 | Acc | Prec | Rec | Spec | F1 | AUC |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ViT-B/16 | 0.6923 | 0.6502 | 0.8678 | 0.5070 | 0.7434 | 0.7735 |
+| DenseNet121 | 0.7330 | 0.6799 | 0.9075 | 0.5488 | 0.7774 | 0.8090 |
+| ConvNeXt-Tiny | 0.7014 | 0.6518 | 0.8987 | 0.4930 | 0.7556 | 0.7865 |
+
+扩容后的 DenseNet121 训练策略对照显示，不同策略的收益不是单向的。简单混合训练提高 RSNA accuracy 和 specificity，但降低 recall，并让 Kermany test accuracy 降到 0.8606；domain-balanced sampling 更好地保住 Kermany test，但 RSNA F1 低于直接迁移；冻结分类头和最后 block 解冻更偏向高 recall，仍没有解决正常样本误报问题。全模型低学习率微调也已补齐：RSNA test accuracy 为 0.7217、F1 为 0.7743、AUC 为 0.8343，回测 Kermany test 时 accuracy 为 0.8766、F1 为 0.9087。它没有形成双数据集共同提升，因此作为负结果保留。
+
+| 训练数据 | 测试数据 | 模型 | Acc | Rec | Spec | F1 | AUC |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| RSNA train | RSNA test | DenseNet121 | 0.7285 | 0.7533 | 0.7023 | 0.7403 | 0.8218 |
+| Kermany+RSNA simple | RSNA test | DenseNet121 | 0.7602 | 0.6432 | 0.8837 | 0.7337 | 0.8568 |
+| Kermany+RSNA domain-balanced | RSNA test | DenseNet121 | 0.7466 | 0.6035 | 0.8977 | 0.7098 | 0.8623 |
+| RSNA frozen head | RSNA test | DenseNet121 | 0.7466 | 0.8811 | 0.6047 | 0.7812 | 0.8012 |
+| RSNA last block | RSNA test | DenseNet121 | 0.7398 | 0.9119 | 0.5581 | 0.7826 | 0.8258 |
+| RSNA full fine-tune | RSNA test | DenseNet121 | 0.7217 | 0.9295 | 0.5023 | 0.7743 | 0.8343 |
+| Kermany+RSNA domain-balanced | Kermany test | DenseNet121 | 0.9022 | 0.9872 | 0.7607 | 0.9266 | 0.9742 |
+
+NIH 弱标签子集来自 `images_001.zip`，包含 130 张图像，train/val/test 为 92/12/26，test 中 NORMAL 和 PNEUMONIA 各 13 张。Kermany 训练模型直接迁移到 NIH test 后表现也明显下降：
+
+| 模型 | Acc | Prec | Rec | Spec | F1 | AUC |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ViT-B/16 | 0.5000 | 0.5000 | 0.4615 | 0.5385 | 0.4800 | 0.5325 |
+| DenseNet121 | 0.5385 | 0.5385 | 0.5385 | 0.5385 | 0.5385 | 0.6331 |
+| ConvNeXt-Tiny | 0.4615 | 0.4667 | 0.5385 | 0.3846 | 0.5000 | 0.5621 |
+
+扩容 RSNA test 已达到每类至少 200 张的最低外部验证门槛，但它仍来自镜像子集，且标签定义、年龄结构和图像格式都不同于 Kermany。NIH 标签又来自报告文本挖掘弱标签。因此这些结果适合说明跨来源泛化风险，不能写成临床诊断能力验证。
 
 ## 重新训练
 

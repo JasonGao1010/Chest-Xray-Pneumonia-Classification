@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "raw_root": "./data/raw/rsna_pneumonia",
+  "images_dir": "./data/raw/rsna_pneumonia",
+  "labels_csv": "./data/raw/rsna_pneumonia/stage_2_train_labels.csv",
+  "output_root": "./data/processed/rsna_binary",
+  "metadata": "./data/processed/rsna_binary/metadata.csv",
+  "sample_count": 1707,
+  "full_label_patient_count": 26684,
+  "label_patient_count": 1707,
+  "available_image_count": 1707,
+  "available_only": true,
+  "counts": {
+    "train": {
+      "NORMAL": 560,
+      "PNEUMONIA": 492
+    },
+    "val": {
+      "NORMAL": 107,
+      "PNEUMONIA": 106
+    },
+    "test": {
+      "NORMAL": 215,
+      "PNEUMONIA": 227
+    }
+  },
+  "missing_images": [],
+  "dry_run": false
+}
