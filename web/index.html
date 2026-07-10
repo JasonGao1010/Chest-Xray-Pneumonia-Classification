@@ -36,7 +36,7 @@
 <div class="topline"></div>
 <header>
   <div class="header-row">
-    <div class="identity"><span class="code">XR-01</span><div><h1>胸片肺炎二分类实验</h1><p class="subtitle">从数据划分到跨来源测试</p></div></div>
+    <div class="identity"><span class="code">CXRShift</span><div><h1>胸片肺炎二分类与跨来源评估</h1><p class="subtitle">从数据划分、模型训练到跨来源测试</p></div></div>
     <div class="header-meta"><span>3 种架构</span><span>3 个随机种子</span><span>95% 分组区间</span></div>
   </div>
   <nav><a href="#summary">主要结果</a><a href="#models">模型表现</a><a href="#explorer">详细指标</a><a href="#interventions">训练方案</a><a href="#methods">方法说明</a><a href="#datasets">数据划分</a><a href="#evidence">核查结果</a></nav>
@@ -46,9 +46,9 @@
   <section class="section" id="summary">
     <div class="section-head"><span class="section-index">01 / 主要结果</span><div><h2>四项关键结果</h2><p class="section-note">以下数值均根据仓库中的逐图预测重新计算，百分数保留两位小数。</p></div></div>
     <div class="finding-grid">
-      <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16 / BASE。测试集有 1,170 张图像，按文件名归为 624 组。</p></article>
-      <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>同样来自 ViT-B/16 / BASE，但固定阈值下的平衡准确率为 65.94%。</p></article>
-      <article class="finding"><span>DenseNet121 / MIX 的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet121 / BASE 高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
+      <article class="finding"><span>Kermany 测试集最佳平衡准确率</span><strong class="good">98.17%</strong><p>来自 ViT-B/16 / ERM。测试集有 1,170 张图像，按文件名归为 624 组。</p></article>
+      <article class="finding"><span>RSNA 测试集最佳 AUROC</span><strong>82.36%</strong><p>同样来自 ViT-B/16 / ERM，但固定阈值下的平衡准确率为 65.94%。</p></article>
+      <article class="finding"><span>DenseNet121 / JT 的 RSNA 平衡准确率</span><strong class="good">78.13%</strong><p>比 DenseNet121 / ERM 高 12.22 个百分点；这项训练使用了 RSNA 标签。</p></article>
       <article class="finding"><span>控制标签比例后的来源分类 AUROC</span><strong class="warn">94.41%</strong><p>两套处理后图像仍具有较高可分性，但现有证据无法确定差异的具体来源。</p></article>
     </div>
   </section>
@@ -95,7 +95,7 @@
   </section>
 
   <section class="section" id="interventions">
-    <div class="section-head"><span class="section-index">04 / 训练方案</span><div><h2>不同训练方案的性能变化</h2><p class="section-note">圆点表示相对 DenseNet121 / BASE 的平衡准确率差值，横线表示按相同分组重采样得到的 95% 置信区间，单位为百分点。</p></div></div>
+    <div class="section-head"><span class="section-index">04 / 训练方案</span><div><h2>不同训练方案的性能变化</h2><p class="section-note">圆点表示相对 DenseNet121 / ERM 的平衡准确率差值，横线表示按相同分组重采样得到的 95% 置信区间，单位为百分点。</p></div></div>
     <div class="delta-panel">
       <div class="delta-header"><span>策略 / 评价来源</span><span>95% CI</span><span>差值</span></div>
       <div id="deltaRows"></div>
@@ -107,10 +107,10 @@
   <section class="section" id="methods">
     <div class="section-head"><span class="section-index">05 / 方法说明</span><div><h2>页面中的简称及其具体含义</h2><p class="section-note">简称只用于页面展示，训练配置和结果文件中的正式名称保持不变。</p></div></div>
     <div class="method-grid">
-      <article class="method-card"><code>BASE</code><h3>基础训练</h3><p>仅使用按文件名分组后的 Kermany 训练集。采用 ImageNet 预训练、水平翻转、轻微旋转、类别权重和余弦学习率调度。</p></article>
-      <article class="method-card"><code>AUG-LS</code><h3>增强与标签平滑</h3><p>在 BASE 的基础上增加颜色扰动，并使用 0.1 的标签平滑。该方案只改变训练正则化方式，不加入 RSNA 图像。</p></article>
-      <article class="method-card"><code>MIX</code><h3>直接混合训练</h3><p>合并 Kermany 与 RSNA 的训练集和验证集，再按同一训练流程拟合 DenseNet121。该方案使用了 RSNA 标签。</p></article>
-      <article class="method-card"><code>MIX-DB</code><h3>来源均衡混合训练</h3><p>训练数据与 MIX 相同，但通过加权采样使两个图像来源在训练过程中获得更均衡的抽样机会。</p></article>
+      <article class="method-card"><code>ERM</code><h3>经验风险最小化</h3><p>仅使用 Kermany-FG，以类别加权交叉熵训练。采用 ImageNet 预训练、水平翻转、轻微旋转和余弦学习率调度。</p></article>
+      <article class="method-card"><code>ERM-Reg</code><h3>正则化 ERM</h3><p>在 ERM 的基础上增加颜色扰动和 0.1 标签平滑。训练数据仍为 Kermany-FG，不加入 RSNA 图像。</p></article>
+      <article class="method-card"><code>JT</code><h3>联合训练</h3><p>合并 Kermany-FG 与 RSNA-1707 的训练集和验证集，再按同一流程训练 DenseNet121。该方法使用了 RSNA 标签。</p></article>
+      <article class="method-card"><code>JT-DBS</code><h3>来源均衡联合训练</h3><p>训练数据与 JT 相同，并通过加权采样使两个图像来源在训练过程中获得相同的期望抽样权重。</p></article>
     </div>
     <div class="model-key"><span><b>DenseNet121</b> torchvision DenseNet-121</span><span><b>ConvNeXt-Tiny</b> torchvision ConvNeXt Tiny</span><span><b>ViT-B/16</b> torchvision Vision Transformer B/16</span></div>
   </section>
@@ -144,26 +144,26 @@ const DATA={
   {name:"ViT-B/16",short:"ViT-B/16",internal:{bacc:.9816841776,auc:.9968450503,brier:.0165625566},external:{bacc:.6593689171,auc:.8236451183,brier:.2832613065}}
  ],
  deltas:[
-  {strategy:"AUG-LS",source:"Kermany",value:.0688,low:-.5377,high:.7862},{strategy:"AUG-LS",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
-  {strategy:"MIX",source:"Kermany",value:-.5841,low:-1.3417,high:.1389},{strategy:"MIX",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
-  {strategy:"MIX-DB",source:"Kermany",value:-.9290,low:-1.9040,high:-.0364},{strategy:"MIX-DB",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
+  {strategy:"ERM-Reg",source:"Kermany",value:.0688,low:-.5377,high:.7862},{strategy:"ERM-Reg",source:"RSNA",value:6.4143,low:3.4736,high:9.4096},
+  {strategy:"JT",source:"Kermany",value:-.5841,low:-1.3417,high:.1389},{strategy:"JT",source:"RSNA",value:12.2180,low:8.0239,high:16.3840},
+  {strategy:"JT-DBS",source:"Kermany",value:-.9290,low:-1.9040,high:-.0364},{strategy:"JT-DBS",source:"RSNA",value:11.3124,low:7.0009,high:15.6778}
  ],
  kermany:[{name:"训练",normal:1113,pneumonia:2994},{name:"验证",normal:156,pneumonia:423},{name:"测试",normal:314,pneumonia:856}],
  rsna:[{name:"训练",normal:560,pneumonia:492},{name:"验证",normal:107,pneumonia:106},{name:"测试",normal:215,pneumonia:227}],
  folds:[.9486059989,.9509945963,.9423408254,.9279896625,.9519147936],
  rows:[
-  {scope:"architecture",experiment:"DenseNet121 / BASE",domain:"Kermany",n:1170,groups:624,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
-  {scope:"architecture",experiment:"ConvNeXt-Tiny / BASE",domain:"Kermany",n:1170,groups:624,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
-  {scope:"architecture",experiment:"ViT-B/16 / BASE",domain:"Kermany",n:1170,groups:624,acc:.9820512821,bacc:.9816841776,prec:.9929161747,recall:.9824766355,spec:.9808917197,f1:.9876688197,auc:.9968450503,auprc:.9988487659,brier:.0165625566,ece:null},
-  {scope:"architecture",experiment:"DenseNet121 / BASE",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6591230407,prec:.6117318436,recall:.9647577093,spec:.3534883721,f1:.7487179487,auc:.8151623809,auprc:.8036194820,brier:.2919496597,ece:null},
-  {scope:"architecture",experiment:"ConvNeXt-Tiny / BASE",domain:"RSNA",n:442,groups:442,acc:.6764705882,bacc:.6695318103,prec:.625,recall:.9251101322,spec:.4139534884,f1:.7460035524,auc:.8039545129,auprc:.8042785175,brier:.2596788402,ece:null},
-  {scope:"architecture",experiment:"ViT-B/16 / BASE",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6593689171,prec:.6129943503,recall:.9559471366,spec:.3627906977,f1:.7469879518,auc:.8236451183,auprc:.8299617258,brier:.2832613065,ece:null},
-  {scope:"strategy",experiment:"DenseNet121 / AUG-LS",domain:"Kermany",n:1170,groups:624,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
-  {scope:"strategy",experiment:"DenseNet121 / AUG-LS",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
-  {scope:"strategy",experiment:"DenseNet121 / MIX",domain:"Kermany",n:1170,groups:624,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
-  {scope:"strategy",experiment:"DenseNet121 / MIX",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
-  {scope:"strategy",experiment:"DenseNet121 / MIX-DB",domain:"Kermany",n:1170,groups:624,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
-  {scope:"strategy",experiment:"DenseNet121 / MIX-DB",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
+  {scope:"architecture",experiment:"DenseNet121 / ERM",domain:"Kermany",n:1170,groups:624,acc:.9803418803,bacc:.9764829752,prec:.9882766706,recall:.9848130841,spec:.9681528662,f1:.9865418373,auc:.9945234835,auprc:.9978898271,brier:.0175451877,ece:null},
+  {scope:"architecture",experiment:"ConvNeXt-Tiny / ERM",domain:"Kermany",n:1170,groups:624,acc:.9777777778,bacc:.9727141497,prec:.9859484778,recall:.9836448598,spec:.9617834395,f1:.9847953216,auc:.9967483184,auprc:.9987781485,brier:.0172802187,ece:null},
+  {scope:"architecture",experiment:"ViT-B/16 / ERM",domain:"Kermany",n:1170,groups:624,acc:.9820512821,bacc:.9816841776,prec:.9929161747,recall:.9824766355,spec:.9808917197,f1:.9876688197,auc:.9968450503,auprc:.9988487659,brier:.0165625566,ece:null},
+  {scope:"architecture",experiment:"DenseNet121 / ERM",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6591230407,prec:.6117318436,recall:.9647577093,spec:.3534883721,f1:.7487179487,auc:.8151623809,auprc:.8036194820,brier:.2919496597,ece:null},
+  {scope:"architecture",experiment:"ConvNeXt-Tiny / ERM",domain:"RSNA",n:442,groups:442,acc:.6764705882,bacc:.6695318103,prec:.625,recall:.9251101322,spec:.4139534884,f1:.7460035524,auc:.8039545129,auprc:.8042785175,brier:.2596788402,ece:null},
+  {scope:"architecture",experiment:"ViT-B/16 / ERM",domain:"RSNA",n:442,groups:442,acc:.6674208145,bacc:.6593689171,prec:.6129943503,recall:.9559471366,spec:.3627906977,f1:.7469879518,auc:.8236451183,auprc:.8299617258,brier:.2832613065,ece:null},
+  {scope:"strategy",experiment:"DenseNet121 / ERM-Reg",domain:"Kermany",n:1170,groups:624,acc:.9769230769,bacc:.9771712602,prec:.9916963227,recall:.9766355140,spec:.9777070064,f1:.9841082990,auc:.9943858265,auprc:.9950966787,brier:.0317713607,ece:.0924478441},
+  {scope:"strategy",experiment:"DenseNet121 / ERM-Reg",domain:"RSNA",n:442,groups:442,acc:.7285067873,bacc:.7232660588,prec:.6731391586,recall:.9162995595,spec:.5302325581,f1:.7761194030,auc:.8001844073,auprc:.7654221566,brier:.1915384085,ece:.0837151018},
+  {scope:"strategy",experiment:"DenseNet121 / JT",domain:"Kermany",n:1170,groups:624,acc:.9717948718,bacc:.9706418537,prec:.9881376038,recall:.9731308411,spec:.9681528662,f1:.9805768099,auc:.9955875350,auprc:.9982603463,brier:.0227979972,ece:.010123},
+  {scope:"strategy",experiment:"DenseNet121 / JT",domain:"RSNA",n:442,groups:442,acc:.7805429864,bacc:.7813031452,prec:.8066037736,recall:.7533039648,spec:.8093023256,f1:.7790432802,auc:.8622067411,auprc:.8688987081,brier:.1590827678,ece:.090015},
+  {scope:"strategy",experiment:"DenseNet121 / JT-DBS",domain:"Kermany",n:1170,groups:624,acc:.9726495726,bacc:.9671929877,prec:.9835680751,recall:.9789719626,spec:.9554140127,f1:.9812646370,auc:.9926148878,auprc:.9969566996,brier:.0255259720,ece:.017695},
+  {scope:"strategy",experiment:"DenseNet121 / JT-DBS",domain:"RSNA",n:442,groups:442,acc:.7714932127,bacc:.7722466960,prec:.7971698113,recall:.7444933921,spec:.8,f1:.7699316629,auc:.8607314824,auprc:.8708531989,brier:.1557498649,ece:.077526}
  ]
 };
 const METRICS=[

@@ -5,6 +5,12 @@ project:
     - NORMAL
     - PNEUMONIA
 
+protocol:
+  id: CXRShift
+  model: ViT-B/16
+  recipe: ERM
+  training_dataset: Kermany-FG
+
 paths:
   data_root: data/raw/chest_xray
   results_dir: results

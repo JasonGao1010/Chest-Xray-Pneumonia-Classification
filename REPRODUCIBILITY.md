@@ -41,7 +41,7 @@ data/raw/rsna_pneumonia/
 
 ## 三、运行完整流程
 
-先查看全部 100 条数据准备、训练、评价、分析和验收命令，不实际执行：
+先查看全部 101 条协议检查、数据准备、训练、评价、分析和验收命令，不实际执行：
 
 ```bash
 python scripts/reproduce_all.py --dry-run
@@ -92,9 +92,11 @@ python scripts/reproduce_all.py --stage verify
 
 | 实验族 | 模型 | 随机种子 | 训练数据 | 测试数据 |
 |---|---|---|---|---|
-| strict | DenseNet121、ConvNeXt-Tiny、ViT-B/16 | 42、43、44 | 分组 Kermany | 分组 Kermany、冻结 RSNA |
-| robust | DenseNet121 | 42、43、44 | 分组 Kermany，使用较强增强 | 分组 Kermany、冻结 RSNA |
-| mixed_simple | DenseNet121 | 42、43、44 | Kermany 与 RSNA 的训练、验证数据 | 分组 Kermany、冻结 RSNA |
-| mixed_domain_balanced | DenseNet121 | 42、43、44 | 混合数据，按来源均衡采样 | 分组 Kermany、冻结 RSNA |
+| `ERM` | DenseNet121、ConvNeXt-Tiny、ViT-B/16 | 42、43、44 | `Kermany-FG` | `Kermany-FG`、`RSNA-1707` |
+| `ERM-Reg` | DenseNet121 | 42、43、44 | `Kermany-FG`，增加颜色扰动和标签平滑 | `Kermany-FG`、`RSNA-1707` |
+| `JT` | DenseNet121 | 42、43、44 | Kermany 与 RSNA 的训练、验证数据 | `Kermany-FG`、`RSNA-1707` |
+| `JT-DBS` | DenseNet121 | 42、43、44 | 混合数据，按来源均衡采样 | `Kermany-FG`、`RSNA-1707` |
+
+全仓命名遵循 [`protocol/README.md`](protocol/README.md)。新运行使用 `CXRShift__{模型}__{方法}__s{种子}`，历史结果中的 `strict`、`robust`、`mixed_simple` 和 `mixed_domain_balanced` 仅作为兼容别名读取。
 
 `v1.0.0` 中可下载的 ViT 权重只服务于本地演示，不参与上述严格复现流程。

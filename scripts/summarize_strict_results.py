@@ -14,8 +14,11 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+from xray_pneumonia.protocol import Identity, artifact_name  # noqa: E402
 ENSEMBLE_SEEDS = (42, 43, 44)
 DECISION_THRESHOLD = 0.5
 BOOTSTRAP_SEED = 20260710
@@ -28,6 +31,9 @@ PREDICTION_PATTERNS = {
         "mixed_domain_balanced_predictions_{dataset}_{model}_seed{seed}.csv"
     ),
 }
+RECIPE_IDS = {"strict": "ERM", "robust": "ERM-Reg", "mixed_simple": "JT", "mixed_domain_balanced": "JT-DBS"}
+MODEL_NAMES = {"densenet121": "DenseNet121", "convnext_tiny": "ConvNeXt-Tiny", "vit_b16": "ViT-B/16"}
+DATASET_IDS = {"kermany_grouped": "Kermany-FG", "rsna": "RSNA-1707"}
 
 
 def filename_group_from_path(path: str, dataset: str) -> str:
@@ -229,6 +235,12 @@ def load_probability_ensemble(
     for seed in ENSEMBLE_SEEDS:
         name = pattern.format(dataset=_dataset_token(dataset), model=model, seed=seed)
         path = results_dir / name
+        canonical = results_dir / artifact_name(
+            Identity(MODEL_NAMES[model], RECIPE_IDS[family], seed),
+            DATASET_IDS[dataset], "test", "predictions", "csv",
+        )
+        if canonical.is_file():
+            path = canonical
         if not path.is_file():
             raise FileNotFoundError(path)
         data = read_predictions(path)
@@ -347,8 +359,9 @@ def main() -> int:
                 args.bootstrap_seed,
             )
             group = {
-                "dataset": dataset,
-                "model": model,
+                "dataset": DATASET_IDS[dataset],
+                "model": MODEL_NAMES[model],
+                "recipe": "ERM",
                 "prediction_files": loaded["prediction_files"],
                 "sample_count": len(loaded["paths"]),
                 "bootstrap_group_count": len(set(groups)),
@@ -362,8 +375,8 @@ def main() -> int:
                 values = [row[metric] for row in loaded["seed_results"]]
                 rows_out.append(
                     {
-                        "dataset": dataset,
-                        "model": model,
+                        "dataset": DATASET_IDS[dataset],
+                        "model": MODEL_NAMES[model],
                         "metric": metric,
                         "seed_mean": statistics.mean(values),
                         "seed_std": statistics.stdev(values),
@@ -414,10 +427,10 @@ def main() -> int:
             )
             payload["paired_comparisons"].append(
                 {
-                    "candidate_family": family,
-                    "baseline_family": "strict",
-                    "dataset": dataset,
-                    "model": "densenet121",
+                    "candidate_recipe": RECIPE_IDS[family],
+                    "baseline_recipe": "ERM",
+                    "dataset": DATASET_IDS[dataset],
+                    "model": "DenseNet121",
                     "sample_count": len(groups),
                     "bootstrap_group_count": len(set(groups)),
                     "baseline_ensemble": baseline_metrics,

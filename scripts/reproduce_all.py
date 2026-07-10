@@ -11,13 +11,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from xray_pneumonia.protocol import Identity, artifact_name  # noqa: E402
+
 MODELS = {
-    "densenet121": "configs/densenet121.yaml",
-    "convnext_tiny": "configs/convnext_tiny.yaml",
-    "vit_b16": "configs/vit_b16.yaml",
+    "DenseNet121": "configs/DenseNet121__ERM.yaml",
+    "ConvNeXt-Tiny": "configs/ConvNeXt-Tiny__ERM.yaml",
+    "ViT-B/16": "configs/ViT-B16__ERM.yaml",
 }
 SEEDS = (42, 43, 44)
-FAMILIES = ("strict", "robust", "mixed_simple", "mixed_domain_balanced")
+RECIPES = ("ERM", "ERM-Reg", "JT", "JT-DBS")
 
 
 def command(*parts: object) -> list[str]:
@@ -62,75 +65,78 @@ def data_stage(args: argparse.Namespace) -> None:
                 "--summary-output", work / "audit/mixed_dataset_summary.json", *force), dry_run=args.dry_run)
 
 
-def train(args: argparse.Namespace, family: str, model: str, seed: int) -> Path:
+def train(args: argparse.Namespace, recipe: str, model: str, seed: int) -> Path:
     work = args.work_dir
-    config = "configs/densenet121_robust.yaml" if family == "robust" else MODELS[model]
-    data_root = work / ("data/kermany_rsna_mixed" if family.startswith("mixed") else "data/kermany_grouped_seed42")
-    summary = work / f"results/{family}_train_{model}_seed{seed}.json"
-    extra = ["--domain-balanced-prefixes", "kermany", "rsna"] if family == "mixed_domain_balanced" else []
+    identity = Identity(model, recipe, seed)
+    config = "configs/DenseNet121__ERM-Reg.yaml" if recipe == "ERM-Reg" else MODELS[model]
+    data_root = work / ("data/kermany_rsna_mixed" if recipe.startswith("JT") else "data/kermany_grouped_seed42")
+    summary = work / f"results/{identity.run_id}__training.json"
+    extra = ["--domain-balanced-prefixes", "kermany", "rsna"] if recipe == "JT-DBS" else []
     run(command("scripts/train.py", "--config", config, "--data-root", data_root,
                 "--results-dir", work / "results", "--checkpoints-dir", work / "checkpoints",
                 "--seed", seed, "--device", args.device, "--json-output", summary, *extra), dry_run=args.dry_run)
     return summary
 
 
-def evaluate(args: argparse.Namespace, family: str, model: str, seed: int, summary: Path, dataset: str, split: str) -> None:
+def evaluate(args: argparse.Namespace, recipe: str, model: str, seed: int, summary: Path, dataset: str, split: str) -> None:
     work = args.work_dir
-    token = "kermany_grouped" if dataset == "kermany" else "rsna"
+    identity = Identity(model, recipe, seed)
+    dataset_id = "Kermany-FG" if dataset == "kermany" else "RSNA-1707"
     root = work / ("data/kermany_grouped_seed42" if dataset == "kermany" else "data/rsna_binary")
     run(command("scripts/evaluate.py", "--training-summary", summary, "--data-root", root,
                 "--split", split, "--device", args.device, "--json-output",
-                work / f"results/{family}_eval_{token}_{split}_{model}_seed{seed}.json",
-                "--predictions-output", work / f"results/{family}_predictions_{token}_{split}_{model}_seed{seed}.csv",
+                work / "results" / artifact_name(identity, dataset_id, split, "evaluation", "json"),
+                "--predictions-output", work / "results" / artifact_name(identity, dataset_id, split, "predictions", "csv"),
                 "--no-update-latest"), dry_run=args.dry_run)
 
 
 def experiment_stage(args: argparse.Namespace) -> None:
     for model in MODELS:
         for seed in SEEDS:
-            summary = train(args, "strict", model, seed)
-            evaluate(args, "strict", model, seed, summary, "kermany", "test")
-            evaluate(args, "strict", model, seed, summary, "rsna", "test")
-            if model == "densenet121":
-                evaluate(args, "strict", model, seed, summary, "kermany", "val")
-                evaluate(args, "strict", model, seed, summary, "rsna", "val")
-    for family in FAMILIES[1:]:
+            summary = train(args, "ERM", model, seed)
+            evaluate(args, "ERM", model, seed, summary, "kermany", "test")
+            evaluate(args, "ERM", model, seed, summary, "rsna", "test")
+            if model == "DenseNet121":
+                evaluate(args, "ERM", model, seed, summary, "kermany", "val")
+                evaluate(args, "ERM", model, seed, summary, "rsna", "val")
+    for recipe in RECIPES[1:]:
         for seed in SEEDS:
-            summary = train(args, family, "densenet121", seed)
-            evaluate(args, family, "densenet121", seed, summary, "kermany", "test")
-            evaluate(args, family, "densenet121", seed, summary, "rsna", "test")
-            if family == "mixed_simple":
-                evaluate(args, family, "densenet121", seed, summary, "kermany", "val")
-                evaluate(args, family, "densenet121", seed, summary, "rsna", "val")
+            summary = train(args, recipe, "DenseNet121", seed)
+            evaluate(args, recipe, "DenseNet121", seed, summary, "kermany", "test")
+            evaluate(args, recipe, "DenseNet121", seed, summary, "rsna", "test")
+            if recipe == "JT":
+                evaluate(args, recipe, "DenseNet121", seed, summary, "kermany", "val")
+                evaluate(args, recipe, "DenseNet121", seed, summary, "rsna", "val")
 
 
 def analyze_stage(args: argparse.Namespace) -> None:
     work = args.work_dir
     run(command("scripts/summarize_strict_results.py", "--results-dir", work / "results",
-                "--output-json", work / "results/strict_summary.json", "--output-csv",
-                work / "results/strict_summary.csv", "--require-complete"), dry_run=args.dry_run)
+                "--output-json", work / "results/CXRShift__main-summary.json", "--output-csv",
+                work / "results/CXRShift__main-summary.csv", "--require-complete"), dry_run=args.dry_run)
     run(command("scripts/analyze_domain_shift.py", "--kermany", work / "data/kermany_grouped_seed42",
                 "--rsna", work / "data/rsna_binary", "--output",
-                work / "results/domain_shift_diagnostic.json"), dry_run=args.dry_run)
-    for family in ("strict", "mixed_simple"):
-        for dataset, root in (("kermany_grouped", work / "data/kermany_grouped_seed42"),
-                              ("rsna", work / "data/rsna_binary")):
+                work / "results/CXRShift__source-analysis.json"), dry_run=args.dry_run)
+    for recipe in ("ERM", "JT"):
+        for dataset_id, root in (("Kermany-FG", work / "data/kermany_grouped_seed42"),
+                                 ("RSNA-1707", work / "data/rsna_binary")):
             for seed in SEEDS:
-                validation = work / f"results/{family}_predictions_{dataset}_val_densenet121_seed{seed}.csv"
-                test = work / f"results/{family}_predictions_{dataset}_test_densenet121_seed{seed}.csv"
+                identity = Identity("DenseNet121", recipe, seed)
+                validation = work / "results" / artifact_name(identity, dataset_id, "val", "predictions", "csv")
+                test = work / "results" / artifact_name(identity, dataset_id, "test", "predictions", "csv")
                 run(command("scripts/analyze_calibration.py", "--predictions", test,
                             "--calibration-predictions", validation, "--temperature-max", 20,
-                            "--json-output", work / f"results/{family}_calibration_{dataset}_densenet121_seed{seed}.json"),
+                            "--json-output", work / "results" / artifact_name(identity, dataset_id, "test", "calibration", "json")),
                     dry_run=args.dry_run)
                 run(command("scripts/evaluate_frozen_thresholds.py", "--validation", validation,
                             "--test", test, "--output",
-                            work / f"results/{family}_operating_points_{dataset}_densenet121_seed{seed}.json"),
+                            work / "results" / artifact_name(identity, dataset_id, "test", "operating-points", "json")),
                     dry_run=args.dry_run)
                 if seed == 42:
                     run(command("scripts/analyze_errors.py", "--predictions", test, "--data-root", root,
-                                "--csv-output", work / f"results/{family}_error_cases_{dataset}_densenet121_seed42.csv",
-                                "--json-output", work / f"results/{family}_error_summary_{dataset}_densenet121_seed42.json",
-                                "--grid-output", work / f"figures/{family}_error_grid_{dataset}_densenet121_seed42.png"),
+                                "--csv-output", work / "results" / artifact_name(identity, dataset_id, "test", "error-cases", "csv"),
+                                "--json-output", work / "results" / artifact_name(identity, dataset_id, "test", "error-summary", "json"),
+                                "--grid-output", work / "figures" / artifact_name(identity, dataset_id, "test", "error-grid", "png")),
                         dry_run=args.dry_run)
 
 
@@ -142,6 +148,7 @@ def main() -> int:
     args = parse_args()
     if not args.work_dir.is_absolute():
         args.work_dir = ROOT / args.work_dir
+    run(command("scripts/check_protocol.py"), dry_run=args.dry_run)
     for name, fn in (("data", data_stage), ("experiments", experiment_stage),
                      ("analyze", analyze_stage), ("verify", verify_stage)):
         if args.stage in {name, "all"}:

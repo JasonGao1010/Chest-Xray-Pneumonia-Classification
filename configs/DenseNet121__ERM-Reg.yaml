@@ -3,6 +3,12 @@ project:
   task: binary_classification
   classes: [NORMAL, PNEUMONIA]
 
+protocol:
+  id: CXRShift
+  model: DenseNet121
+  recipe: ERM-Reg
+  training_dataset: Kermany-FG
+
 paths:
   data_root: data/processed/kermany_grouped_seed42
   results_dir: results

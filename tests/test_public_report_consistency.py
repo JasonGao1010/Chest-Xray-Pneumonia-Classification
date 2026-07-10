@@ -44,10 +44,10 @@ def test_html_defines_every_public_model_and_method_code():
         ("DenseNet121", "torchvision DenseNet-121"),
         ("ConvNeXt-Tiny", "torchvision ConvNeXt Tiny"),
         ("ViT-B/16", "torchvision Vision Transformer B/16"),
-        ("BASE", "基础训练"),
-        ("AUG-LS", "增强与标签平滑"),
-        ("MIX", "直接混合训练"),
-        ("MIX-DB", "来源均衡混合训练"),
+        ("ERM", "经验风险最小化"),
+        ("ERM-Reg", "正则化 ERM"),
+        ("JT", "联合训练"),
+        ("JT-DBS", "来源均衡联合训练"),
     ):
         assert code in html
         assert meaning in html

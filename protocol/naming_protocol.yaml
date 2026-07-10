@@ -1,0 +1,43 @@
+schema_version: 1
+protocol_id: CXRShift
+project_id: Chest-Xray-Pneumonia-Classification
+
+models:
+  DenseNet121:
+    backend: torchvision:densenet121
+    legacy_slug: densenet121
+  ConvNeXt-Tiny:
+    backend: torchvision:convnext_tiny
+    legacy_slug: convnext_tiny
+  ViT-B/16:
+    backend: torchvision:vit_b_16
+    artifact_slug: ViT-B16
+    legacy_slug: vit_b16
+
+recipes:
+  ERM:
+    legacy_family: strict
+    description: Kermany-only baseline training
+  ERM-Reg:
+    legacy_family: robust
+    description: ERM with color jitter and label smoothing 0.1
+  JT:
+    legacy_family: mixed_simple
+    description: Direct Kermany and RSNA mixed training
+  JT-DBS:
+    legacy_family: mixed_domain_balanced
+    description: JT with source-balanced sampling
+
+datasets:
+  Kermany-FG:
+    legacy_slug: kermany_grouped
+    root_name: kermany_grouped_seed42
+    grouping: filename-derived groups
+  RSNA-1707:
+    legacy_slug: rsna
+    root_name: rsna_binary
+    grouping: patientId
+
+run_id: "{protocol_id}__{model_slug}__{recipe_id}__s{seed}"
+artifact_name: "{run_id}__{dataset_id}__{split}__{artifact}.{extension}"
+seeds: [42, 43, 44]

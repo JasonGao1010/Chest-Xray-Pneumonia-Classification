@@ -5,10 +5,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from xray_pneumonia.protocol import Identity, artifact_name  # noqa: E402
 PRIMARY_METRICS = ("balanced_accuracy", "recall", "specificity", "roc_auc", "auprc")
 RELATIVE_TOLERANCE = 0.05
 
@@ -33,18 +36,31 @@ def parse_args() -> argparse.Namespace:
 
 
 def keyed_groups(payload: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
-    return {(row["dataset"], row["model"]): row for row in payload["groups"]}
+    datasets = {"kermany_grouped": "Kermany-FG", "rsna": "RSNA-1707"}
+    models = {"densenet121": "DenseNet121", "convnext_tiny": "ConvNeXt-Tiny", "vit_b16": "ViT-B/16"}
+    return {
+        (datasets.get(row["dataset"], row["dataset"]), models.get(row["model"], row["model"])): row
+        for row in payload["groups"]
+    }
 
 
 def keyed_comparisons(payload: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
-    return {(row["candidate_family"], row["dataset"]): row for row in payload["paired_comparisons"]}
+    recipes = {"robust": "ERM-Reg", "mixed_simple": "JT", "mixed_domain_balanced": "JT-DBS"}
+    datasets = {"kermany_grouped": "Kermany-FG", "rsna": "RSNA-1707"}
+    return {
+        (
+            recipes.get(row.get("candidate_family"), row.get("candidate_recipe")),
+            datasets.get(row["dataset"], row["dataset"]),
+        ): row
+        for row in payload["paired_comparisons"]
+    }
 
 
 def main() -> int:
     args = parse_args()
     work = args.work_dir if args.work_dir.is_absolute() else ROOT / args.work_dir
     reference_path = args.reference if args.reference.is_absolute() else ROOT / args.reference
-    rebuilt = load(work / "results/strict_summary.json")
+    rebuilt = load(work / "results/CXRShift__main-summary.json")
     reference = load(reference_path)
     kermany = load(work / "audit/kermany_grouped_summary.json")
     rsna = load(work / "audit/rsna_dataset_summary.json")
@@ -54,17 +70,19 @@ def main() -> int:
         failures.append("Kermany identity gate failed")
     if rsna.get("sample_count") != 1707 or rsna.get("hash_mismatches") or rsna.get("missing_images"):
         failures.append("RSNA 1707-member identity gate failed")
-    required_secondary: list[Path] = [work / "results/domain_shift_diagnostic.json"]
-    for family in ("strict", "mixed_simple"):
-        for dataset in ("kermany_grouped", "rsna"):
+    required_secondary: list[Path] = [work / "results/CXRShift__source-analysis.json"]
+    for recipe in ("ERM", "JT"):
+        for dataset in ("Kermany-FG", "RSNA-1707"):
             for seed in (42, 43, 44):
+                identity = Identity("DenseNet121", recipe, seed)
                 required_secondary.extend([
-                    work / f"results/{family}_calibration_{dataset}_densenet121_seed{seed}.json",
-                    work / f"results/{family}_operating_points_{dataset}_densenet121_seed{seed}.json",
+                    work / "results" / artifact_name(identity, dataset, "test", "calibration", "json"),
+                    work / "results" / artifact_name(identity, dataset, "test", "operating-points", "json"),
                 ])
+            identity = Identity("DenseNet121", recipe, 42)
             required_secondary.extend([
-                work / f"results/{family}_error_cases_{dataset}_densenet121_seed42.csv",
-                work / f"results/{family}_error_summary_{dataset}_densenet121_seed42.json",
+                work / "results" / artifact_name(identity, dataset, "test", "error-cases", "csv"),
+                work / "results" / artifact_name(identity, dataset, "test", "error-summary", "json"),
             ])
     missing_secondary = [path.relative_to(work).as_posix() for path in required_secondary if not path.is_file()]
     if missing_secondary:

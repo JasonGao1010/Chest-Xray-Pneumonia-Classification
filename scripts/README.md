@@ -9,7 +9,7 @@ pytest -q
 python -m pytest -q
 ```
 
-两种入口均应得到相同结果。当前为 46 项通过。
+两种入口均应得到相同结果。当前为 50 项通过。
 
 ## 完整复现入口
 
@@ -20,7 +20,7 @@ python scripts/reproduce_all.py --dry-run
 python scripts/reproduce_all.py --stage all --device auto
 ```
 
-总入口固定执行 18 次训练：严格基线 3 个模型乘 3 个种子，另加 DenseNet121 的 robust、mixed_simple、mixed_domain_balanced 各 3 个种子。每个训练模型都在 Kermany 和 RSNA 测试集评价。任何必需预测文件缺失时，完整性汇总门禁会失败；最终验收写入 `rebuild/reproduction_verification.json`。
+总入口固定执行 18 次训练：`ERM` 使用 3 个模型和 3 个种子，`ERM-Reg`、`JT`、`JT-DBS` 分别使用 DenseNet121 和 3 个种子。每个训练模型都在 `Kermany-FG` 和 `RSNA-1707` 上评价。任何必需预测文件缺失时，完整性汇总门禁会失败；最终验收写入 `rebuild/reproduction_verification.json`。
 
 ## Kermany 数据与清单
 
@@ -30,7 +30,7 @@ python scripts/reproduce_all.py --stage all --device auto
 python scripts/check_dataset.py --verify-images
 ```
 
-核验现有保守文件名簇清单和 5856 个文件，不重建数据：
+核验现有文件名分组清单和 5856 个文件，不重建数据：
 
 ```bash
 python scripts/prepare_kermany_grouped.py --verify-only --verify-files
@@ -112,15 +112,15 @@ python scripts/audit_integrity.py \
 
 ```bash
 python scripts/train.py \
-  --config configs/densenet121.yaml \
+  --config configs/DenseNet121__ERM.yaml \
   --data-root data/processed/kermany_grouped_seed42 \
   --results-dir rebuild/results \
   --checkpoints-dir rebuild/checkpoints \
   --seed 42 \
-  --json-output rebuild/results/strict_train_densenet121_seed42.json
+  --json-output rebuild/results/CXRShift__DenseNet121__ERM__s42__training.json
 ```
 
-稳健配方使用 `configs/densenet121_robust.yaml`。简单混合使用 `data/processed/kermany_grouped_rsna_mixed`；域均衡在同一命令上增加：
+`ERM-Reg` 使用 `configs/DenseNet121__ERM-Reg.yaml`。`JT` 使用 `data/processed/kermany_grouped_rsna_mixed`；`JT-DBS` 在同一命令上增加：
 
 ```text
 --domain-balanced-prefixes kermany rsna
@@ -132,12 +132,12 @@ python scripts/train.py \
 
 ```bash
 python scripts/evaluate.py \
-  --training-summary rebuild/results/strict_train_densenet121_seed42.json \
+  --training-summary rebuild/results/CXRShift__DenseNet121__ERM__s42__training.json \
   --data-root data/processed/kermany_grouped_seed42 \
   --split test --device auto \
-  --json-output rebuild/results/strict_eval_kermany_test_densenet121_seed42.json \
-  --predictions-output rebuild/results/strict_predictions_kermany_test_densenet121_seed42.csv \
-  --confusion-matrix-output rebuild/figures/strict_confusion_kermany_test_densenet121_seed42.png \
+  --json-output rebuild/results/CXRShift__DenseNet121__ERM__s42__Kermany-FG__test__evaluation.json \
+  --predictions-output rebuild/results/CXRShift__DenseNet121__ERM__s42__Kermany-FG__test__predictions.csv \
+  --confusion-matrix-output rebuild/figures/CXRShift__DenseNet121__ERM__s42__Kermany-FG__test__confusion-matrix.png \
   --no-update-latest
 ```
 
@@ -164,18 +164,18 @@ python scripts/analyze_domain_shift.py
 
 ```bash
 python scripts/analyze_calibration.py \
-  --predictions results/strict_predictions_rsna_test_densenet121_seed42.csv \
-  --calibration-predictions results/strict_predictions_rsna_val_densenet121_seed42.csv \
+  --predictions rebuild/results/CXRShift__DenseNet121__ERM__s42__RSNA-1707__test__predictions.csv \
+  --calibration-predictions rebuild/results/CXRShift__DenseNet121__ERM__s42__RSNA-1707__val__predictions.csv \
   --temperature-max 20 \
   --json-output rebuild/strict_calibration_rsna_seed42.json
 
 python scripts/evaluate_frozen_thresholds.py \
-  --validation results/strict_predictions_rsna_val_densenet121_seed42.csv \
-  --test results/strict_predictions_rsna_test_densenet121_seed42.csv \
+  --validation rebuild/results/CXRShift__DenseNet121__ERM__s42__RSNA-1707__val__predictions.csv \
+  --test rebuild/results/CXRShift__DenseNet121__ERM__s42__RSNA-1707__test__predictions.csv \
   --output rebuild/strict_operating_points_rsna_seed42.json
 
 python scripts/analyze_errors.py \
-  --predictions results/strict_predictions_rsna_test_densenet121_seed42.csv \
+  --predictions rebuild/results/CXRShift__DenseNet121__ERM__s42__RSNA-1707__test__predictions.csv \
   --data-root data/processed/rsna_binary \
   --csv-output rebuild/strict_error_cases_rsna_seed42.csv \
   --json-output rebuild/strict_error_summary_rsna_seed42.json \

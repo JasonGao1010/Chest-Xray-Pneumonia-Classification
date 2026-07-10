@@ -187,10 +187,10 @@ results/*
 
 # Public config
 configs/*
-!configs/vit_b16.yaml
-!configs/densenet121.yaml
-!configs/convnext_tiny.yaml
-!configs/densenet121_robust.yaml
+!configs/DenseNet121__ERM.yaml
+!configs/ConvNeXt-Tiny__ERM.yaml
+!configs/ViT-B16__ERM.yaml
+!configs/DenseNet121__ERM-Reg.yaml
 
 # Local source materials are not needed in the public repository.
 docs/*
@@ -221,6 +221,7 @@ scripts/*
 !scripts/freeze_rsna_manifest.py
 !scripts/reproduce_all.py
 !scripts/verify_reproduction.py
+!scripts/check_protocol.py
 !scripts/render_report_figures.py
 !scripts/capture_web_demo.py
 
