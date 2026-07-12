@@ -36,6 +36,7 @@ data/           数据说明和冻结划分清单
 figures/        主要结果图
 models/         模型权重来源与下载说明
 results/        指标、逐图预测和审计记录
+report/         冻结研究报告、可编辑源文件和配套图表
 scripts/        数据准备、训练、评价和审计程序
 src/            可复用 Python 包
 tests/          自动测试
@@ -50,6 +51,7 @@ web/            本地推理界面和离线结果报告
 - [`scripts/README.md`](scripts/README.md)：各阶段命令和输出约定；
 - [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)：从原始数据到主表的完整复现流程和机器验收标准。
 - [`protocol/README.md`](protocol/README.md)：项目统一使用的数据、模型、训练方案、运行编号和产物命名规则。
+- [`report/main.pdf`](report/main.pdf)：冻结版完整研究报告；[`report/main.tex`](report/main.tex) 为可编辑源文件。
 
 ## 安装与测试
 
@@ -63,7 +65,7 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
-当前测试套件包含 50 项测试。GPU 训练还需要相容的 NVIDIA 驱动和 CUDA 运行环境。
+当前测试套件包含 51 项测试。GPU 训练还需要相容的 NVIDIA 驱动和 CUDA 运行环境。
 
 ## 完整复现
 
